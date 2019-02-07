@@ -5,8 +5,9 @@ import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import PointTrackerForm from '../point-tracker-form/point-tracker-form';
 
-
 import * as profileActions from '../../actions/profile';
+import * as scheduleActions from '../../actions/schedule';
+
 import './_mentor.scss';
 
 const mapStateToProps = state => ({
@@ -16,6 +17,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchMyStudents: profile => dispatch(profileActions.fetchMyStudentsReq(profile)),
+  fetchStudentSchedule: studentId => dispatch(scheduleActions.fetchClassScheduleData(studentId)),
 });
 
 class Mentor extends React.Component {
@@ -43,8 +45,8 @@ class Mentor extends React.Component {
 
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
-
     if (this.props.myStudents[i].role === 'student') {
+      this.props.fetchStudentSchedule(this.props.myStudents[i].id);
       this.setState({
         ...this.state,
         content: this.props.myStudents[i],
@@ -60,11 +62,11 @@ class Mentor extends React.Component {
         return (
           <li
             className={ this.state.selected === i.toString() ? 'nav-item selected' : 'nav-item' }
-            key={student._id}
+            key={student.schoolId}
             data-index={i}
             onClick={ this.handleSidebarClick.bind(this) }>
             <a className="nav-link">
-              { student.firstName } { student.lastName }
+              { student.name }
             </a>
           </li>
         );
@@ -96,6 +98,7 @@ class Mentor extends React.Component {
   }
 
   handleButtonClick = () => {
+    console.log('mentor.js handleButtonClick');
     this.setState({ modal: !this.state.modal });
   }
 
@@ -128,6 +131,7 @@ class Mentor extends React.Component {
 
 Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
+  fetchStudentSchedule: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
 };

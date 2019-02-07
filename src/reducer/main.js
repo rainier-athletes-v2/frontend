@@ -10,6 +10,7 @@ import studentData from './student-data';
 import students from './students';
 import teachers from './teachers';
 import myStudents from './myStudents';
+import schedule from './schedule';
 import csvExtract from './extract';
 import error from './error';
 
@@ -21,6 +22,7 @@ export default combineReducers({
   pointTracker,
   pointTrackers,
   myStudents,
+  schedule,
   synopsisReportLink,
   csvExtract,
   studentData,
