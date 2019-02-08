@@ -46,7 +46,7 @@ class Mentor extends React.Component {
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
     if (this.props.myStudents[i].role === 'student') {
-      this.props.fetchStudentSchedule(this.props.myStudents[i].id);
+      // this.props.fetchStudentSchedule(this.props.myStudents[i].id);
       this.setState({
         ...this.state,
         content: this.props.myStudents[i],
@@ -66,7 +66,7 @@ class Mentor extends React.Component {
             data-index={i}
             onClick={ this.handleSidebarClick.bind(this) }>
             <a className="nav-link">
-              { student.name }
+              { `${student.firstName} ${student.lastName}` }
             </a>
           </li>
         );
