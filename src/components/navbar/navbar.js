@@ -34,15 +34,15 @@ class Navbar extends React.Component {
     };
   }
 
-  setGoogleOAuthUrl = () => {
-    const baseUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
-    const redirect = `redirect_uri=${API_URL}/oauth/google`;
-    const scope = 'scope=openid%20email%20profile%20https://www.googleapis.com/auth/drive';
-    const clientId = `client_id=${GOOGLE_OAUTH_ID.trim()}`;
-    const prompt = 'prompt=consent%20select_account';
-    const responseType = 'response_type=code';
-
-    return `${baseUrl}?${redirect}&${scope}&${clientId}&${prompt}&${responseType}&access_type=offline`;
+  setSfOAuthUrl = () => {
+    const baseUrl = SF_OAUTH_AUTHORIZE_URL; // change test to login to move to production instance
+    const redirect = `redirect_uri=${API_URL}/oauth/sf`;
+    const scope = 'scope=id%20openid%20email%20profile%20api';
+    const clientId = `client_id=${SF_OAUTH_ID.trim()}`;
+    const prompt = 'prompt=consent%20login'; // '%20login' may be added
+    const responseType = 'response_type=code'; 
+    const oAuthUrl = `${baseUrl}?${redirect}&${scope}&${clientId}&${prompt}&${responseType}`;
+    return oAuthUrl;
   }
 
   componentDidMount() {
@@ -60,7 +60,10 @@ class Navbar extends React.Component {
   }
 
   renderAdmin = () => {
-    return <React.Fragment><li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li><li className="nav-item"><Link to="/admin" className="nav-link">Admin</Link></li></React.Fragment>;
+    return <React.Fragment>
+      <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>
+      <li className="nav-item"><Link to="/admin" className="nav-link">Admin</Link></li>
+    </React.Fragment>;
   }
 
   determineRole = () => {
@@ -74,7 +77,7 @@ class Navbar extends React.Component {
     const JSXNotLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo" src={ rainierBtn } /></Link>
-        <span className="login nav-content"><a href={ this.setGoogleOAuthUrl() }><img className="google-btn" src={ googleBtn } /></a></span>
+        <span className="login nav-content"><a href={ this.setSfOAuthUrl() }><img className="google-btn" src={ googleBtn } /></a></span>
       </React.Fragment>
     );
 

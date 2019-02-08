@@ -21,7 +21,8 @@ webpackConfig.plugins = [
   }),
   new DefinePlugin({
     API_URL: JSON.stringify(process.env.API_URL),
-    GOOGLE_OAUTH_ID: JSON.stringify(process.env.GOOGLE_OAUTH_ID),
+    SF_OAUTH_ID: JSON.stringify(process.env.SF_OAUTH_ID),
+    SF_OAUTH_AUTHORIZE_URL: JSON.stringify(process.env.SF_OAUTH_AUTHORIZE_URL),
   }),
   new ProvidePlugin({
     jQuery: 'jquery',
