@@ -29,10 +29,10 @@ class MentorContent extends React.Component {
 
     const currentCoachesJSX = haveData ? (student.studentData.coaches && student.studentData.coaches.filter(c => c.currentCoach).map(c => (
       <div className="current-coaches" key={c._id}>
-        <span className="label">Name: {`${c.coach.firstName} ${c.coach.lastName}`}</span>
-        <span className="label">{c.coach.cellPhone ? `Cell: ${c.coach.cellPhone}` : `Phone: ${c.coach.phone}`}</span>
+        <span className="label">Name: {c.coach.name}</span>
+        <span className="label">Phone: {c.coach.phone}</span>
         <span className="label">Email: <a
-          href={c.coach.primaryEmail ? `mailto:${c.coach.primaryEmail}` : '#'}
+          href={c.coach.email ? `mailto:${c.coach.email}` : '#'}
           target="_blank"
           rel="noopener noreferrer">{c.coach.primaryEmail}</a></span>
       </div>
@@ -79,7 +79,7 @@ class MentorContent extends React.Component {
               { student.primaryEmail }
             </span>
           </div>
-          <div className="col-md-6">
+          {/* <div className="col-md-6">
             <span className="title">Synergy Account</span>
             <span>
               <FontAwesomeIcon icon="user" className="fa-2x"/>
@@ -89,7 +89,7 @@ class MentorContent extends React.Component {
               <FontAwesomeIcon icon="key" className="fa-2x"/>
               {haveData ? student.studentData.synergy && Buffer.from(student.studentData.synergy.password, 'base64').toString() : ''}
             </span>
-          </div>
+          </div> */}
         </div>
         <div className="row">
           <div className="profile-link">
