@@ -13,3 +13,4 @@ export const DETACH_ROUTE = '/detach';
 export const EXTRACT_CSV_ROUTE = '/extract';
 export const STUDENT_DATA_ROUTE = '/studentdata';
 export const MYSTUDENTS_ROUTE = '/profiles/myStudents';
+export const CLASS_SCHEDULE_ROUTE = '/schedule';

@@ -11,10 +11,10 @@ class MentorContent extends React.Component {
     const student = this.props.content;
     const haveData = !!student.studentData;
 
-    const currentSchool = haveData ? student.studentData.school.find(s => s.currentSchool) : null;
+    const currentSchool = haveData ? student.studentData.school && student.studentData.school.find(s => s.currentSchool) : null;
     const currentSchoolName = currentSchool ? currentSchool.schoolName : '';
 
-    const currentSportsJSX = haveData ? (student.studentData.sports.filter(s => s.currentlyPlaying).map(s => (
+    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map(s => (
       <div className="team-info" key={s._id}>
         <span className="label">Sport: {s.sport}</span>
         <span className="label">Team: {s.team}</span>
@@ -27,7 +27,7 @@ class MentorContent extends React.Component {
       </div>
     ))) : null;
 
-    const currentCoachesJSX = haveData ? (student.studentData.coaches.filter(c => c.currentCoach).map(c => (
+    const currentCoachesJSX = haveData ? (student.studentData.coaches && student.studentData.coaches.filter(c => c.currentCoach).map(c => (
       <div className="current-coaches" key={c._id}>
         <span className="label">Name: {`${c.coach.firstName} ${c.coach.lastName}`}</span>
         <span className="label">{c.coach.cellPhone ? `Cell: ${c.coach.cellPhone}` : `Phone: ${c.coach.phone}`}</span>
@@ -38,7 +38,7 @@ class MentorContent extends React.Component {
       </div>
     ))) : null;
 
-    const familyMembersJSX = haveData ? (student.studentData.family.map(f => (
+    const familyMembersJSX = haveData ? (student.studentData.family && student.studentData.family.map(f => (
       <div className="current-family" key={f._id}>
         <span className="label">Name: {`${f.member.firstName} ${f.member.lastName}`}</span>
         <span className="label">Student Residence: {f.weekdayGuardian ? 'weekdays' : ''} {f.weekendGuardian ? 'weekends' : ''}</span>
@@ -83,11 +83,11 @@ class MentorContent extends React.Component {
             <span className="title">Synergy Account</span>
             <span>
               <FontAwesomeIcon icon="user" className="fa-2x"/>
-              {haveData ? student.studentData.synergy.username : ''}
+              {haveData ? student.studentData.synergy && student.studentData.synergy.username : ''}
             </span>
             <span>
               <FontAwesomeIcon icon="key" className="fa-2x"/>
-              {haveData ? Buffer.from(student.studentData.synergy.password, 'base64').toString() : ''}
+              {haveData ? student.studentData.synergy && Buffer.from(student.studentData.synergy.password, 'base64').toString() : ''}
             </span>
           </div>
         </div>
