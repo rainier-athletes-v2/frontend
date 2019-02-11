@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './point-tracker-summary.scss';
+import './synopsis-report-summary.scss';
 
-class PointTrackerSummary extends React.Component {
+class SynopsisReportSummary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -24,8 +24,8 @@ class PointTrackerSummary extends React.Component {
       </Tooltip>
     );
 
-    const { pointTracker } = this.props;
-    const { playingTimeOnly } = pointTracker;
+    const { synopsisReport } = this.props;
+    const { playingTimeOnly } = synopsisReport;
 
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
@@ -36,47 +36,47 @@ class PointTrackerSummary extends React.Component {
 
     const fullReportResponseJSX = (
       <React.Fragment>
-        <h4>{pointTracker.title}</h4>
+        <h4>{synopsisReport.title}</h4>
         {/* <br /> */}
-        { pointTracker.pointSheetStatus.turnedIn ? null
+        { synopsisReport.pointSheetStatus.turnedIn ? null
           : <React.Fragment>
             <p>Point Sheet not turned in.</p>
             </React.Fragment> }
-        { pointTracker.pointSheetStatus.turnedIn 
-          && (pointTracker.mentorGrantedPlayingTime === '' || pointTracker.mentorGrantedPlayingTime === pointTracker.earnedPlayingTime)
+        { synopsisReport.pointSheetStatus.turnedIn 
+          && (synopsisReport.mentorGrantedPlayingTime === '' || synopsisReport.mentorGrantedPlayingTime === synopsisReport.earnedPlayingTime)
           ? <React.Fragment>
             <span className="title">
             Game Eligibility Earned
             </span>
-            <span> {pointTracker.earnedPlayingTime}</span>
+            <span> {synopsisReport.earnedPlayingTime}</span>
           </React.Fragment>
           : <React.Fragment>
             <span className="title">Mentor Granted Playing Time</span>
-            <span>{pointTracker.mentorGrantedPlayingTime}</span>
+            <span>{synopsisReport.mentorGrantedPlayingTime}</span>
             <br />
             <span className="title">Mentor Comments</span>
-            <p>{pointTracker.synopsisComments.mentorGrantedPlayingTimeComments}</p>
+            <p>{synopsisReport.synopsisComments.mentorGrantedPlayingTimeComments}</p>
             <br /> 
             </React.Fragment> }
-            {pointTracker.synopsisComments.studentActionItems
+            {synopsisReport.synopsisComments.studentActionItems
               ? <React.Fragment>
                 <br />
                 <span className="title">Student Action Items</span>
-                <p>{pointTracker.synopsisComments.studentActionItems}</p>
+                <p>{synopsisReport.synopsisComments.studentActionItems}</p>
                 </React.Fragment>
               : null
             }
-            {pointTracker.synopsisComments.sportsUpdate 
+            {synopsisReport.synopsisComments.sportsUpdate 
               ? <React.Fragment>
                 <br />
                 <span className="title">Sports Update</span>
-                <p>{pointTracker.synopsisComments.sportsUpdate}</p>
+                <p>{synopsisReport.synopsisComments.sportsUpdate}</p>
                 </React.Fragment>
               : null
             }
             <br />
             Link To Full Synopsis Report (RA Points, Grades, Mentor Comments, etc): 
-            <a href={pointTracker.synopsisLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a>
+            <a href={synopsisReport.synopsisLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a>
           </React.Fragment>
     );
 
@@ -112,9 +112,9 @@ class PointTrackerSummary extends React.Component {
   }
 }
 
-PointTrackerSummary.propTypes = {
-  pointTracker: PropTypes.object,
+SynopsisReportSummary.propTypes = {
+  synopsisReport: PropTypes.object,
   onClose: PropTypes.func,
 };
 
-export default PointTrackerSummary;
+export default SynopsisReportSummary;

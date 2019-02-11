@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './synopsis-report.scss';
+import './synopsis-report-pdf.scss';
 
-export default function SynopsisReport(props) {
-  const { pointTracker, student } = props;
+export default function SynopsisReportPdf(props) {
+  const { synopsisReport, student } = props;
 
   const studentsSchool = student.studentData.school.find(s => s.currentSchool);
   const studentsSchoolName = studentsSchool ? studentsSchool.schoolName : 'Score Table';
   const isMiddleSchool = studentsSchool ? !studentsSchool.isElementarySchool : true;
-  const playingTimeOverride = pointTracker.mentorGrantedPlayingTime !== ''
-    && pointTracker.mentorGrantedPlayingTime !== pointTracker.earnedPlayingTime;
+  const playingTimeOverride = synopsisReport.mentorGrantedPlayingTime !== ''
+    && synopsisReport.mentorGrantedPlayingTime !== synopsisReport.earnedPlayingTime;
 
   const pointPercentage = (subject) => {
     const { excusedDays, stamps, halfStamps } = subject.scoring;
@@ -37,36 +37,36 @@ export default function SynopsisReport(props) {
         </tr>
       </thead>
       <tbody>
-        {pointTracker.subjects.map((subject, row) => {
+        {synopsisReport.subjects.map((subject, row) => {
           if (subject.subjectName.toLowerCase() !== 'tutorial') {
             return (
             <tr key={ subject.subjectName }>
               {isMiddleSchool ? <td>{subject.teacher.lastName}</td> : ''}
               <td key={ `${subject.subjectName}${row}1` }>{ subject.subjectName }</td>
               {isMiddleSchool ? <td>{ subject.grade }</td> : ''}
-              <td key={ `${subject.subjectName}${row}2` }>{ !pointTracker.playingTimeOnly ? subject.scoring.excusedDays : 'N/A' } </td>
-              <td key={ `${subject.subjectName}${row}3` }>{ !pointTracker.playingTimeOnly ? subject.scoring.stamps : 'N/A' }</td>
-              <td key={ `${subject.subjectName}${row}4` }>{ !pointTracker.playingTimeOnly ? subject.scoring.halfStamps : 'N/A' }</td>
-              <td key={ `${subject.subjectName}${row}5` }>{ !pointTracker.playingTimeOnly ? 20 - subject.scoring.excusedDays * 4 - subject.scoring.stamps - subject.scoring.halfStamps : 'N/A' }</td>
-              <td key={ `${subject.subjectName}${row}6` }>{ !pointTracker.playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
+              <td key={ `${subject.subjectName}${row}2` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.excusedDays : 'N/A' } </td>
+              <td key={ `${subject.subjectName}${row}3` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.stamps : 'N/A' }</td>
+              <td key={ `${subject.subjectName}${row}4` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.halfStamps : 'N/A' }</td>
+              <td key={ `${subject.subjectName}${row}5` }>{ !synopsisReport.playingTimeOnly ? 20 - subject.scoring.excusedDays * 4 - subject.scoring.stamps - subject.scoring.halfStamps : 'N/A' }</td>
+              <td key={ `${subject.subjectName}${row}6` }>{ !synopsisReport.playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
             </tr>
             );
           }
           return undefined;
         })}
         {isMiddleSchool
-          ? pointTracker.subjects.map((subject, row) => {
+          ? synopsisReport.subjects.map((subject, row) => {
             if (subject.subjectName.toLowerCase() === 'tutorial') {
               return (
               <tr key={ subject.subjectName }>
                 {isMiddleSchool ? <td></td> : ''}
                 <td key={ `${subject.subjectName}${row}1` }>{ subject.subjectName }</td>
                 <td key={ `${subject.subjectName}${row}1.5` }>{ '' }</td>
-                <td key={ `${subject.subjectName}${row}2` }>{ !pointTracker.playingTimeOnly ? subject.scoring.excusedDays : 'N/A' } </td>
-                <td key={ `${subject.subjectName}${row}3` }>{ !pointTracker.playingTimeOnly ? subject.scoring.stamps : 'N/A' }</td>
-                <td key={ `${subject.subjectName}${row}4` }>{ !pointTracker.playingTimeOnly ? subject.scoring.halfStamps : 'N/A' }</td>
-                <td key={ `${subject.subjectName}${row}5` }>{ !pointTracker.playingTimeOnly ? 20 - subject.scoring.excusedDays * 4 - subject.scoring.stamps - subject.scoring.halfStamps : 'N/A' }</td>
-                <td key={ `${subject.subjectName}${row}6` }>{ !pointTracker.playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
+                <td key={ `${subject.subjectName}${row}2` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.excusedDays : 'N/A' } </td>
+                <td key={ `${subject.subjectName}${row}3` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.stamps : 'N/A' }</td>
+                <td key={ `${subject.subjectName}${row}4` }>{ !synopsisReport.playingTimeOnly ? subject.scoring.halfStamps : 'N/A' }</td>
+                <td key={ `${subject.subjectName}${row}5` }>{ !synopsisReport.playingTimeOnly ? 20 - subject.scoring.excusedDays * 4 - subject.scoring.stamps - subject.scoring.halfStamps : 'N/A' }</td>
+                <td key={ `${subject.subjectName}${row}6` }>{ !synopsisReport.playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
               </tr>
               );
             }
@@ -108,37 +108,37 @@ export default function SynopsisReport(props) {
   const playingTimeJSX = <React.Fragment>
     <div className="row">
       <div className="left">
-        { !pointTracker.playingTimeOnly 
-          && pointTracker.pointSheetStatus.turnedIn
-          && (pointTracker.mentorGrantedPlayingTime === '' || pointTracker.mentorGrantedPlayingTime === pointTracker.earnedPlayingTime)
+        { !synopsisReport.playingTimeOnly 
+          && synopsisReport.pointSheetStatus.turnedIn
+          && (synopsisReport.mentorGrantedPlayingTime === '' || synopsisReport.mentorGrantedPlayingTime === synopsisReport.earnedPlayingTime)
           ? <React.Fragment>
             <h3>Game Eligibility Earned</h3>
-            <p>{pointTracker.earnedPlayingTime}</p>
+            <p>{synopsisReport.earnedPlayingTime}</p>
           </React.Fragment>
           : <React.Fragment>
             <h3>Mentor Granted Playing Time</h3>
-            <p>{pointTracker.mentorGrantedPlayingTime}</p>
+            <p>{synopsisReport.mentorGrantedPlayingTime}</p>
         </React.Fragment> }
       </div>
     </div>
   </React.Fragment>;
 
-  const mentorCommentsJSX = playingTimeOverride || pointTracker.playingTimeOnly
+  const mentorCommentsJSX = playingTimeOverride || synopsisReport.playingTimeOnly
     ? <div>
         <h3>Mentor&#39;s Comments re: Playing Time</h3>
-          <p>{pointTracker.synopsisComments.mentorGrantedPlayingTimeComments}</p>
+          <p>{synopsisReport.synopsisComments.mentorGrantedPlayingTimeComments}</p>
       </div>
     : null;
 
-  const pointTrackerHTML = <React.Fragment>
+  const synopsisReportHTML = <React.Fragment>
     <body>
       <div className="image">
         <img style={{ WebkitUserSelect: 'none' }} src="http://portal.rainierathletes.org/2dbb0b1d137e14479018b5023d904dec.png" />
       </div>
-          <h1>{pointTracker.title.split(':')[0]}</h1>
-          <h2>{pointTracker.title.split(':')[1].trim()}</h2>
+          <h1>{synopsisReport.title.split(':')[0]}</h1>
+          <h2>{synopsisReport.title.split(':')[1].trim()}</h2>
           <h3>{studentsSchoolName}</h3>
-          { pointTracker.pointSheetStatus.turnedIn ? null
+          { synopsisReport.pointSheetStatus.turnedIn ? null
             : <React.Fragment>
               <p>Point Sheet not turned in.</p>
               </React.Fragment> }
@@ -148,19 +148,19 @@ export default function SynopsisReport(props) {
           {playingTimeJSX} 
           {mentorCommentsJSX}        
           <h3>Student Action Items</h3>
-            <p>{pointTracker.synopsisComments.studentActionItems}</p>
+            <p>{synopsisReport.synopsisComments.studentActionItems}</p>
           <h3>Sports Update</h3>
-            <p>{pointTracker.synopsisComments.sportsUpdate}</p>
+            <p>{synopsisReport.synopsisComments.sportsUpdate}</p>
           <h3>Additional Comments</h3>
-            <p>{pointTracker.synopsisComments.additionalComments}</p>
+            <p>{synopsisReport.synopsisComments.additionalComments}</p>
 
     </body>
   </React.Fragment>;
 
-  return pointTrackerHTML;
+  return synopsisReportHTML;
 }
 
-SynopsisReport.propTypes = {
-  pointTracker: PropTypes.object,
+SynopsisReportPdf.propTypes = {
+  synopsisReport: PropTypes.object,
   student: PropTypes.object,
 };
