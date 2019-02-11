@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
-import PointTrackerForm from '../point-tracker-form/point-tracker-form';
+import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 
 import * as profileActions from '../../actions/profile';
 import * as scheduleActions from '../../actions/schedule';
@@ -119,7 +119,7 @@ class Mentor extends React.Component {
           <Sidebar content={ this.fetchStudents() } role={ this.checkRole() }/>
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } buttonClick={ this.handleButtonClick } >
             {
-              this.state.modal ? <PointTrackerForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
+              this.state.modal ? <SynopsisReportForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
             }
           </ MentorContent>
           </div>

@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getReportingPeriods } from '../../lib/utils';
 import PointTrackerTable from '../point-tracker-table/point-tracker-table';
-import PointTrackerSummary from '../point-tracker-summary/point-tracker-summary';
+import SynopsisReportSummary from '../point-tracker-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
-import * as pointTrackerActions from '../../actions/point-tracker';
+import * as srActions from '../../actions/synopsis-report';
 
-import './point-tracker-form.scss';
+import './synopsis-report-form.scss';
 
-const emptyPointTracker = {
+const emptySR = {
   date: new Date(Date.now()).toDateString(),
   title: '',
   student: '',
@@ -117,11 +117,11 @@ const names = {
   iepSummerReview: 'IEP/Summer Review Meeting',
 };
 
-class PointTrackerForm extends React.Component {
+class SynopsisReportForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = emptyPointTracker;
+    this.state = emptySR;
 
     this.state.synopsisSaved = false;
   }
@@ -887,7 +887,7 @@ class PointTrackerForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved ? <PointTrackerSummary pointTracker={this.state} onClose={ this.props.buttonClick }/> : pointTrackerForm }
+        { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state} onClose={ this.props.buttonClick }/> : synopsisReportForm }
       </div>
     );
   }
@@ -899,11 +899,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  createPointTracker: pointTracker => dispatch(pointTrackerActions.createPointTracker(pointTracker)),
-  createSynopsisReport: pointTracker => dispatch(pointTrackerActions.createSynopsisReport(pointTracker)),
+  createPointTracker: pointTracker => dispatch(srActions.createPointTracker(pointTracker)),
+  createSynopsisReportPdf: sr => dispatch(srActions.createSynopsisReportPdf(sr)),
 });
 
-PointTrackerForm.propTypes = {
+SynopsisReportForm.propTypes = {
   synopsisReportLink: PropTypes.string,
   handleChange: PropTypes.func,
   createPointTracker: PropTypes.func,
@@ -913,4 +913,4 @@ PointTrackerForm.propTypes = {
   myRole: PropTypes.string,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PointTrackerForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);

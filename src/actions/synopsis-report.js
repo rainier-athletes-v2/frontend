@@ -1,62 +1,74 @@
 import superagent from 'superagent';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import SynopsisReport from '../components/synopsis-report/synopsis-report-pdf';
+import synopsisReportPdf from '../components/synopsis-report-pdf/synopsis-report-pdf';
 import * as profileActions from './profile';
 import * as routes from '../lib/routes';
 
-export const setPointTracker = pointTracker => ({
-  type: 'POINT_TRACKER_SET',
-  payload: pointTracker,
+export const setSynopsisReports = srList => ({
+  type: 'SYNOPSIS_REPORTS_SET',
+  payload: srList,
 });
 
-export const setPointTrackers = pointTrackers => ({
-  type: 'POINT_TRACKERS_SET',
-  payload: pointTrackers,
+export const setSynopsisReport = sr => ({
+  type: 'SYNOPSIS_REPORT_SET',
+  payload: sr,
 });
 
-export const setSynopsisReportLink = link => ({
+export const setSynopsisReportPdfLink = link => ({
   type: 'SYNOPSIS_REPORT_LINK_SET',
   payload: link,
 });
 
-export const clearSynopsisReportLink = () => ({
+export const clearSynopsisReportPdfLink = () => ({
   type: 'SYNOPSIS_REPORT_LINK_CLEAR',
 });
 
-export const fetchPointTrackers = () => (store) => { // eslint-disable-line
+export const fetchRecentSynopsisReports = (studentId) => (store) => { // eslint-disable-line
   const { token } = store.getState();
 
-  return superagent.get(`${API_URL}${routes.POINTS_TRACKER_ROUTE}`)
+  return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORTS_ROUTE}/${studentId}`)
     .set('Authorization', `Bearer ${token}`)
     .set('Content-Type', 'application/json')
     .then((res) => {
-      const pointTrackers = res.body;
-      return store.dispatch(setPointTrackers(pointTrackers));
+      const recentSynopsisReports = res.body;
+      return store.dispatch(setSynopsisReports(recentSynopsisReports));
     });
 };
 
-export const createPointTracker = pointTracker => (store) => {
+export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
   const { token } = store.getState();
 
-  console.log('createPointTracker sending report', pointTracker.title);  //eslint-disable-line
-
-  const studentId = pointTracker.student._id.toString();
-
-  return superagent.post(`${API_URL}${routes.POINTS_TRACKER_ROUTE}`)
+  return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}/${srId}`)
     .set('Authorization', `Bearer ${token}`)
-    .set('Content-Type', 'application/json')
-    .send({ ...pointTracker, student: studentId }) // this to prevent circular JSON
-    .then(() => {
-      return store.dispatch(profileActions.fetchStudentsReq());
-    })
-    .catch((err) => {
-      console.error('createPointTracker error:', err);  //eslint-disable-line
+    .send('Content-Type', 'application/json')
+    .then((res) => {
+      const thisSynopsisReport = res.body;
+      return store.dispatch(setSynopsisReport(thisSynopsisReport));
     });
 };
 
-const pointTrackerToHTML = (pointTracker, student) => {
-  const synopsisReport = <SynopsisReport pointTracker={pointTracker} student={student}/>;
+// export const createPointTracker = pointTracker => (store) => {
+//   const { token } = store.getState();
+
+//   console.log('createPointTracker sending report', pointTracker.title);  //eslint-disable-line
+
+//   const studentId = pointTracker.student._id.toString();
+
+//   return superagent.post(`${API_URL}${routes.POINTS_TRACKER_ROUTE}`)
+//     .set('Authorization', `Bearer ${token}`)
+//     .set('Content-Type', 'application/json')
+//     .send({ ...pointTracker, student: studentId }) // this to prevent circular JSON
+//     .then(() => {
+//       return store.dispatch(profileActions.fetchStudentsReq());
+//     })
+//     .catch((err) => {
+//       console.error('createPointTracker error:', err);  //eslint-disable-line
+//     });
+// };
+
+const synopsisReportToHTML = (pointTracker, student) => {
+  const synopsisReportPdf = <synopsisReportPdf pointTracker={pointTracker} student={student}/>;
 
   // this css styles the html created in components/synopsis-report
   return (
@@ -128,18 +140,18 @@ const pointTrackerToHTML = (pointTracker, student) => {
     }
 
     </style>
-    ${ReactDOMServer.renderToString(synopsisReport)}
+    ${ReactDOMServer.renderToString(synopsisReportPdf)}
   `);
 };
 
-export const createSynopsisReport = pointTracker => (store) => {
+export const createSynopsisReportPdf = sr => (store) => {
   const { token } = store.getState();
-  const { student, studentName, title } = pointTracker;
+  const { student, studentName, title } = sr;
 
   const data = {
     name: studentName,
     title,
-    html: pointTrackerToHTML(pointTracker, student),
+    html: synopsisReportToHTML(sr, student),
   };
 
   return superagent.post(`${API_URL}${routes.SYNOPSIS_REPORT}`)
@@ -147,6 +159,6 @@ export const createSynopsisReport = pointTracker => (store) => {
     .set('Content-Type', 'application/json')
     .send(data)
     .then((res) => {
-      return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+      return store.dispatch(setSynopsisReportPdfLink(res.body.webViewLink));
     });
 };
