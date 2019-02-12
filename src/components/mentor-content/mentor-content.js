@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SynopsisReportTable from '../synopsis-report-table/synopsis-report-table';
 import AdminPickStudent from '../admin-pick-student/admin-pick-student';
 import * as util from '../../lib/utils';
 
@@ -14,8 +15,8 @@ class MentorContent extends React.Component {
     const currentSchool = haveData ? student.studentData.school && student.studentData.school.find(s => s.currentSchool) : null;
     const currentSchoolName = currentSchool ? currentSchool.schoolName : '';
 
-    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map(s => (
-      <div className="team-info" key={s._id}>
+    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map((s, i) => (
+      <div className="team-info" key={`sport-${i}`}>
         <span className="label">Sport: {s.sport}</span>
         <span className="label">Team: {s.team}</span>
         <span className="label">League: {s.league}</span>
@@ -126,11 +127,12 @@ class MentorContent extends React.Component {
           <a className="nav-link disabled sidebar-heading">
             { this.props.subPT ? 'Select Student' : 'Student Profile' }
           </a>
-          {
+          {/* {
             Object.keys(student).length !== 0 ? <button type="submit" className="linkToPT" onClick={ this.props.buttonClick }>
                 Synopsis Report
             </button> : null
-          }
+          } */}
+          <SynopsisReportTable onClick={ this.props.buttonClick }/>
           {
             student.studentData ? studentProfile : null
           }

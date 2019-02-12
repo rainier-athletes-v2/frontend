@@ -3,33 +3,35 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getReportingPeriods } from '../../lib/utils';
-import PointTrackerTable from '../point-tracker-table/point-tracker-table';
-import SynopsisReportSummary from '../point-tracker-summary/synopsis-report-summary';
+import SynopsisReportTable from '../synopsis-report-table/synopsis-report-table';
+import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
 import * as srActions from '../../actions/synopsis-report';
 
 import './synopsis-report-form.scss';
 
 const emptySR = {
-  date: new Date(Date.now()).toDateString(),
-  title: '',
-  student: '',
-  studentName: '',
-  subjects: [{
-    subjectName: 'Tutorial',
+  date: new Date(Date.now()).toDateString(), // records[0].Start_Date__c
+  title: '', // records[0].Week__c
+  student: '', // undefined
+  studentName: '', // records[0].Student__r.Name
+  subjects: [{ // records[0].PointTrackers__r.records[n]
+    subjectName: 'Tutorial', // ...Class__r.Name
+    period: '', // ...Class__r.Period__c,
+    teacher: '', // ...Class__r.Teacher__r.Name
     scoring: {
-      excusedDays: 0,
-      stamps: 0,
-      halfStamps: 0,
+      excusedDays: 0, // records[n].Excused_Days__c
+      stamps: 0, // records[n].Stamps__c,
+      halfStamps: 0, // records[n].Half_Stamps__c
     },
-    grade: 'N/A',
+    grade: 'N/A', // records[n].Grade__c
   }],
-  playingTimeOnly: true,
-  mentorMadeScheduledCheckin: -1,
-  studentMissedScheduledCheckin: -1,
+  playingTimeOnly: true, // records[0].Playing_Time_Only__c
+  mentorMadeScheduledCheckin: -1, // records[0].Weekly_Check_In_Status__c
+  studentMissedScheduledCheckin: -1, // same as above
   communications: [
     {
-      with: 'Student',
+      with: 'Student', // records[0].Student_Touch_Points__c
       role: 'student',
       f2fCheckIn: false,
       f2fRaEvent: false,
@@ -37,10 +39,10 @@ const emptySR = {
       basecampOrEmail: false,
       phoneOrText: false,
       familyMeeting: false,
-      notes: '',
+      notes: '', // records[0].Student_Touch_Points_Other_c
     },
     {
-      with: 'Family',
+      with: 'Family', // records[0].Family_Touch_Points__c
       role: 'family',
       f2fCheckIn: false,
       f2fRaEvent: false,
@@ -48,10 +50,10 @@ const emptySR = {
       basecampOrEmail: false,
       phoneOrText: false,
       familyMeeting: false,
-      notes: '',
+      notes: '', // records[0].Family_Touch_Points_Other__c
     },
     {
-      with: 'Teacher',
+      with: 'Teacher', // records[0].Teacher_Touch_Points__c
       role: 'teacher',
       f2fCheckIn: false,
       f2fRaEvent: false,
@@ -59,10 +61,10 @@ const emptySR = {
       basecampOrEmail: false,
       phoneOrText: false,
       familyMeeting: false,
-      notes: '',
+      notes: '', // records[0].Teacher_Touch_Points_Other__c
     },
     {
-      with: 'Coach',
+      with: 'Coach', // records[0].Coach_Touch_Points__c
       role: 'coach',
       f2fCheckIn: false,
       f2fRaEvent: false,
@@ -70,35 +72,44 @@ const emptySR = {
       basecampOrEmail: false,
       phoneOrText: false,
       familyMeeting: false,
-      notes: '',
+      notes: '', // records[0].Coach_Touch_Points_Other__c
     },
   ],
   oneTeam: {
-    wednesdayCheckin: false,
-    mentorMeal: false,
-    sportsGame: false,
-    communityEvent: false,
-    iepSummerReview: false,
-    other: false,
+    wednesdayCheckin: false, // records[0].Wednesday_Check_In__c
+    mentorMeal: false, // records[0].Mentor_Meal__c
+    sportsGame: false, // records[0].Sports_Game__c
+    communityEvent: false, // records[0].Community_event__c
+    iepSummerReview: false, // records[0].IEP_Summer_Review_Meeting__c
+    other: false, // records[0].Other_Meetup__c
   },
-  oneTeamNotes: '',
-  pointSheetStatus: {
+  oneTeamNotes: '', // records[0].One_Team_Notes__c
+  pointSheetStatus: { // records[0].Point_Sheet_Status__c,
     turnedIn: true,
     lost: false,
     incomplete: false,
     absent: false,
     other: false,
   },
-  pointSheetStatusNotes: '',
-  earnedPlayingTime: '',
-  mentorGrantedPlayingTime: '',
+  pointSheetStatusNotes: '', // records[0].Point_Sheet_Status_Notes__c
+  earnedPlayingTime: '', // records[0].Earned_Playing_Time__c
+  mentorGrantedPlayingTime: '', // records[0].Mentor_Granted_Playing_Time__c
   synopsisComments: {
-    mentorGrantedPlayingTimeComments: '',
-    studentActionItems: '',
-    sportsUpdate: '',
-    additionalComments: '',
+    mentorGrantedPlayingTimeComments: '', // records[0].Mentor_Granted_Playing_Time_Explanation__c
+    studentActionItems: '', // records[0].Student_Action_Items__c
+    sportsUpdate: '', // records[0].Sports_Update__c
+    additionalComments: '', // records[0].Additional_Comments__c
   },
 };
+
+const oneTeam = [
+  'wednesdayCheckin',
+  'mentorMeal',
+  'sportsGame',
+  'communityEvent',
+  'iepSummerReview',
+  'oneTeamOther',
+];
 
 const names = {
   turnedIn: 'Point Sheet turned in and at least 25% complete: ',
@@ -110,24 +121,40 @@ const names = {
   studentActionItems: 'Student Action Items:',
   sportsUpdate: 'Sports Update:',
   additionalComments: 'Additional Comments:',
-  wednesdayCheckin: 'Wednesday Check-In',
-  mentorMeal: 'Mentor Meal',
-  sportsGame: 'Sports Game Meet-Up',
-  communityEvent: 'RA Comm. Event Meet-Up',
-  iepSummerReview: 'IEP/Summer Review Meeting',
+  wednesdayCheckin: { text: 'Wednesday Check-In', prop: 'Wednesday_Check_In__c' },
+  mentorMeal: { text: 'Mentor Meal', prop: 'Mentor_Meal__c' },
+  sportsGame: { text: 'Sports Game Meet-Up', prop: 'Sports_Game__c' },
+  communityEvent: { text: 'RA Comm. Event Meet-Up', prop: 'Community_Event__c' },
+  iepSummerReview: { text: 'IEP/Summer Review Meeting', prop: 'IEP_Summer_Review_Meeting__c' },
+  oneTeamOther: { text: 'Other meetup', prop: 'Other_Meetup__c' },
 };
+
+const mapStateToProps = state => ({
+  synopsisReportLink: state.synopsisReportLink,
+  synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
+  // pointTrackers: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0].PointTrackers__r.records,
+  myRole: state.myProfile.role,
+});
+
+const mapDispatchToProps = dispatch => ({
+  saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
+  createSynopsisReportPdf: sr => dispatch(srActions.createSynopsisReportPdf(sr)),
+});
 
 class SynopsisReportForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = emptySR;
+    this.state = {};
+    this.state.synopsisReport = this.props.synopsisReport;
 
     this.state.synopsisSaved = false;
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
+    console.log('sr DidUpdate');
+    // if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
+    if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.setState({
         ...this.state,
         synopsisSaved: true,
@@ -135,36 +162,56 @@ class SynopsisReportForm extends React.Component {
         synopsisLink: this.props.synopsisReportLink,
       });
     }
+    if (this.props.synopsisReport !== prevProps.synopsisReport) {
+      this.setState({ ...this.state, synopsisReport: this.props.synopsisReport });
+    }
   }
 
+  // static getDerivedStateFromProps = (nextProps) => {
+  //   console.log('sr getDerivedState', nextProps);
+  //   if (nextProps.synopsisReport) {
+  //     return { synopsisReport: nextProps.synopsisReport };
+  //   }
+
+  //   return null;
+  // }
+
+  // componentDidUpdate = (prevProps, prevState) => {
+  //   debugger;
+  //   if (!prevProps.synopsisReport && this.props.synopsisReport) {
+  //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
+  //   }
+  // }
+
   componentDidMount = () => {
-    const selectedStudent = this.props.content;
-    const { lastPointTracker } = selectedStudent.studentData;
+    console.log('componentDidMount');
+    // const selectedStudent = this.props.content;
+    // const { lastPointTracker } = selectedStudent.studentData;
 
     this.setState((prevState) => {
       let newState = { ...prevState };
-      newState = lastPointTracker || emptyPointTracker;
-      newState.student = selectedStudent;
-      newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
-      newState.isElementaryStudent = selectedStudent.studentData.school
-        && selectedStudent.studentData.school.length
-        ? selectedStudent.studentData.school.find(s => s.currentSchool).isElementarySchool
-        : false;
-      newState.mentorMadeScheduledCheckin = -1;
-      newState.studentMissedScheduledCheckin = -1;
-      newState.playingTimeOnly = false;
-      // elementary has no tutorial so pop it from the empty point tracker
-      if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
-      newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
-      newState.synopsisSaved = false;
-      newState.mentorGrantedPlayingTime = '';
-      newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
-      newState.pointSheetStatusNotes = '';
-      newState.pointSheetStatus.lost = false;
-      newState.pointSheetStatus.incomplete = false;
-      newState.pointSheetStatus.absent = false;
-      newState.pointSheetStatus.other = false;
-      newState.teachers = this.props.content.studentData.teachers;
+    //   newState = lastPointTracker || emptySR;
+    //   newState.student = selectedStudent;
+    //   newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
+    //   newState.isElementaryStudent = selectedStudent.studentData.school
+    //     && selectedStudent.studentData.school.length
+    //     ? selectedStudent.studentData.school.find(s => s.currentSchool).isElementarySchool
+    //     : false;
+    //   newState.mentorMadeScheduledCheckin = -1;
+    //   newState.studentMissedScheduledCheckin = -1;
+    //   newState.playingTimeOnly = false;
+    //   // elementary has no tutorial so pop it from the empty point tracker
+    //   if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
+    //   newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
+    //   newState.synopsisSaved = false;
+    //   newState.mentorGrantedPlayingTime = '';
+    //   newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
+    //   newState.pointSheetStatusNotes = '';
+    //   newState.pointSheetStatus.lost = false;
+    //   newState.pointSheetStatus.incomplete = false;
+    //   newState.pointSheetStatus.absent = false;
+    //   newState.pointSheetStatus.other = false;
+    //   newState.teachers = this.props.content.studentData.teachers;
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
       newState.metWithMentee = true;
@@ -226,25 +273,31 @@ class SynopsisReportForm extends React.Component {
     });
   }
 
-  handleMentorMadeScheduledCheckinChange = (event) => {
-    const newState = Object.assign({}, this.state);
-    newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
+  // handleMentorMadeScheduledCheckinChange = (event) => {
+  //   const newState = Object.assign({}, this.state);
+  //   newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
+  //   this.setState(newState);
+  // }
+
+  // handleStudentMissedScheduledCheckinChange = (event) => {
+  //   const newState = Object.assign({}, this.state);
+  //   newState.studentMissedScheduledCheckin = parseInt(event.target.value, 10);
+  //   this.setState(newState);
+  // }
+
+  handleWeeklyCheckInChange = (event) => {
+    const newState = { ...this.state };
+    newState.synopsisReport.Weekly_Check_In_Status__c = event.target.value;
     this.setState(newState);
   }
 
-  handleStudentMissedScheduledCheckinChange = (event) => {
-    const newState = Object.assign({}, this.state);
-    newState.studentMissedScheduledCheckin = parseInt(event.target.value, 10);
-    this.setState(newState);
-  }
-
-  clearPtFields = (pointTracker) => {
-    pointTracker.subjects.forEach((subject) => {
-      Object.assign(subject.scoring, emptyPointTracker.subjects[0].scoring);
+  clearSRFields = (synopsisReport) => {
+    synopsisReport.subjects.forEach((subject) => {
+      Object.assign(subject.scoring, emptySR.subjects[0].scoring);
     });
-    Object.assign(pointTracker.synopsisComments, emptyPointTracker.synopsisComments);
-    Object.assign(pointTracker.communications, emptyPointTracker.communications);
-    pointTracker.oneTeamNotes = emptyPointTracker.oneTeamNotes;
+    Object.assign(synopsisReport.synopsisComments, emptySR.synopsisComments);
+    Object.assign(synopsisReport.communications, emptySR.communications);
+    synopsisReport.oneTeamNotes = emptySR.oneTeamNotes;
   }
 
   handlePointSheetTurnedInChange = (event) => {
@@ -282,13 +335,19 @@ class SynopsisReportForm extends React.Component {
 
     this.setState((prevState) => {
       const newState = { ...prevState };
-      newState.oneTeam[name] = checked;
+      newState.synopsisReport[name] = checked;
       return newState;
     });
   }
 
   handleOneTeamNotesChange = (event) => {
-    this.setState({ oneTeamNotes: event.target.value });
+    event.persist();
+    console.log('notes:', event.target.name, event.target.value);
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.synopsisReport.One_Team_Notes__c = event.target.value;
+      return newState;
+    });
   }
 
   handlePlayingTimeChange = (event) => {
@@ -346,17 +405,17 @@ class SynopsisReportForm extends React.Component {
 
   handleFullReportSubmit = (event) => {
     event.preventDefault();
-    const pointTracker = this.state;
-    pointTracker.playingTimeOnly = false;
-    const valid = this.validPlayingTime(pointTracker);
-    if (valid && (pointTracker.pointSheetStatus.turnedIn ? this.validScores(pointTracker) : true)) {
-      delete pointTracker._id;
+    const { synopsisReport } = this.state;
+    synopsisReport.Playing_Time_Only__c = false;
+    // const valid = this.validPlayingTime(synopsisReport);
+    if (true) { // valid && (synopsisReport.pointSheetStatus.turnedIn ? this.validScores(synopsisReport) : true)) {
+      // delete synopsisReport._id;
 
       this.setState({ ...this.state, waitingOnSaves: true });
-      this.props.createPointTracker({ ...pointTracker });
-      this.props.createSynopsisReport(pointTracker);
+      this.props.saveSynopsisReport({ ...synopsisReport });
+      // this.props.createSynopsisReportPdf({ ...synopsisReport });
 
-      this.setState({ pointTracker: emptyPointTracker });
+      this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -539,95 +598,68 @@ class SynopsisReportForm extends React.Component {
       <div className="row">
         <div className="col-md-6">
           <span className="title">Student</span>
-          <span className="name">{this.props.content.firstName} {this.props.content.lastName }</span>
+          <span className="name">{ this.state.synopsisReport && this.state.synopsisReport.Student__r.Name }</span>
         </div>
         <div className="col-md-6">
-          <label className="title" htmlFor="">Select Reporting Period</label>
-          <select
-            required
-            onChange={ this.handleTitleChange }
-            defaultValue={reportingPeriods[1]}>
-            {reportingPeriods.map(p => (
-              <option
-                key={p}
-                value={p}>
-              {p}
-              </option>
-            ))}
-          </select>
+          <h3 className="title">{`Reporting Period: ${this.state.synopsisReport && this.state.synopsisReport.Week__c}`}</h3>
         </div>
       </div>
     );
 
+    // records[0].Weekly_Check_In_Status__c : Met, Mentor missed check in, Student missed check in
     const mentorMadeScheduledCheckinJSX = (
       <React.Fragment>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you meet student at your weekly check in?</label>
-          <input
-            type="radio"
-            name="made-meeting"
-            value="1"
-            className="inline"
-            checked={this.state.mentorMadeScheduledCheckin === 1 ? 'checked' : ''}
-            required="true"
-            onChange={this.handleMentorMadeScheduledCheckinChange}/> Yes
-          <input
-            type="radio"
-            name="made-meeting"
-            value="0"
-            className="inline"
-            checked={this.state.mentorMadeScheduledCheckin === 0 ? 'checked' : ''}
-            requried="true"
-            onChange={this.handleMentorMadeScheduledCheckinChange}/> No
+        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Weekly Check-in Status: </label>
+          <select name="made-meeting" 
+            value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c}
+            required
+            onChange={ this.handleWeeklyCheckInChange}>
+            <option key="0" value="">--Select Checking Status--</option>
+            <option key="1" value="Met">Met</option>
+            <option key="2" value="Mentor missed check in">Mentor missed check in</option>
+            <option key="3" value="Student missed check in">Student missed check in</option>
+            <option key="4" value="School closed">School closed</option>
+          </select>
       </div>
-      { this.state.mentorMadeScheduledCheckin === 0
-        ? <div className="mentor-met-container" key='studentMadeCheckin'>
-        <label className={this.state.studentMissedMentor ? '' : 'required'} htmlFor="missed-meeting">Who missed the checkin?</label>
-          <input
-            type="radio"
-            name="missed-meeting"
-            value="1"
-            className="inline"
-            checked={this.state.studentMissedScheduledCheckin === 1 ? 'checked' : ''}
-            required="true"
-            onChange={this.handleStudentMissedScheduledCheckinChange}/> Student
-          <input
-            type="radio"
-            name="missed-meeting"
-            value="0"
-            className="inline"
-            checked={this.state.studentMissedScheduledCheckin === 0 ? 'checked' : ''}
-            requried="true"
-            onChange={this.handleStudentMissedScheduledCheckinChange}/> Mentor
-        </div> 
-        : null }
       </React.Fragment>
     );
+
+    /*
+    oneTeam: {
+    wednesdayCheckin: false, // records[0].Wednesday_Check_In__c
+    mentorMeal: false, // records[0].Mentor_Meal__c
+    sportsGame: false, // records[0].Sports_Game__c
+    communityEvent: false, // records[0].Community_event__c
+    iepSummerReview: false, // records[0].IEP_Summer_Review_Meeting__c
+    other: false, // records[0].Other_Meetup__c
+    },
+    */
+    
 
     const oneTeamJSX = (
       <fieldset>
         <div className="survey-questions">
         <span className="title">One Team Face-to-Face Meet-Ups</span>
-        {Object.keys(this.state.oneTeam)
-          .filter(keyName => names[keyName])
-          .map((oneTeamQuestion, i) => (
-            <div className="survey-question-container" key={ i }>
-              <input
-                type="checkbox"
-                name={ oneTeamQuestion }
-                onChange= { this.handleOneTeamChange }
-                checked={ this.state.oneTeam.oneTeamQuestion }/>
-              <label htmlFor={ oneTeamQuestion }>{ names[oneTeamQuestion] }</label>
-            </div>
-          ))}
+        {oneTeam.map((keyName, i) => (
+          <div className="survey-question-container" key={ i }>
+            <input
+              type="checkbox"
+              name={ names[keyName].prop} // oneTeamQuestion }
+              onChange= { this.handleOneTeamChange }
+              checked={ this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop] }/>
+            <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
+          </div>
+        ))
+        }
           <div className="survey-question-container">
             <span className="title" htmlFor="oneTeamNotes">One Team Notes</span>
                 <textarea
-                  name="One Team Notes"
+                  name="oneTeamNotes"
                   onChange={ this.handleOneTeamNotesChange }
-                  value={ this.state.oneTeamNotes }
-                  placeholder={this.state.oneTeam.other ? 'Please explain selection of Other' : ''}
-                  required={this.state.oneTeam.other}
+                  value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c }
+                  placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+                  required={this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c}
                   rows="2"
                   cols="80"
                   wrap="hard"
@@ -637,206 +669,207 @@ class SynopsisReportForm extends React.Component {
     </fieldset>
     );
 
-    const pointSheetStatusJSX = (
-      <fieldset>
-        <div className="survey-questions">
-        <span className={`title ${this.state.pointSheetStatusOK ? '' : 'required'}`}>Point Sheet Status</span>
-          {Object.keys(this.state.pointSheetStatus)
-            .filter(keyName => names[keyName])
-            .map((statusQuestion, i) => {
-              if (statusQuestion === 'turnedIn') {
-                return (
-                  <div className="survey-question-container" key={ i }>
-                    <label htmlFor="turned-in">{ names[statusQuestion] }</label>
-                      <input
-                        type="radio"
-                        name="turned-in"
-                        value="true"
-                        className="inline"
-                        checked={this.state.pointSheetStatus.turnedIn ? 'checked' : ''}
-                        onChange={this.handlePointSheetTurnedInChange}/> Yes
-                      <input
-                        type="radio"
-                        name="turned-in"
-                        value="false"
-                        className="inline"
-                        checked={!this.state.pointSheetStatus.turnedIn ? 'checked' : ''}
-                        onChange={this.handlePointSheetTurnedInChange}/> No
-                    {/* </label> */}
-                  </div>
-                );
-              }
+    // const pointSheetStatusJSX = (
+    //   <fieldset>
+    //     <div className="survey-questions">
+    //     <span className={`title ${this.state.pointSheetStatusOK ? '' : 'required'}`}>Point Sheet Status</span>
+    //       {Object.keys(this.state.pointSheetStatus)
+    //         .filter(keyName => names[keyName])
+    //         .map((statusQuestion, i) => {
+    //           if (statusQuestion === 'turnedIn') {
+    //             return (
+    //               <div className="survey-question-container" key={ i }>
+    //                 <label htmlFor="turned-in">{ names[statusQuestion] }</label>
+    //                   <input
+    //                     type="radio"
+    //                     name="turned-in"
+    //                     value="true"
+    //                     className="inline"
+    //                     checked={this.state.pointSheetStatus.turnedIn ? 'checked' : ''}
+    //                     onChange={this.handlePointSheetTurnedInChange}/> Yes
+    //                   <input
+    //                     type="radio"
+    //                     name="turned-in"
+    //                     value="false"
+    //                     className="inline"
+    //                     checked={!this.state.pointSheetStatus.turnedIn ? 'checked' : ''}
+    //                     onChange={this.handlePointSheetTurnedInChange}/> No
+    //                 {/* </label> */}
+    //               </div>
+    //             );
+    //           }
 
-              return (!this.state.pointSheetStatus.turnedIn
-                ? <div className="survey-question-container" key={ i }>
-                  <input
-                    type="radio"
-                    id={ statusQuestion }
-                    name="pointSheetStatus"
-                    required={!this.state.pointSheetStatus.turnedIn}
-                    onChange= { this.handlePointSheetStatusChange }
-                    checked={ this.state.pointSheetStatus.statusQuestion }/>{ names[statusQuestion] }
-                </div>
-                : null
-              );
-            })
-            }
-            { !this.state.pointSheetStatus.turnedIn
-              ? <div className="survey-question-container">
-                <span className={`title ${this.state.pointSheetStatusOK || !this.state.pointSheetStatus.other || (this.state.pointSheetStatus.other && !!this.state.pointSheetStatusNotes) ? '' : 'required'}`} htmlFor="pointSheetStatusNotes">Point Sheet Status Notes</span>
-                    <textarea
-                      name="pointSheetStatusNotes"
-                      placeholder={this.state.pointSheetStatus.other ? 'Please explain selected status...' : ''}
-                      onChange={ this.handlePointSheetNotesChange }
-                      value={ this.state.pointSheetStatusNotes }
-                      required={this.state.pointSheetStatus.other}
-                      rows="2"
-                      cols="80"
-                      wrap="hard"
-                    />
-              </div>
-              : '' }
-        </div>
-    </fieldset>
-    );
+    //           return (!this.state.pointSheetStatus.turnedIn
+    //             ? <div className="survey-question-container" key={ i }>
+    //               <input
+    //                 type="radio"
+    //                 id={ statusQuestion }
+    //                 name="pointSheetStatus"
+    //                 required={!this.state.pointSheetStatus.turnedIn}
+    //                 onChange= { this.handlePointSheetStatusChange }
+    //                 checked={ this.state.pointSheetStatus.statusQuestion }/>{ names[statusQuestion] }
+    //             </div>
+    //             : null
+    //           );
+    //         })
+    //         }
+    //         { !this.state.pointSheetStatus.turnedIn
+    //           ? <div className="survey-question-container">
+    //             <span className={`title ${this.state.pointSheetStatusOK || !this.state.pointSheetStatus.other || (this.state.pointSheetStatus.other && !!this.state.pointSheetStatusNotes) ? '' : 'required'}`} htmlFor="pointSheetStatusNotes">Point Sheet Status Notes</span>
+    //                 <textarea
+    //                   name="pointSheetStatusNotes"
+    //                   placeholder={this.state.pointSheetStatus.other ? 'Please explain selected status...' : ''}
+    //                   onChange={ this.handlePointSheetNotesChange }
+    //                   value={ this.state.pointSheetStatusNotes }
+    //                   required={this.state.pointSheetStatus.other}
+    //                   rows="2"
+    //                   cols="80"
+    //                   wrap="hard"
+    //                 />
+    //           </div>
+    //           : '' }
+    //     </div>
+    // </fieldset>
+    // );
 
-    const communicationPillarsTableJSX = (
-      <fieldset>
-        <span className="title">Communication Touch Points</span>
-        <div className="survey-questions">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>RA Core Pillar</th>
-                <th>
-                  Face-To-Face
-                  <TooltipItem id={'tooltip-corepillar'} text={'In person communication'}/>
-                </th>
-                <th>
-                  Digital
-                  <TooltipItem id={'tooltip-corepillar'} text={'Communication through basecamp, text msg, email, etc.'}/>
-                </th>
-                <th>
-                  Phone Call
-                  <TooltipItem id={'tooltip-corepillar'} text={'Digital communication through voice or video'}/>
-                </th>
-                <th>Other</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.communications.map((com, i) => (
-                <React.Fragment key={`${com.role}${i}7`}>
-                <tr key={`${com.role}${i}8`}>
-                  <td key={`${com.role}${i}0`}>{com.with}</td>
-                  <td key={`${com.role}${i}1`}>{this.commCheckbox(com, i, 0)}</td>
-                  <td key={`${com.role}${i}2`}>{this.commCheckbox(com, i, 1)}</td>
-                  <td key={`${com.role}${i}3`}>{this.commCheckbox(com, i, 2)}</td>
-                  <td key={`${com.role}${i}4`}>{this.commCheckbox(com, i, 3)}</td>
-                </tr>
-                {com.other
-                  ? <tr key={`${com.role}${i}5`}>
-                    <td>Notes:</td>
-                    <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
-                  </tr>
-                  : null}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </fieldset>
-    );
+    // const communicationPillarsTableJSX = (
+    //   <fieldset>
+    //     <span className="title">Communication Touch Points</span>
+    //     <div className="survey-questions">
+    //       <table className="table">
+    //         <thead>
+    //           <tr>
+    //             <th>RA Core Pillar</th>
+    //             <th>
+    //               Face-To-Face
+    //               <TooltipItem id={'tooltip-corepillar'} text={'In person communication'}/>
+    //             </th>
+    //             <th>
+    //               Digital
+    //               <TooltipItem id={'tooltip-corepillar'} text={'Communication through basecamp, text msg, email, etc.'}/>
+    //             </th>
+    //             <th>
+    //               Phone Call
+    //               <TooltipItem id={'tooltip-corepillar'} text={'Digital communication through voice or video'}/>
+    //             </th>
+    //             <th>Other</th>
+    //           </tr>
+    //         </thead>
+    //         <tbody>
+    //           {this.state.communications.map((com, i) => (
+    //             <React.Fragment key={`${com.role}${i}7`}>
+    //             <tr key={`${com.role}${i}8`}>
+    //               <td key={`${com.role}${i}0`}>{com.with}</td>
+    //               <td key={`${com.role}${i}1`}>{this.commCheckbox(com, i, 0)}</td>
+    //               <td key={`${com.role}${i}2`}>{this.commCheckbox(com, i, 1)}</td>
+    //               <td key={`${com.role}${i}3`}>{this.commCheckbox(com, i, 2)}</td>
+    //               <td key={`${com.role}${i}4`}>{this.commCheckbox(com, i, 3)}</td>
+    //             </tr>
+    //             {com.other
+    //               ? <tr key={`${com.role}${i}5`}>
+    //                 <td>Notes:</td>
+    //                 <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
+    //               </tr>
+    //               : null}
+    //             </React.Fragment>
+    //           ))}
+    //         </tbody>
+    //       </table>
+    //     </div>
+    //   </fieldset>
+    // );
 
-    // add back in calc playing time calc below
-    const playingTimeJSX = (
-      <React.Fragment>
-        <div className="row">
-          { this.state.pointSheetStatus.turnedIn
-            ? <div className="col-md-6">
-                <span className="title">Game Eligibility Earned</span>
-                <span className="name">{ this.calcPlayingTime() } </span>
-            </div>
-            : null }
-          <div className="col-md-6">
-            <span className={`title ${this.state.playingTimeGranted ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTime">
-              Mentor Granted Playing Time { !this.state.pointSheetStatus.turnedIn ? '(Required)' : '' } :</span>
-            <select
-              name="mentorGrantedPlayingTime"
-              onChange={ this.handlePlayingTimeChange }
-              value={ this.state.mentorGrantedPlayingTime }
-              >
-              <option value="" defaultValue>Select playing time override:</option>
-              <option value="Entire Game">Entire Game</option>
-              <option value="All but Start">All but Start</option>
-              <option value="Three Quarters">Three Quarters</option>
-              <option value="Two Quarters">Two Quarters</option>
-              <option value="One Quarter">One Quarter</option>
-              <option value="None of Game">None of Game</option>
-            </select>
-          </div>
-        </div>
-      </React.Fragment>
-    );
+    // // add back in calc playing time calc below
+    // const playingTimeJSX = (
+    //   <React.Fragment>
+    //     <div className="row">
+    //       { this.state.pointSheetStatus.turnedIn
+    //         ? <div className="col-md-6">
+    //             <span className="title">Game Eligibility Earned</span>
+    //             <span className="name">{ this.calcPlayingTime() } </span>
+    //         </div>
+    //         : null }
+    //       <div className="col-md-6">
+    //         <span className={`title ${this.state.playingTimeGranted ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTime">
+    //           Mentor Granted Playing Time { !this.state.pointSheetStatus.turnedIn ? '(Required)' : '' } :</span>
+    //         <select
+    //           name="mentorGrantedPlayingTime"
+    //           onChange={ this.handlePlayingTimeChange }
+    //           value={ this.state.mentorGrantedPlayingTime }
+    //           >
+    //           <option value="" defaultValue>Select playing time override:</option>
+    //           <option value="Entire Game">Entire Game</option>
+    //           <option value="All but Start">All but Start</option>
+    //           <option value="Three Quarters">Three Quarters</option>
+    //           <option value="Two Quarters">Two Quarters</option>
+    //           <option value="One Quarter">One Quarter</option>
+    //           <option value="None of Game">None of Game</option>
+    //         </select>
+    //       </div>
+    //     </div>
+    //   </React.Fragment>
+    // );
 
-    const mentorGrantedPlayingTimeCommentsJSX = (
-      <div className="synopsis">
-        {
-          (!this.state.pointSheetStatus.turnedIn
-            || this.state.playingTimeOnly
-            || (this.state.mentorGrantedPlayingTime !== '' 
-            && this.state.mentorGrantedPlayingTime !== this.state.earnedPlayingTime))
-            ? <div key="mentorGrantedPlayingTimeComments">
-                <label className={`title ${this.state.commentsMade ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTimeComments">Mentor Granted Playing Time Explanation (Required):</label>
-                <textarea
-                  name="mentorGrantedPlayingTimeComments"
-                  onChange={ this.handleSynopsisCommentChange }
-                  value={ this.state.synopsisComments.mentorGrantedPlayingTimeComments }
-                  rows="2"
-                  cols="80"
-                  wrap="hard"
-                />
-              </div>
-            : null
-        }
-      </div>
-    );
+    // const mentorGrantedPlayingTimeCommentsJSX = (
+    //   <div className="synopsis">
+    //     {
+    //       (!this.state.pointSheetStatus.turnedIn
+    //         || this.state.playingTimeOnly
+    //         || (this.state.mentorGrantedPlayingTime !== '' 
+    //         && this.state.mentorGrantedPlayingTime !== this.state.earnedPlayingTime))
+    //         ? <div key="mentorGrantedPlayingTimeComments">
+    //             <label className={`title ${this.state.commentsMade ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTimeComments">Mentor Granted Playing Time Explanation (Required):</label>
+    //             <textarea
+    //               name="mentorGrantedPlayingTimeComments"
+    //               onChange={ this.handleSynopsisCommentChange }
+    //               value={ this.state.synopsisComments.mentorGrantedPlayingTimeComments }
+    //               rows="2"
+    //               cols="80"
+    //               wrap="hard"
+    //             />
+    //           </div>
+    //         : null
+    //     }
+    //   </div>
+    // );
 
-    const submitPlayingTimeOnlyButtonJSX = (
-      <div className="synopsis">
-        { this.state.waitingOnSaves 
-          ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-          : <React.Fragment>
-              <button type="submit" onClick={ this.handlePlayingTimeSubmit } className="btn btn-secondary" id="playing-time-only">Submit Playing Time Only</button>
-              <p>Please plan to complete the rest of the report by Sunday evening and post Summary to Basecamp. </p> 
-            </React.Fragment> }
-      </div>
-    );
+    // const submitPlayingTimeOnlyButtonJSX = (
+    //   <div className="synopsis">
+    //     { this.state.waitingOnSaves 
+    //       ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
+    //       : <React.Fragment>
+    //           <button type="submit" onClick={ this.handlePlayingTimeSubmit } className="btn btn-secondary" id="playing-time-only">Submit Playing Time Only</button>
+    //           <p>Please plan to complete the rest of the report by Sunday evening and post Summary to Basecamp. </p> 
+    //         </React.Fragment> }
+    //   </div>
+    // );
 
-    const synopsisCommentsJSX = (
-      <div className="synopsis">
-        {
-          Object.keys(this.state.synopsisComments)
-            .filter(keyName => names[keyName] && keyName !== 'mentorGrantedPlayingTimeComments')
-            .map((synopsisComment, i) => {
-              return (
-                <div key={ i }>
-                  <label className="title" htmlFor={ synopsisComment }>{ names[synopsisComment] }</label>
-                  <textarea
-                    name={ synopsisComment }
-                    onChange={ this.handleSynopsisCommentChange }
-                    value={ this.state.synopsisComments[synopsisComment] }
-                    rows="6"
-                    cols="80"
-                    wrap="hard"
-                  />
-                </div>
-              );
-            })
-        }
-      </div>
-    );
+    // const synopsisCommentsJSX = (
+    //   <div className="synopsis">
+    //     {
+    //       Object.keys(this.state.synopsisComments)
+    //         .filter(keyName => names[keyName] && keyName !== 'mentorGrantedPlayingTimeComments')
+    //         .map((synopsisComment, i) => {
+    //           return (
+    //             <div key={ i }>
+    //               <label className="title" htmlFor={ synopsisComment }>{ names[synopsisComment] }</label>
+    //               <textarea
+    //                 name={ synopsisComment }
+    //                 onChange={ this.handleSynopsisCommentChange }
+    //                 value={ this.state.synopsisComments[synopsisComment] }
+    //                 rows="6"
+    //                 cols="80"
+    //                 wrap="hard"
+    //               />
+    //             </div>
+    //           );
+    //         })
+    //     }
+    //   </div>
+    // );
 
-    const pointTrackerForm = (
+    const synopsisReportForm = this.props.synopsisReport
+      ? (
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -851,7 +884,7 @@ class SynopsisReportForm extends React.Component {
               <form className="data-entry container">
                 { selectOptionsJSX }
                 { mentorMadeScheduledCheckinJSX }
-                { pointSheetStatusJSX }
+                {/* { pointSheetStatusJSX }
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
                 { submitPlayingTimeOnlyButtonJSX }
@@ -867,10 +900,10 @@ class SynopsisReportForm extends React.Component {
                     saveSubjectTable={this.saveSubjectTable}
                   />
                   : null }
-                { communicationPillarsTableJSX }
+                { communicationPillarsTableJSX } */}
                 { oneTeamJSX }
 
-                { synopsisCommentsJSX }
+                {/* { synopsisCommentsJSX } */}
                 <div className="modal-footer">
                   { this.state.waitingOnSaves 
                     ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
@@ -883,7 +916,8 @@ class SynopsisReportForm extends React.Component {
           </div>
         </div>
       </div>
-    );
+      )
+      : null;
 
     return (
       <div className="modal-backdrop">
@@ -893,21 +927,13 @@ class SynopsisReportForm extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  synopsisReportLink: state.synopsisReportLink,
-  myRole: state.myProfile.role,
-});
-
-const mapDispatchToProps = dispatch => ({
-  createPointTracker: pointTracker => dispatch(srActions.createPointTracker(pointTracker)),
-  createSynopsisReportPdf: sr => dispatch(srActions.createSynopsisReportPdf(sr)),
-});
-
 SynopsisReportForm.propTypes = {
   synopsisReportLink: PropTypes.string,
+  synopsisReport: PropTypes.object,
+  pointTrackers: PropTypes.object,
   handleChange: PropTypes.func,
-  createPointTracker: PropTypes.func,
-  createSynopsisReport: PropTypes.func,
+  saveSynopsisReport: PropTypes.func,
+  createSynopsisReportPdf: PropTypes.func,
   buttonClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,

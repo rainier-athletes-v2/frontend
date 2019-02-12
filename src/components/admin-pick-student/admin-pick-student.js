@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import PointTrackerForm from '../point-tracker-form/point-tracker-form';
+import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 
 import './admin-pick-student.scss';
 
@@ -45,7 +45,7 @@ class AdminPickStudent extends React.Component {
     return (
     <div className="container pick-student">
       {
-        this.state.modal ? <PointTrackerForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
+        this.state.modal ? <SynopsisReportForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
       }
       <button type="submit" className="linkToPT" onClick={ this.handleButtonClick }>
           Synopsis Report

@@ -6,18 +6,21 @@ import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 
 import * as profileActions from '../../actions/profile';
-import * as scheduleActions from '../../actions/schedule';
+import * as srListActions from '../../actions/synopsis-report-list';
+import * as srActions from '../../actions/synopsis-report';
 
 import './_mentor.scss';
 
 const mapStateToProps = state => ({
   myStudents: state.myStudents,
   myProfile: state.myProfile,
+  synopsisReport: state.synopsisReport,
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchMyStudents: profile => dispatch(profileActions.fetchMyStudentsReq(profile)),
-  fetchStudentSchedule: studentId => dispatch(scheduleActions.fetchClassScheduleData(studentId)),
+  fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
+  fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
 });
 
 class Mentor extends React.Component {
@@ -35,7 +38,6 @@ class Mentor extends React.Component {
     if (nextProps.myStudents) {
       return { myStudents: nextProps.myStudents };
     }
-
     return null;
   }
 
@@ -43,10 +45,17 @@ class Mentor extends React.Component {
     this.props.fetchMyStudents();
   }
 
+  // componentDidUpdate = (prevProps, prevState) => {
+  //   debugger;
+  //   if (!prevProps.synopsisReport && this.props.synopsisReport) {
+  //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
+  //   }
+  // }
+
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
     if (this.props.myStudents[i].role === 'student') {
-      // this.props.fetchStudentSchedule(this.props.myStudents[i].id);
+      this.props.fetchRecentSynopsisReports(this.props.myStudents[i].id);
       this.setState({
         ...this.state,
         content: this.props.myStudents[i],
@@ -62,7 +71,7 @@ class Mentor extends React.Component {
         return (
           <li
             className={ this.state.selected === i.toString() ? 'nav-item selected' : 'nav-item' }
-            key={student.schoolId}
+            key={i}
             data-index={i}
             onClick={ this.handleSidebarClick.bind(this) }>
             <a className="nav-link">
@@ -73,7 +82,7 @@ class Mentor extends React.Component {
       });
     }
 
-    return 'loading';
+    return 'Loading...';
   }
 
   checkRole() {
@@ -97,8 +106,11 @@ class Mentor extends React.Component {
     return null;
   }
 
-  handleButtonClick = () => {
-    console.log('mentor.js handleButtonClick');
+  handleButtonClick = (e) => {
+    e.preventDefault();
+    console.log('fetching SR, e.target.value', e.target.value);
+    this.props.fetchSynopsisReport(e.target.value);
+    console.log('toggling SR modal');
     this.setState({ modal: !this.state.modal });
   }
 
@@ -131,9 +143,11 @@ class Mentor extends React.Component {
 
 Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
-  fetchStudentSchedule: PropTypes.func,
+  fetchRecentSynopsisReports: PropTypes.func,
+  fetchSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
+  synopsisReport: PropTypes.object,
 };
 
 
