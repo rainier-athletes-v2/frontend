@@ -154,7 +154,7 @@ class SynopsisReportForm extends React.Component {
 
     this.state = {};
     this.state.synopsisReport = this.props.synopsisReport;
-
+    this.state.communications = this.initCommunicationsState(this.props.synopsisReport);
     this.state.synopsisSaved = false;
   }
 
@@ -172,7 +172,11 @@ class SynopsisReportForm extends React.Component {
       });
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
-      this.setState({ ...this.state, synopsisReport: this.props.synopsisReport });
+      this.setState({ 
+        ...this.state, 
+        synopsisReport: this.props.synopsisReport,
+        communications: this.initCommunicationsState(this.props.synopsisReport),
+      });
     }
   }
 
@@ -196,6 +200,69 @@ class SynopsisReportForm extends React.Component {
   //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
   //   }
   // }
+
+  initCommunicationsState = (sr) => {
+    console.log('initCommState', !!sr);
+    if (!sr) return null;
+    // convert SF comm pillars multi-select fields into legacy communications object:
+    // communications: [
+    //   {
+    //     with: 'Student', // records[0].Student_Touch_Points__c
+    //     role: 'student',
+    //     f2fCheckIn: false,
+    //     f2fRaEvent: false,
+    //     f2fGameOrPractice: false,
+    //     basecampOrEmail: false,
+    //     phoneOrText: false,
+    //     familyMeeting: false,
+    //     notes: '', // records[0].Student_Touch_Points_Other_c
+    //   },
+    //   etc for Family, Teacher and Coach
+    // SF multiselect values are Face-to-Face, Digital, Phone Call, Other
+    const comm = [];
+    const pillar = [
+      'Student',
+      'Family',
+      'Teacher',
+      'Coach',
+    ];
+    for (let i = 0; i < pillar.length; i++) {
+      const p = {};
+      const tpKey = `${pillar[i]}_Touch_Points__c`;
+      console.log(tpKey, sr[tpKey]);
+      const notes = `${pillar[i]}_Touch_Points_Other__c`;
+      p.with = pillar[i];
+      p.role = pillar[i].toLowerCase();
+      p.f2fCheckIn = sr[tpKey].indexOf('Face-To-Face') > -1;
+      p.digital = sr[tpKey].indexOf('Digital') > -1;
+      p.phoneCall = sr[tpKey].indexOf('Phone Call') > -1;
+      p.other = sr[tpKey].indexOf('Other') > -1;
+      p.notes = sr[notes];
+      comm.push(p);
+    }
+    console.log('initCommState returning', comm);
+    return comm;
+  }
+
+  mergeCommuncationsWithSR = (sr, comm) => {
+    // refactor legacy communications array into SF fields
+    const keys = ['Student', 'Family', 'Teacher', 'Coach'];
+    comm.forEach((p, i) => {
+      const tpKey = `${keys[i]}_Touch_Points__c`;
+      const notesKey = `${keys[i]}_Touch_Points_Other__c`;
+      let str = '';
+      if (p.f2fCheckIn) str = 'Face-To-Face';
+      str += str.length > 0 && p.digital ? ';' : '';
+      if (p.digital) str += 'Digital';
+      str += str.length > 0 && p.phoneCall ? ';' : '';
+      if (p.phoneCall) str += 'Phone Call';
+      str += str.length > 0 && p.other ? ';' : '';
+      if (p.other) str += 'Other';
+      sr[tpKey] = str;
+      sr[notesKey] = p.notes; 
+    });
+    return sr;
+  }
 
   componentDidMount = () => {
     console.log('componentDidMount');
@@ -226,6 +293,7 @@ class SynopsisReportForm extends React.Component {
     //   newState.pointSheetStatus.absent = false;
     //   newState.pointSheetStatus.other = false;
     //   newState.teachers = this.props.content.studentData.teachers;
+      newState.communications = this.initCommunicationsState(this.props.synopsisReport);
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
       newState.metWithMentee = true;
@@ -392,23 +460,6 @@ class SynopsisReportForm extends React.Component {
     });
   }
 
-  handleCommPillarChange = (event) => {
-    const { name, options } = event.target;
-
-    let selectValues = ''; // this.state.synopsisReport && this.state.synopsisReport[`${name}_Touch_Pointa__c`];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectValues += `${selectValues.length > 0 ? ';' : ''}${options[i].value}`;
-      }
-    }
-
-    this.setState((prevState) => {
-      const newState = { ...prevState };
-      newState.synopsisReport[`${name}_Touch_Points__c`] = selectValues;
-      return newState;
-    });
-  }
-
   validPlayingTime = (sr) => {
     const playingTimeGranted = sr.Point_Sheet_Status__c === 'Turned In' || !!sr.Mentor_Granted_Playing_Time__c;
     const commentsRequired = sr.Playing_Time_Only__c
@@ -450,14 +501,16 @@ class SynopsisReportForm extends React.Component {
 
   handleFullReportSubmit = (event) => {
     event.preventDefault();
-    const { synopsisReport } = this.state;
+    const { synopsisReport, communications } = this.state;
     synopsisReport.Playing_Time_Only__c = false;
+    const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
+    debugger;
     const valid = this.validPlayingTime(synopsisReport);
     if (valid && (synopsisReport.pointSheetStatus.turnedIn ? this.validScores(synopsisReport) : true)) {
       // delete synopsisReport._id;
 
       this.setState({ ...this.state, waitingOnSaves: true });
-      this.props.saveSynopsisReport({ ...synopsisReport });
+      this.props.saveSynopsisReport({ ...mergedSynopsisReport });
       // this.props.createSynopsisReportPdf({ ...synopsisReport });
 
       this.setState({ synopsisReport: null });
@@ -586,36 +639,78 @@ class SynopsisReportForm extends React.Component {
     return earnedPlayingTime;
   }
 
-  // handleCommCheckboxChange = (event) => {
-  //   const { name, checked } = event.target;
-  //   const [role, row, columnKey] = name.split('-'); // eslint-disable-line
+  handleCommPillarChange = (event) => {
+    const { name, options } = event.target;
 
-  //   this.setState((prevState) => {
-  //     const newState = { ...prevState };
-  //     newState.communications[row][columnKey] = checked;
-  //     return newState;
-  //   });
-  // }
+    let selectValues = ''; // this.state.synopsisReport && this.state.synopsisReport[`${name}_Touch_Points__c`];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectValues += `${selectValues.length > 0 ? ';' : ''}${options[i].value}`;
+      }
+    }
 
-  // commCheckbox = (com, row, col) => {
-  //   const columnKeys = [
-  //     'faceToFace',
-  //     'digital',
-  //     'phone',
-  //     'other',
-  //   ];
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.synopsisReport[`${name}_Touch_Points__c`] = selectValues;
+      return newState;
+    });
+  }
 
-  //   const checked = this.state.communications[row][columnKeys[col]] || false;
+  handleCommCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    const [role, row, columnKey] = name.split('-'); // eslint-disable-line
 
-  //   return (
-  //     <input
-  //       type="checkbox"
-  //       name={ `${com.role}-${row}-${columnKeys[col]}` }
-  //       onChange= { this.handleCommCheckboxChange }
-  //       checked={ checked }
-  //       />
-  //   );
-  // }
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.communications[row][columnKey] = checked;
+      if (columnKey === 'other' && !checked) {
+        newState.communications[row].notes = '';
+      }
+      return newState;
+    });
+  }
+
+  commCheckbox = (com, row, col) => {
+    const columnKeys = [
+      'f2fCheckIn',
+      'digital',
+      'phoneCall',
+      'other',
+    ];
+  
+    const checked = this.state.communications[row][columnKeys[col]] || false;
+
+    return (
+      <input
+        type="checkbox"
+        name={ `${com.role}-${row}-${columnKeys[col]}` }
+        onChange= { this.handleCommCheckboxChange }
+        checked={ checked }
+        />
+    );
+  }
+
+  handleCommNotesChange = (event) => {
+    const { id, value } = event.target;
+    const row = id.split('-')[1];
+
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.communications[row].notes = value;
+      return newState;
+    });
+  }
+
+  commNotes = (com, row) => {
+    return (<textarea
+      rows="2"
+      wrap="hard"
+      required={this.state.communications[row].other}
+      placeholder={this.state.communications[row].other ? 'Please explain choice of Other' : ''}
+      id={`${com.role}-${row}-notes`}
+      value={this.state.communications[row].notes} onChange={this.handleCommNotesChange}/>
+    );
+  }
 
   handleTouchPointNotesChange = (event) => {
     const { name, value } = event.target;
@@ -730,46 +825,96 @@ class SynopsisReportForm extends React.Component {
     </fieldset>
     );
 
-    const commPillarValues = [
-      '--Select One Or More--',
-      'Face-to-Face',
-      'Phone Call',
-      'Digital',
-      'Other',
-    ];
+    // const commPillarValues = [
+    //   '--Select One Or More--',
+    //   'Face-to-Face',
+    //   'Phone Call',
+    //   'Digital',
+    //   'Other',
+    // ];
 
-    const communicationPillarsJSX = (
+    // const communicationPillarsJSX = (
+    //   <fieldset>
+    //     <span className="title">Communication Touch Points</span>
+    //     <div className="survey-questions">
+    //     {commPillars.map((pillar, i) => (
+    //       <React.Fragment key={i}>
+    //         <span className="title" key={pillar}>{pillar}</span>
+    //         <select name={pillar} key={`${pillar}-select-${i}`} multiple onChange={this.handleCommPillarChange}>
+    //           {commPillarValues.map((value, j) => (
+    //             <option key={`${pillar}-${j}`} value={value}>{value}</option>
+    //           ))}
+    //         </select>
+    //         <div className="survey-question-container">
+    //           <span className={`title ${this.state.synopsisReport && this.state.synopsisReport.Student_Touch_Points__c === 'Other'
+    //             ? 'required' : ''}`} htmlFor={pillar}>{`${pillar} Touch Point Notes`}</span>
+    //             <textarea
+    //               name={pillar}
+    //               placeholder={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other' 
+    //                 ? 'Please explain selected status...' 
+    //                 : ''}
+    //               onChange={ this.handleTouchPointNotesChange }
+    //               value={ this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points_Other__c`] }
+    //               required={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other'}
+    //               rows="2"
+    //               cols="80"
+    //               wrap="hard"
+    //             />
+    //         </div>
+    //       </React.Fragment>
+    //     ))}
+    //     </div>
+    //     </fieldset>
+    // );
+
+    const communicationPillarsTableJSX = (
       <fieldset>
         <span className="title">Communication Touch Points</span>
         <div className="survey-questions">
-        {commPillars.map((pillar, i) => (
-          <React.Fragment key={i}>
-            <span className="title" key={pillar}>{pillar}</span>
-            <select name={pillar} key={`${pillar}-select-${i}`} multiple onChange={this.handleCommPillarChange}>
-              {commPillarValues.map((value, j) => (
-                <option key={`${pillar}-${j}`} value={value}>{value}</option>
-              ))}
-            </select>
-            <div className="survey-question-container">
-              <span className={`title ${this.state.synopsisReport && this.state.synopsisReport.Student_Touch_Points__c === 'Other'
-                ? 'required' : ''}`} htmlFor={pillar}>{`${pillar} Touch Point Notes`}</span>
-                <textarea
-                  name={pillar}
-                  placeholder={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other' 
-                    ? 'Please explain selected status...' 
-                    : ''}
-                  onChange={ this.handleTouchPointNotesChange }
-                  value={ this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points_Other__c`] }
-                  required={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other'}
-                  rows="2"
-                  cols="80"
-                  wrap="hard"
-                />
-            </div>
-          </React.Fragment>
-        ))}
+          <table className="table">
+            <thead>
+              <tr>
+                <th>RA Core Pillar</th>
+                <th>
+                  Face-To-Face
+                  <TooltipItem id={'tooltip-corepillar'} text={'In person communication'}/>
+                </th>
+                <th>
+                  Digital
+                  <TooltipItem id={'tooltip-corepillar'} text={'Communication through basecamp, text msg, email, etc.'}/>
+                </th>
+                <th>
+                  Phone Call
+                  <TooltipItem id={'tooltip-corepillar'} text={'Digital communication through voice or video'}/>
+                </th>
+                <th>Other</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.communications
+                ? this.state.communications.map((com, i) => (
+                  <React.Fragment key={`${com.role}${i}7`}>
+                  <tr key={`${com.role}${i}8`}>
+                    <td key={`${com.role}${i}0`}>{com.with}</td>
+                    <td key={`${com.role}${i}1`}>{this.commCheckbox(com, i, 0)}</td>
+                    <td key={`${com.role}${i}2`}>{this.commCheckbox(com, i, 1)}</td>
+                    <td key={`${com.role}${i}3`}>{this.commCheckbox(com, i, 2)}</td>
+                    <td key={`${com.role}${i}4`}>{this.commCheckbox(com, i, 3)}</td>
+                  </tr>
+                  {com.other
+                    ? <tr key={`${com.role}${i}5`}>
+                      <td>Notes:</td>
+                      <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
+                    </tr>
+                    : null}
+                  </React.Fragment>
+                ))
+                : null
+            }
+            </tbody>
+          </table>
         </div>
-        </fieldset>
+      </fieldset>
     );
 
     // // add back in calc playing time calc below
@@ -896,7 +1041,7 @@ class SynopsisReportForm extends React.Component {
                     // saveSubjectTable={this.saveSubjectTable}
                   />
                   : null }
-                { communicationPillarsJSX }
+                { communicationPillarsTableJSX }
                 { synopsisCommentsJSX }
                 <div className="modal-footer">
                   { this.state.waitingOnSaves 

@@ -31,7 +31,6 @@ export default class SubjectColumn extends React.Component {
       'Stamps__c',
       'Half_Stamps__c',
     ];
-    console.log(this.props.subject);
     return (
       <React.Fragment>
         <div className="grid-cell">{ this.props.subject.Class__r.Name.toLowerCase() !== 'tutorial' 
