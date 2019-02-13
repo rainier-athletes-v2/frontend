@@ -6,7 +6,7 @@ const mapStateToProps = state => ({
   srData: state.synopsisReportList,
 });
 
-class SynopsisReportTable extends React.Component {
+class SynopsisReportsTable extends React.Component {
   render() {
     if (this.props.srData) {
       return (
@@ -45,9 +45,9 @@ class SynopsisReportTable extends React.Component {
   }
 }
 
-SynopsisReportTable.propTypes = {
+SynopsisReportsTable.propTypes = {
   onClick: PropTypes.func,
   srData: PropTypes.array,
 };
 
-export default connect(mapStateToProps)(SynopsisReportTable);
+export default connect(mapStateToProps)(SynopsisReportsTable);

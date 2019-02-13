@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import SynopsisReportTable from '../synopsis-report-table/synopsis-report-table';
+import SynopsisReportsTable from '../synopsis-reports-table/synopsis-reports-table';
 import AdminPickStudent from '../admin-pick-student/admin-pick-student';
 import * as util from '../../lib/utils';
 
@@ -132,7 +132,7 @@ class MentorContent extends React.Component {
                 Synopsis Report
             </button> : null
           } */}
-          <SynopsisReportTable onClick={ this.props.buttonClick }/>
+          <SynopsisReportsTable onClick={ this.props.buttonClick }/>
           {
             student.studentData ? studentProfile : null
           }
