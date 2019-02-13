@@ -442,7 +442,7 @@ class SynopsisReportForm extends React.Component {
       subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
     ));
     // const school = sr.student.studentData.school.find(s => s.currentSchool);
-    const isElementaryStudent = sr.Elementary_Student__c;
+    const isElementaryStudent = sr.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
       || sr.PointTrackers__r.records.every(subject => subject.Grade__c !== '');
     return goodSubjectStamps && goodSubjectGrades;
@@ -528,7 +528,7 @@ class SynopsisReportForm extends React.Component {
     const student = this.state.synopsisReport.Student__r;
     const sr = this.state.synopsisReport;
 
-    const isElementarySchool = student.Elementary_Student__c;
+    const isElementarySchool = student.Student_Grade__c < 6;
     // if (student.studentData.school.length > 0) {
     //   isElementarySchool = student.studentData.school.filter(s => s.currentSchool)[0].isElementarySchool; // eslint-disable-line
     // }
@@ -635,7 +635,8 @@ class SynopsisReportForm extends React.Component {
           <span className="name">{ this.state.synopsisReport && this.state.synopsisReport.Student__r.Name }</span>
         </div>
         <div className="col-md-6">
-          <h3 className="title">{`Reporting Period: ${this.state.synopsisReport && this.state.synopsisReport.Week__c}`}</h3>
+          <span className="title">Reporting Period</span>
+          <span className="name">{`${this.state.synopsisReport && this.state.synopsisReport.Week__c}`}</span>
         </div>
       </div>
     );

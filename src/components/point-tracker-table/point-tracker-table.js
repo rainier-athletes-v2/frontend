@@ -90,7 +90,7 @@ export default class PointTrackerTable extends React.Component {
           subject={ subject }
           handleSubjectChange={ this.props.handleSubjectChange }
           // deleteSubject={ this.props.deleteSubject }
-          isElementaryStudent={ this.props.synopsisReport.Student__r.Elementary_Student__c }
+          isElementaryStudent={ this.props.synopsisReport.Student__r.Student_Grade__c < 6 }
           // editing={ this.state.editing }
         /> 
       );
@@ -109,7 +109,7 @@ export default class PointTrackerTable extends React.Component {
           <div>
           {/* { this.state.editing ? addNewSubjectJSX : null } */}
           </div>
-          <div className={this.props.synopsisReport.Student__r.Elementary_Student__c 
+          <div className={this.props.synopsisReport.Student__r.Student_Grade__c < 6 
             ? 'point-table elementary-table' 
             : 'point-table middleschool-table'}>
               <div className="grid-label">Teacher</div>
@@ -117,8 +117,8 @@ export default class PointTrackerTable extends React.Component {
               <div className="grid-label">Excused</div>
               <div className="grid-label">Stamps</div>
               <div className="grid-label">X&apos;s</div>
-              {this.props.synopsisReport.Student__r.Elementary_Student__c ? null : <div className="grid-label">Grade</div>}
-              <div className="grid-cell grid-cell-delete"></div>
+              {this.props.synopsisReport.Student__r.Student_Grade__c < 6 ? null : <div className="grid-label">Grade</div>}
+              {/* <div className="grid-cell grid-cell-delete"></div> */}
             { subjectsJSX }
           </div>
           {/* <div className="row">
