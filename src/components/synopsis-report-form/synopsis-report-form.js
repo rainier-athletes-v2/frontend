@@ -297,8 +297,9 @@ class SynopsisReportForm extends React.Component {
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
       newState.metWithMentee = true;
-      newState.studentMissedMentor = true;
+      // newState.studentMissedMentor = true;
       newState.pointSheetStatusOK = true;
+      newState.pointSheetStatusNotesOK = true;
       return newState;
     });
   }
@@ -319,29 +320,29 @@ class SynopsisReportForm extends React.Component {
     this.setState((prevState) => {
       const newState = { ...prevState };
       const [subjectName, categoryName] = name.split('-');
-
-      const newSubjects = newState.subjects
+      console.log('subjectName', subjectName, 'categoryName', categoryName);
+      const newSubjects = newState.synopsisReport.PointTrackers__r.records
         .map((subject) => {
-          if (subject.subjectName === subjectName) {
+          if (subject.Class__r.Name === subjectName) {
             const newSubject = { ...subject };
             if (categoryName === 'grade') {
-              newSubject.grade = validGrades.includes(event.target.value.toUpperCase()) ? event.target.value.toUpperCase() : '';
-              if (newSubject.grade === 'N') newSubject.grade = 'N/A';
-              if (subjectName.toLowerCase() === 'tutorial') newSubject.grade = 'N/A';
-            } else if (categoryName === 'excusedDays') {
-              newSubject.scoring.excusedDays = Math.min(Math.max(parseInt(event.target.value, 10), 0), 5);
+              newSubject.Grade__c = validGrades.includes(event.target.value.toUpperCase()) ? event.target.value.toUpperCase() : '';
+              if (newSubject.Grade__c === 'N') newSubject.Grade__c = 'N/A';
+              if (subjectName.toLowerCase() === 'tutorial') newSubject.Grade__c = 'N/A';
+            } else if (categoryName === 'Excused_Days__c') {
+              newSubject.Excused_Days__c = Math.min(Math.max(parseInt(event.target.value, 10), 0), 5);
             } else {
               const currentValue = parseInt(event.target.value, 10);
               // test currentValue for NaN which doesn't equal itself.
               if (currentValue !== currentValue) { // eslint-disable-line
-                newSubject.scoring[categoryName] = '';
+                newSubject[categoryName] = '';
               } else {
-                const maxStampsPossible = 20 - (newSubject.scoring.excusedDays * 4);
-                const maxStampsAdjustment = categoryName === 'stamps'
-                  ? newSubject.scoring.halfStamps
-                  : newSubject.scoring.stamps;
+                const maxStampsPossible = 20 - (newSubject.Excused_Days__c * 4);
+                const maxStampsAdjustment = categoryName === 'Stamps__c'
+                  ? newSubject.Half_Stamps__c
+                  : newSubject.Stamps__c;
                 const maxValidStamps = maxStampsPossible - maxStampsAdjustment;
-                newSubject.scoring[categoryName] = Math.floor(Math.min(Math.max(currentValue, 0), maxValidStamps));
+                newSubject[categoryName] = Math.floor(Math.min(Math.max(currentValue, 0), maxValidStamps));
               }
             }
 
@@ -350,7 +351,7 @@ class SynopsisReportForm extends React.Component {
           return subject;
         });
 
-      newState.subjects = newSubjects;
+      newState.synopsisReport.PointTrackers__r.records = newSubjects;
       return newState;
     });
   }
@@ -443,11 +444,9 @@ class SynopsisReportForm extends React.Component {
   }
 
   handlePlayingTimeChange = (event) => {
-    this.setState((prevState) => {
-      const newState = { ...prevState };
-      newState.synopsisReport.Mentor_Granted_Playing_Time__c = event.target.value;
-      return newState;
-    });
+    const newState = { ...this.state };
+    newState.synopsisReport.Mentor_Granted_Playing_Time__c = event.target.value;
+    return this.setState(newState);
   }
 
   handleSynopsisCommentChange = (event) => {
@@ -466,24 +465,33 @@ class SynopsisReportForm extends React.Component {
       || !sr.Point_Sheet_Status__c === 'Turned In'
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
-    const metWithMentee = sr.Weekly_Check_In_Status__c === 'Met';
-    const studentMissedMentor = sr.Weekly_Check_In_Status__c === 'Student missed check in'; // || (sr.mentorMadeScheduledCheckin === 0 && sr.studentMissedScheduledCheckin !== -1);
-    const pointSheetStatusOK = sr.Point_Sheet_Status__c === 'Turned In'
-      || (!sr.Point_Sheet_Status__c === 'Turned In'
-        && (sr.Point_Sheet_Status__c === 'Lost'
-          || sr.Point_Sheet_Status__c === 'Incomplete'
-          || sr.Point_Sheet_Status__c === 'Absent'
-          || (sr.Point_Sheet_Status__c === 'Other' && !!sr.Point_Sheet_Status__Notes__c)));
+    const metWithMentee = !!sr.Weekly_Check_In_Status__c;
+    // const studentMissedMentor = sr.Weekly_Check_In_Status__c === 'Student missed check in'; // || (sr.mentorMadeScheduledCheckin === 0 && sr.studentMissedScheduledCheckin !== -1);
+    // const pointSheetStatusOK = sr.Point_Sheet_Status__c === 'Turned In'
+    //   || (sr.Point_Sheet_Status__c !== 'Turned In'
+    //     && (sr.Point_Sheet_Status__c === 'Lost'
+    //       || sr.Point_Sheet_Status__c === 'Incomplete'
+    //       || sr.Point_Sheet_Status__c === 'Absent'
+    //       || sr.Point_Sheet_Status__c === 'Other') && !!sr.Point_Sheet_Status_Notes__c);
+    const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
+    const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned In' 
+      || (sr.Point_Sheet_Status__c !== 'Turned In' && !!sr.Point_Sheet_Status_Notes__c);
 
     this.setState({
       playingTimeGranted,
       commentsMade,
       metWithMentee,
-      studentMissedMentor,
+      // studentMissedMentor,
       pointSheetStatusOK,
+      pointSheetStatusNotesOK,
     });
 
-    return playingTimeGranted && commentsMade && metWithMentee && studentMissedMentor && pointSheetStatusOK;
+    return playingTimeGranted 
+      && commentsMade 
+      && metWithMentee 
+      // && studentMissedMentor 
+      && pointSheetStatusOK
+      && pointSheetStatusNotesOK;
   }
 
   validScores = (sr) => {
@@ -504,7 +512,6 @@ class SynopsisReportForm extends React.Component {
     const { synopsisReport, communications } = this.state;
     synopsisReport.Playing_Time_Only__c = false;
     const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
-    debugger;
     const valid = this.validPlayingTime(synopsisReport);
     if (valid && (synopsisReport.pointSheetStatus.turnedIn ? this.validScores(synopsisReport) : true)) {
       // delete synopsisReport._id;
@@ -803,7 +810,7 @@ class SynopsisReportForm extends React.Component {
             </select>
             { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status !== 'Turned In'
               ? <div className="survey-question-container">
-                  <span className={`title ${this.state.pointSheetStatusOK 
+                  <span className={`title ${this.state.pointSheetStatusNotesOK 
                     // || !this.state.pointSheetStatus.other
                     // || (this.state.pointSheetStatus.other && !!this.state.pointSheetStatusNotes) 
                     ? '' : 'required'}`} htmlFor="pointSheetStatusNotes">Point Sheet Status Notes</span>
