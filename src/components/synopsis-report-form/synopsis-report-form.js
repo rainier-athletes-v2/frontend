@@ -7,6 +7,7 @@ import PointTrackerTable from '../point-tracker-table/point-tracker-table';
 import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
 import * as srActions from '../../actions/synopsis-report';
+import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './synopsis-report-form.scss';
 
@@ -145,7 +146,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  createSynopsisReportPdf: sr => dispatch(srActions.createSynopsisReportPdf(sr)),
+  createSynopsisReportPdf: sr => dispatch(srPdfActions.createSynopsisReportPdf(sr)),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -228,11 +229,11 @@ class SynopsisReportForm extends React.Component {
       const notes = `${pillar[i]}_Touch_Points_Other__c`;
       p.with = pillar[i];
       p.role = pillar[i].toLowerCase();
-      p.f2fCheckIn = sr[tpKey].indexOf('Face-To-Face') > -1;
-      p.digital = sr[tpKey].indexOf('Digital') > -1;
-      p.phoneCall = sr[tpKey].indexOf('Phone Call') > -1;
-      p.other = sr[tpKey].indexOf('Other') > -1;
-      p.notes = sr[notes];
+      p.f2fCheckIn = sr[tpKey] && sr[tpKey].indexOf('Face-To-Face') > -1;
+      p.digital = sr[tpKey] && sr[tpKey].indexOf('Digital') > -1;
+      p.phoneCall = sr[tpKey] && sr[tpKey].indexOf('Phone Call') > -1;
+      p.other = sr[tpKey] && sr[tpKey].indexOf('Other') > -1;
+      p.notes = sr[notes] || '';
       comm.push(p);
     }
     return comm;
@@ -263,7 +264,7 @@ class SynopsisReportForm extends React.Component {
     // const { lastPointTracker } = selectedStudent.studentData;
 
     this.setState((prevState) => {
-      let newState = { ...prevState };
+      const newState = { ...prevState };
     //   newState = lastPointTracker || emptySR;
     //   newState.student = selectedStudent;
     //   newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
@@ -277,7 +278,7 @@ class SynopsisReportForm extends React.Component {
     //   // elementary has no tutorial so pop it from the empty point tracker
     //   if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
     //   newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
-    //   newState.synopsisSaved = false;
+      newState.synopsisSaved = false;
     //   newState.mentorGrantedPlayingTime = '';
     //   newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
     //   newState.pointSheetStatusNotes = '';
@@ -297,11 +298,11 @@ class SynopsisReportForm extends React.Component {
     });
   }
 
-  handleTitleChange = (event) => {
-    const newState = { ...this.state, synopsisSaved: false };
-    newState.title = `${newState.studentName}: ${event.target.value}`;
-    this.setState(newState);
-  }
+  // handleTitleChange = (event) => {
+  //   const newState = { ...this.state, synopsisSaved: false };
+  //   newState.title = `${newState.studentName}: ${event.target.value}`;
+  //   this.setState(newState);
+  // }
 
   handleSubjectChange = (event) => {
     event.persist();
@@ -416,8 +417,8 @@ class SynopsisReportForm extends React.Component {
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      // this.props.createSynopsisReportPdf({ ...synopsisReport });
-      this.setState({ synopsisReport: null });
+      this.props.createSynopsisReportPdf({ ...synopsisReport });
+      // this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -427,7 +428,7 @@ class SynopsisReportForm extends React.Component {
     event.preventDefault();
     const { synopsisReport } = this.state;
     synopsisReport.Playing_Time_Only__c = true;
-    if (this.validPlayingTime(synopsisReport)) {
+    if (this.validMentorInput(synopsisReport)) {
       this.setState({ ...this.state, waitingOnSaves: true, synopsisReport });
       this.props.saveSynopsisReport({ ...synopsisReport });
       this.props.createSynopsisReportPdf({ ...synopsisReport });
@@ -602,7 +603,9 @@ class SynopsisReportForm extends React.Component {
         <label className={this.state.metWithMentee ? 'title' : 'title required'} 
           htmlFor="Weekly_Check_In_Status__c">Weekly Check-in Status: </label>
           <select
-            value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c}
+            value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c
+              ? this.state.synopsisReport.Weekly_Check_In_Status__c
+              : ''}
             required
             name="Weekly_Check_In_Status__c"
             onChange={ this.handleSimpleFieldChange}>
@@ -635,7 +638,9 @@ class SynopsisReportForm extends React.Component {
                 <textarea
                   name="One_Team_Notes__c"
                   onChange={ this.handleTextAreaChange }
-                  value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c }
+                  value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
+                    ? this.state.synopsisReport.One_Team_Notes__c
+                    : '' }
                   placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
                   required={this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c}
                   rows="2"
@@ -653,7 +658,9 @@ class SynopsisReportForm extends React.Component {
           <span className={`title ${this.state.pointSheetStatusOK ? '' : 'required'}`}>Point Sheet Status</span>
             <select
               name="Point_Sheet_Status__c" 
-              value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c}
+              value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c
+                ? this.state.synopsisReport.Point_Sheet_Status__c
+                : ''}
               required
               onChange={ this.handleSimpleFieldChange}>
               <option key="0" value="">--Select Point Sheet Status--</option>
@@ -673,7 +680,9 @@ class SynopsisReportForm extends React.Component {
                         ? 'Please explain selected status...' 
                         : ''}
                       onChange={ this.handleTextAreaChange }
-                      value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c }
+                      value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
+                        ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
+                        : '' }
                       required={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Other'}
                       rows="2"
                       cols="80"
@@ -752,7 +761,9 @@ class SynopsisReportForm extends React.Component {
             <select
               name="Mentor_Granted_Playing_Time__c"
               onChange={ this.handleSimpleFieldChange }
-              value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time__c }
+              value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time__c
+                ? this.state.synopsisReport.Mentor_Granted_Playing_Time__c
+                : '' }
               >
               <option value="" defaultValue>Select playing time override:</option>
               <option value="Entire Game">Entire Game</option>
@@ -779,7 +790,9 @@ class SynopsisReportForm extends React.Component {
                 <textarea
                   name="Mentor_Granted_Playing_Time_Explanation__c"
                   onChange={ this.handleTextAreaChange }
-                  value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c }
+                  value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
+                    ? this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
+                    : '' }
                   rows="2"
                   cols="80"
                   wrap="hard"
@@ -817,7 +830,9 @@ class SynopsisReportForm extends React.Component {
               <textarea
                 name={ names[comment].prop }
                 onChange={ this.handleTextAreaChange }
-                value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop] }
+                value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop]
+                  ? this.state.synopsisReport[names[comment].prop]
+                  : '' }
                 rows="6"
                 cols="80"
                 wrap="hard"
@@ -828,7 +843,25 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    const synopsisReportForm = this.props.synopsisReport
+    const isValidSynopsisReport = (
+      this.props.synopsisReport
+      && this.props.synopsisReport.PointTrackers__r
+      && this.props.synopsisReport.PointTrackers__r.records
+      && this.props.synopsisReport.PointTrackers__r.records[0].Class__r
+      && this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r
+      && this.props.synopsisReport.Student__r
+    );
+    // isValidSynopsisReport = () => {
+    //   const sr = !!this.props.synopsisReport;
+    //   const srpt = !!this.propslsynopsisReport.PointTrackers__r;
+    //   const srptr = !!this.props.synopsisReport.PointTrackers__r.records;
+    //   const srptr0c = !!this.props.synopsisReport.PointTrackers__r.records[0].Class__r;
+    //   const srptr0ct = !! this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r;
+    //   const srs = !!this.props.synopsisReport.Student__r;
+    //   return sr && srpt && srptr && srptr0c && srptr0ct & srs;
+    // };
+
+    const synopsisReportForm = this.props.synopsisReport // || isValidSynopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
@@ -876,12 +909,12 @@ class SynopsisReportForm extends React.Component {
         </div>
       </div>
       )
-      : null;
+      : null; // alert('Student does not have properly initialized data.');
 
     return (
       <div className="modal-backdrop">
-        {/* { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state} onClose={ this.props.buttonClick }/> : synopsisReportForm } */}
-        { synopsisReportForm }
+        { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state.synopsisReport} onClose={ this.props.buttonClick }/> : synopsisReportForm }
+        {/* { synopsisReportForm } */}
       </div>
     );
   }

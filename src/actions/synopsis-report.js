@@ -31,6 +31,6 @@ export const saveSynopsisReport = (sr) => (store) => { // eslint-disable-line
     .send(sr)
     .then((res) => {
       console.log('saveSR response.status', res.status);
-      return store.dispatch(clearSynopsisReport());
+      // return store.dispatch(clearSynopsisReport());
     });
 };
