@@ -128,7 +128,7 @@ class Mentor extends React.Component {
       <React.Fragment>
         <div className="container-fluid">
           <div className="row">
-          <Sidebar content={ this.fetchStudents() } role={ this.checkRole() }/>
+          <Sidebar content={ this.fetchStudents() } role={ null }/>
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } buttonClick={ this.handleButtonClick } >
             {
               this.state.modal ? <SynopsisReportForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
