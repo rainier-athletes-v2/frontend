@@ -159,10 +159,7 @@ class SynopsisReportForm extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    console.log('sr DidUpdate');
-    // debugger;
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
-    // if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.setState({
         ...this.state,
         synopsisSaved: true,
@@ -202,7 +199,6 @@ class SynopsisReportForm extends React.Component {
   // }
 
   initCommunicationsState = (sr) => {
-    console.log('initCommState', !!sr);
     if (!sr) return null;
     // convert SF comm pillars multi-select fields into legacy communications object:
     // communications: [
@@ -229,7 +225,6 @@ class SynopsisReportForm extends React.Component {
     for (let i = 0; i < pillar.length; i++) {
       const p = {};
       const tpKey = `${pillar[i]}_Touch_Points__c`;
-      console.log(tpKey, sr[tpKey]);
       const notes = `${pillar[i]}_Touch_Points_Other__c`;
       p.with = pillar[i];
       p.role = pillar[i].toLowerCase();
@@ -240,7 +235,6 @@ class SynopsisReportForm extends React.Component {
       p.notes = sr[notes];
       comm.push(p);
     }
-    console.log('initCommState returning', comm);
     return comm;
   }
 
@@ -265,7 +259,6 @@ class SynopsisReportForm extends React.Component {
   }
 
   componentDidMount = () => {
-    console.log('componentDidMount');
     // const selectedStudent = this.props.content;
     // const { lastPointTracker } = selectedStudent.studentData;
 
@@ -320,7 +313,6 @@ class SynopsisReportForm extends React.Component {
     this.setState((prevState) => {
       const newState = { ...prevState };
       const [subjectName, categoryName] = name.split('-');
-      console.log('subjectName', subjectName, 'categoryName', categoryName);
       const newSubjects = newState.synopsisReport.PointTrackers__r.records
         .map((subject) => {
           if (subject.Class__r.Name === subjectName) {
@@ -356,123 +348,34 @@ class SynopsisReportForm extends React.Component {
     });
   }
 
-  // handleMentorMadeScheduledCheckinChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
-  //   this.setState(newState);
-  // }
-
-  // handleStudentMissedScheduledCheckinChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.studentMissedScheduledCheckin = parseInt(event.target.value, 10);
-  //   this.setState(newState);
-  // }
-
-  handleWeeklyCheckInChange = (event) => {
+  handleSimpleFieldChange = (event) => {
+    const { name, value } = event.target;
     const newState = { ...this.state };
-    newState.synopsisReport.Weekly_Check_In_Status__c = event.target.value;
-    this.setState(newState);
-  }
-
-  clearSRFields = (synopsisReport) => {
-    synopsisReport.subjects.forEach((subject) => {
-      Object.assign(subject.scoring, emptySR.subjects[0].scoring);
-    });
-    Object.assign(synopsisReport.synopsisComments, emptySR.synopsisComments);
-    Object.assign(synopsisReport.communications, emptySR.communications);
-    synopsisReport.oneTeamNotes = emptySR.oneTeamNotes;
-  }
-
-  // handlePointSheetTurnedInChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.pointSheetStatus.turnedIn = event.target.value === 'true';
-  //   if (!newState.pointSheetStatus.turnedIn) {
-  //     const keys = Object.keys(newState.pointSheetStatus);
-  //     keys.forEach((key) => {
-  //       newState.pointSheetStatus[key] = false;
-  //     });
-  //     this.clearPtFields(newState);
-  //   }
-  //   this.setState(newState);
-  // }
-
-  // handlePointSheetStatusChange = (event) => {
-  //   const { id } = event.target;
-  //   this.setState((prevState) => {
-  //     const newState = { ...prevState };
-  //     const keys = Object.keys(newState.pointSheetStatus);
-  //     keys.forEach((key) => {
-  //       newState.pointSheetStatus[key] = false;
-  //       if (key === id) newState.pointSheetStatus[key] = true;
-  //     });
-  //     return newState;
-  //   });
-  // }
-
-  handlePointSheetStatusChange = (event) => {
-    const newState = { ...this.state };
-    newState.synopsisReport.Point_Sheet_Status__c = event.target.value;
-    this.setState(newState);
-  }
-
-  handlePointSheetNotesChange = (event) => {
-    event.persist();
-    this.setState((prevState) => {
-      const newState = { ...prevState }
-      newState.synopsisReport.Point_Sheet_Status_Notes__c = event.target.value;
-      return newState;
-    });
-  }
-
-  handleOneTeamChange = (event) => {
-    const { name, checked } = event.target;
-
-    this.setState((prevState) => {
-      const newState = { ...prevState };
-      newState.synopsisReport[name] = checked;
-      return newState;
-    });
-  }
-
-  handleOneTeamNotesChange = (event) => {
-    event.persist();
-    this.setState((prevState) => {
-      const newState = { ...prevState };
-      newState.synopsisReport.One_Team_Notes__c = event.target.value;
-      return newState;
-    });
-  }
-
-  handlePlayingTimeChange = (event) => {
-    const newState = { ...this.state };
-    newState.synopsisReport.Mentor_Granted_Playing_Time__c = event.target.value;
+    newState.synopsisReport[name] = value;
     return this.setState(newState);
   }
 
-  handleSynopsisCommentChange = (event) => {
-    const { name, value } = event.target;
+  handleTextAreaChange = (event) => {
+    event.persist();
+    this.handleSimpleFieldChange(event);
+  }
 
+  handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
     this.setState((prevState) => {
       const newState = { ...prevState };
-      newState.synopsisReport[names[name].prop] = value;
-      return newState;
+      newState.synopsisReport[name] = checked;
+      return newState; 
     });
   }
 
-  validPlayingTime = (sr) => {
+  validMentorInput = (sr) => {
     const playingTimeGranted = sr.Point_Sheet_Status__c === 'Turned In' || !!sr.Mentor_Granted_Playing_Time__c;
     const commentsRequired = sr.Playing_Time_Only__c
       || !sr.Point_Sheet_Status__c === 'Turned In'
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
-    // const studentMissedMentor = sr.Weekly_Check_In_Status__c === 'Student missed check in'; // || (sr.mentorMadeScheduledCheckin === 0 && sr.studentMissedScheduledCheckin !== -1);
-    // const pointSheetStatusOK = sr.Point_Sheet_Status__c === 'Turned In'
-    //   || (sr.Point_Sheet_Status__c !== 'Turned In'
-    //     && (sr.Point_Sheet_Status__c === 'Lost'
-    //       || sr.Point_Sheet_Status__c === 'Incomplete'
-    //       || sr.Point_Sheet_Status__c === 'Absent'
-    //       || sr.Point_Sheet_Status__c === 'Other') && !!sr.Point_Sheet_Status_Notes__c);
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned In' 
       || (sr.Point_Sheet_Status__c !== 'Turned In' && !!sr.Point_Sheet_Status_Notes__c);
@@ -481,7 +384,6 @@ class SynopsisReportForm extends React.Component {
       playingTimeGranted,
       commentsMade,
       metWithMentee,
-      // studentMissedMentor,
       pointSheetStatusOK,
       pointSheetStatusNotesOK,
     });
@@ -489,18 +391,16 @@ class SynopsisReportForm extends React.Component {
     return playingTimeGranted 
       && commentsMade 
       && metWithMentee 
-      // && studentMissedMentor 
       && pointSheetStatusOK
       && pointSheetStatusNotesOK;
   }
 
-  validScores = (sr) => {
+  validPointTrackerScores = (sr) => {
     if (sr.Point_Sheet_Status__c !== 'Turned In') return false;
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
       subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
     ));
-    // const school = sr.student.studentData.school.find(s => s.currentSchool);
     const isElementaryStudent = sr.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
       || sr.PointTrackers__r.records.every(subject => subject.Grade__c !== '');
@@ -511,15 +411,12 @@ class SynopsisReportForm extends React.Component {
     event.preventDefault();
     const { synopsisReport, communications } = this.state;
     synopsisReport.Playing_Time_Only__c = false;
-    const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
-    const valid = this.validPlayingTime(synopsisReport);
-    if (valid && (synopsisReport.pointSheetStatus.turnedIn ? this.validScores(synopsisReport) : true)) {
-      // delete synopsisReport._id;
-
+    const validMentorInput = this.validMentorInput(synopsisReport);
+    if (validMentorInput && (synopsisReport.Point_Sheet_Status__c === 'Turned In' ? this.validPointTrackerScores(synopsisReport) : true)) {      
       this.setState({ ...this.state, waitingOnSaves: true });
+      const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
       // this.props.createSynopsisReportPdf({ ...synopsisReport });
-
       this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
@@ -540,47 +437,6 @@ class SynopsisReportForm extends React.Component {
     }
   }
 
-  // deleteSubject = (subjectName, teacherId) => {
-  //   this.setState((prevState) => {
-  //     const newState = { ...prevState };
-
-  //     newState.subjects = newState.subjects.filter((subject) => {
-  //       if (subjectName && teacherId) {
-  //         return subject.subjectName !== subjectName && subject.teacher !== teacherId;
-  //       }
-  //       return subject.subjectName !== subjectName;
-  //     });
-
-  //     return newState;
-  //   });
-  // }
-
-  // createSubject = (subjectName, teacherId) => {
-  //   this.setState((prevState) => {
-  //     const newState = { ...prevState };
-  //     const newSubject = {
-  //       subjectName,
-  //       teacher: this.state.teachers.find(t => t.teacher._id.toString() === teacherId.toString()).teacher,
-  //       scoring: {
-  //         excusedDays: '',
-  //         stamps: '',
-  //         halfStamps: '',
-  //       },
-  //       grade: '',
-  //     };
-
-  //     newState.subjects.push(newSubject);
-
-  //     return newState;
-  //   });
-  // }
-
-  // saveSubjectTable = () => {
-  //   const pointTracker = { ...this.state };
-  //   delete pointTracker._id;
-  //   this.props.createPointTracker({ ...pointTracker });
-  // }
-
   calcPlayingTime = () => {
     if (!this.state.synopsisReport) return null;
 
@@ -589,9 +445,6 @@ class SynopsisReportForm extends React.Component {
     const sr = this.state.synopsisReport;
 
     const isElementarySchool = student.Student_Grade__c < 6;
-    // if (student.studentData.school.length > 0) {
-    //   isElementarySchool = student.studentData.school.filter(s => s.currentSchool)[0].isElementarySchool; // eslint-disable-line
-    // }
 
     const numberOfPeriods = subjects.length;
     const totalClassTokens = numberOfPeriods * 2;
@@ -746,16 +599,17 @@ class SynopsisReportForm extends React.Component {
     const mentorMadeScheduledCheckinJSX = (
       <React.Fragment>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.metWithMentee ? 'title' : 'title required'} htmlFor="made-meeting">Weekly Check-in Status: </label>
-          <select name="made-meeting" 
+        <label className={this.state.metWithMentee ? 'title' : 'title required'} 
+          htmlFor="Weekly_Check_In_Status__c">Weekly Check-in Status: </label>
+          <select
             value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c}
             required
-            onChange={ this.handleWeeklyCheckInChange}>
+            name="Weekly_Check_In_Status__c"
+            onChange={ this.handleSimpleFieldChange}>
             <option key="0" value="">--Select Check In Status--</option>
             <option key="1" value="Met">Met</option>
             <option key="2" value="Mentor missed check in">Mentor missed check in</option>
             <option key="3" value="Student missed check in">Student missed check in</option>
-            <option key="4" value="School closed">School closed</option>
           </select>
       </div>
       </React.Fragment>
@@ -770,17 +624,17 @@ class SynopsisReportForm extends React.Component {
             <input
               type="checkbox"
               name={ names[keyName].prop} // oneTeamQuestion }
-              onChange= { this.handleOneTeamChange }
+              onChange= { this.handleCheckboxChange }
               checked={ this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop] }/>
             <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
           </div>
         ))
         }
           <div className="survey-question-container">
-            <span className="title" htmlFor="oneTeamNotes">One Team Notes</span>
+            <span className="title" htmlFor="One_Team_Notes__c">One Team Notes</span>
                 <textarea
-                  name="oneTeamNotes"
-                  onChange={ this.handleOneTeamNotesChange }
+                  name="One_Team_Notes__c"
+                  onChange={ this.handleTextAreaChange }
                   value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c }
                   placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
                   required={this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c}
@@ -797,10 +651,11 @@ class SynopsisReportForm extends React.Component {
       <fieldset>
         <div className="survey-questions">
           <span className={`title ${this.state.pointSheetStatusOK ? '' : 'required'}`}>Point Sheet Status</span>
-            <select name="made-meeting" 
+            <select
+              name="Point_Sheet_Status__c" 
               value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c}
               required
-              onChange={ this.handlePointSheetStatusChange}>
+              onChange={ this.handleSimpleFieldChange}>
               <option key="0" value="">--Select Point Sheet Status--</option>
               <option key="1" value="Turned In">Turned In</option>
               <option key="2" value="Lost">Lost</option>
@@ -808,18 +663,16 @@ class SynopsisReportForm extends React.Component {
               <option key="4" value="Absent">Absent</option>
               <option key="5" value="Other">Other</option>
             </select>
-            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status !== 'Turned In'
+            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In'
               ? <div className="survey-question-container">
                   <span className={`title ${this.state.pointSheetStatusNotesOK 
-                    // || !this.state.pointSheetStatus.other
-                    // || (this.state.pointSheetStatus.other && !!this.state.pointSheetStatusNotes) 
-                    ? '' : 'required'}`} htmlFor="pointSheetStatusNotes">Point Sheet Status Notes</span>
+                    ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</span>
                     <textarea
-                      name="pointSheetStatusNotes"
+                      name="Point_Sheet_Status_Notes__c"
                       placeholder={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Other' 
                         ? 'Please explain selected status...' 
                         : ''}
-                      onChange={ this.handlePointSheetNotesChange }
+                      onChange={ this.handleTextAreaChange }
                       value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c }
                       required={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Other'}
                       rows="2"
@@ -831,48 +684,6 @@ class SynopsisReportForm extends React.Component {
         </div>
     </fieldset>
     );
-
-    // const commPillarValues = [
-    //   '--Select One Or More--',
-    //   'Face-to-Face',
-    //   'Phone Call',
-    //   'Digital',
-    //   'Other',
-    // ];
-
-    // const communicationPillarsJSX = (
-    //   <fieldset>
-    //     <span className="title">Communication Touch Points</span>
-    //     <div className="survey-questions">
-    //     {commPillars.map((pillar, i) => (
-    //       <React.Fragment key={i}>
-    //         <span className="title" key={pillar}>{pillar}</span>
-    //         <select name={pillar} key={`${pillar}-select-${i}`} multiple onChange={this.handleCommPillarChange}>
-    //           {commPillarValues.map((value, j) => (
-    //             <option key={`${pillar}-${j}`} value={value}>{value}</option>
-    //           ))}
-    //         </select>
-    //         <div className="survey-question-container">
-    //           <span className={`title ${this.state.synopsisReport && this.state.synopsisReport.Student_Touch_Points__c === 'Other'
-    //             ? 'required' : ''}`} htmlFor={pillar}>{`${pillar} Touch Point Notes`}</span>
-    //             <textarea
-    //               name={pillar}
-    //               placeholder={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other' 
-    //                 ? 'Please explain selected status...' 
-    //                 : ''}
-    //               onChange={ this.handleTouchPointNotesChange }
-    //               value={ this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points_Other__c`] }
-    //               required={this.state.synopsisReport && this.state.synopsisReport[`${pillar}_Touch_Points__c`] === 'Other'}
-    //               rows="2"
-    //               cols="80"
-    //               wrap="hard"
-    //             />
-    //         </div>
-    //       </React.Fragment>
-    //     ))}
-    //     </div>
-    //     </fieldset>
-    // );
 
     const communicationPillarsTableJSX = (
       <fieldset>
@@ -935,11 +746,12 @@ class SynopsisReportForm extends React.Component {
             </div>
             : null }
           <div className="col-md-6">
-            <span className={`title ${this.state.playingTimeGranted ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTime">
+            <span className={`title ${this.state.playingTimeGranted ? '' : 'required'}`} 
+              htmlFor="Mentor_Granted_Playing_Time__c">
               Mentor Granted Playing Time { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In' ? '(Required)' : '' } :</span>
             <select
-              name="mentorGrantedPlayingTime"
-              onChange={ this.handlePlayingTimeChange }
+              name="Mentor_Granted_Playing_Time__c"
+              onChange={ this.handleSimpleFieldChange }
               value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time__c }
               >
               <option value="" defaultValue>Select playing time override:</option>
@@ -958,15 +770,15 @@ class SynopsisReportForm extends React.Component {
     const mentorGrantedPlayingTimeCommentsJSX = (
       <div className="synopsis">
         {
-          (this.state.synopsisReport && (this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In'
-            || this.state.synopsisReport.Playing_Time_Only__c
-            || (this.state.synopsisReport.Mentor_Granted_Playing_Time__c !== '' 
-            && this.state.synopsisReport.Mentor_Granted_Playing_Time__c !== this.state.synopsisReport.Earned_Playing_Time__c)))
+          this.state.synopsisReport
+            && (this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In'
+            || this.state.synopsisReport.Earned_Playing_Time__c !== this.state.synopsisReport.Mentor_Granted_Playing_Time__c)
             ? <div key="mentorGrantedPlayingTimeComments">
-                <label className={`title ${this.state.commentsMade ? '' : 'required'}`} htmlFor="mentorGrantedPlayingTimeComments">Mentor Granted Playing Time Explanation (Required):</label>
+                <label className={`title ${this.state.commentsMade ? '' : 'required'}`} 
+                  htmlFor="Mentor_Granted_Playing_Time_Explanation__c">Mentor Granted Playing Time Explanation:</label>
                 <textarea
-                  name="mentorGrantedPlayingTimeComments"
-                  onChange={ this.handleSynopsisCommentChange }
+                  name="Mentor_Granted_Playing_Time_Explanation__c"
+                  onChange={ this.handleTextAreaChange }
                   value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c }
                   rows="2"
                   cols="80"
@@ -990,7 +802,7 @@ class SynopsisReportForm extends React.Component {
     );
 
     const synopsisComments = [
-      'mentorGrantedPlayingTimeComments', // records[0].Mentor_Granted_Playing_Time_Explanation__c
+      // 'mentorGrantedPlayingTimeComments', // records[0].Mentor_Granted_Playing_Time_Explanation__c
       'studentActionItems', // records[0].Student_Action_Items__c
       'sportsUpdate', // records[0].Sports_Update__c
       'additionalComments', // records[0].Additional_Comments__c
@@ -1001,10 +813,10 @@ class SynopsisReportForm extends React.Component {
         {
           synopsisComments.map((comment, i) => (
             <div key={ i }>
-              <label className="title" htmlFor={ comment }>{ names[comment].text }</label>
+              <label className="title" htmlFor={ names[comment].prop }>{ names[comment].text }</label>
               <textarea
-                name={ comment }
-                onChange={ this.handleSynopsisCommentChange }
+                name={ names[comment].prop }
+                onChange={ this.handleTextAreaChange }
                 value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop] }
                 rows="6"
                 cols="80"
@@ -1049,6 +861,7 @@ class SynopsisReportForm extends React.Component {
                   />
                   : null }
                 { communicationPillarsTableJSX }
+                { oneTeamJSX }
                 { synopsisCommentsJSX }
                 <div className="modal-footer">
                   { this.state.waitingOnSaves 
