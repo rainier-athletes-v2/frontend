@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import './_synopsis-reports-table.scss';
+
 const mapStateToProps = state => ({
   srData: state.synopsisReportList,
 });
@@ -12,12 +14,12 @@ class SynopsisReportsTable extends React.Component {
 
     return (
       <React.Fragment>
-        <h3>Most Recent Synopsis Reports</h3>
+        <h3 className="heading">Most Recent Synopsis Reports</h3>
         { this.props.srData.length
           ? <table>
             <thead>
               <tr>
-                <th>SF Name</th>
+                <th>Name</th>
                 <th>Report Dates</th>
                 <th>SR Status</th>
                 <th>Point Sheet Status</th>
@@ -33,7 +35,7 @@ class SynopsisReportsTable extends React.Component {
                         <td>{sr.title}</td>
                         <td>{sr.synopsisReportStatus}</td>
                         <td>{sr.pointSheetStatus}</td>
-                        <td><button onClick={this.props.onClick} value={sr.id}>EDIT</button></td>
+                        <td><button className="btn-link-1" onClick={this.props.onClick} value={sr.id}>EDIT</button></td>
                       </tr>;
                   })
                   : null

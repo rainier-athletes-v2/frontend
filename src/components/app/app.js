@@ -35,8 +35,8 @@ export default class App extends React.Component {
             <Dashboard />
             <Route exact path="*" component={AuthRedirect} />
             {/* <Route exact path={routes.ADMIN_ROUTE} component={ AdminUser(AdminTable) } /> */}
-            {/* <Route exact path={routes.MENTOR_ROUTE} component={ MentorUser(Mentor) } /> */}
-            <Mentor />
+            <Route exact path={routes.MENTOR_ROUTE} component={ MentorUser(Mentor) } />
+            {/* <Mentor /> */}
           </div>
         </BrowserRouter>
         <Footer />

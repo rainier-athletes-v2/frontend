@@ -91,9 +91,9 @@ class Navbar extends React.Component {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent" onClick={this.handleNavMenuClick}>
           <ul className="navbar-nav mr-auto nav-content">
-            {/* {
+            {
               this.props.myProfile ? this.determineRole() : null
-            } */}
+            }
             {/* <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Welcome, { name }
