@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import AdminPickStudent from '../admin-pick-student/admin-pick-student';
-import PointTrackerForm from '../point-tracker-form/point-tracker-form';
+import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 import AdminExtract from '../admin-extract/admin-extract';
 import * as routes from '../../lib/routes';
 
@@ -63,7 +63,7 @@ class AdminContent extends React.Component {
           : null 
         }
         {
-          this.state.modal ? <PointTrackerForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
+          this.state.modal ? <SynopsisReportForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
         }
         {this.state.show === routes.EXTRACT_CSV_ROUTE ? <AdminExtract /> : null }
       </div>

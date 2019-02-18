@@ -19,7 +19,7 @@ class Sidebar extends React.Component {
           <ul className="nav flex-column">
             <li className="nav-title">
               <a className="nav-link disabled sidebar-heading">
-                Student
+                Students
               </a>
             </li>
             {

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import AdminPickStudent from '../admin-pick-student/admin-pick-student';
+import SynopsisReportsTable from '../synopsis-reports-table/synopsis-reports-table';
+// import AdminPickStudent from '../admin-pick-student/admin-pick-student';
 import * as util from '../../lib/utils';
 
 import './_mentor-content.scss';
@@ -14,8 +15,8 @@ class MentorContent extends React.Component {
     const currentSchool = haveData ? student.studentData.school && student.studentData.school.find(s => s.currentSchool) : null;
     const currentSchoolName = currentSchool ? currentSchool.schoolName : '';
 
-    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map(s => (
-      <div className="team-info" key={s._id}>
+    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map((s, i) => (
+      <div className="team-info" key={`sport-${i}`}>
         <span className="label">Sport: {s.sport}</span>
         <span className="label">Team: {s.team}</span>
         <span className="label">League: {s.league}</span>
@@ -55,7 +56,7 @@ class MentorContent extends React.Component {
       <div className="student-profile container">
         <div className="profile-primary row">
           <div>
-            <span className="info name">{ student.firstName } { student.lastName } </span>
+            {/* <span className="info name">{ student.firstName } { student.lastName } </span> */}
             <span>
               <FontAwesomeIcon icon="birthday-cake" className="fa-2x"/>
               { student.studentData ? util.convertDateToValue(student.studentData.dateOfBirth) : null }
@@ -93,9 +94,19 @@ class MentorContent extends React.Component {
         </div>
         <div className="row">
           <div className="profile-link">
-            <a className="btn-link-1" href={ student.studentData ? student.studentData.synopsisReportArchiveUrl : null }>Synopsis Report Archive</a>
-            <a className="btn-link-1" href={ student.studentData ? student.studentData.googleDocsUrl : null } >Student Documents</a>
-            <a className="btn-link-1" href={ student.studentData ? student.studentData.googleCalendarUrl : null }>Student Calendar</a>
+            <a className="btn-link-1" 
+              href={ student.studentData ? student.studentData.synopsisReportArchiveUrl : null }
+              alt="link to synopsis report archive"
+              target="blank"
+              rel="noopener noreferrer">Synopsis Report Archive</a>
+            <a className="btn-link-1" href={ student.studentData ? student.studentData.googleDocsUrl : null } 
+              alt="link to google docs archive"
+              target="blank"
+              rel="noopener noreferrer">Student Documents</a>
+            <a className="btn-link-1" href={ student.studentData ? student.studentData.googleCalendarUrl : null }
+              alt="link to student calendar"
+              target="blank"
+              rel="noopener noreferrer">Student Calendar</a>
           </div>
         </div>
         <div className="row">
@@ -121,22 +132,11 @@ class MentorContent extends React.Component {
     
     return (
       <React.Fragment>
-      <div role="main" className="col-md-8 panel content-panel" style={ { overflow: this.props.subPT ? 'inherit' : 'scroll' } }>
+      <div role="main" className="col-md-8 panel content-panel" style={ { overflow: 'scroll' } }>
         <div className="sidebar-sticky">
-          <a className="nav-link disabled sidebar-heading">
-            { this.props.subPT ? 'Select Student' : 'Student Profile' }
-          </a>
-          {
-            Object.keys(student).length !== 0 ? <button type="submit" className="linkToPT" onClick={ this.props.buttonClick }>
-                Synopsis Report
-            </button> : null
-          }
-          {
-            student.studentData ? studentProfile : null
-          }
-          {
-            this.props.subPT ? <AdminPickStudent /> : null
-          }
+          <span className="content-heading">{`Student Profile: ${student.firstName ? student.firstName : ''} ${student.lastName ? student.lastName : ''}`}</span>
+          <SynopsisReportsTable onClick={ this.props.editSrClick }/>
+          { student.studentData ? studentProfile : null }
         </div>
       </div>
       {
@@ -152,8 +152,7 @@ MentorContent.propTypes = {
   title: PropTypes.string,
   btnClick: PropTypes.func,
   children: PropTypes.node,
-  buttonClick: PropTypes.func,
-  subPT: PropTypes.boolean,
+  editSrClick: PropTypes.func,
 };
 
 export default MentorContent;
