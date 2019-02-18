@@ -18,7 +18,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchMyStudents: profile => dispatch(profileActions.fetchMyStudentsReq(profile)),
+  fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
 });
@@ -108,9 +108,8 @@ class Mentor extends React.Component {
 
   handleButtonClick = (e) => {
     e.preventDefault();
-    console.log('fetching SR, e.target.value', e.target.value);
     this.props.fetchSynopsisReport(e.target.value);
-    console.log('toggling SR modal');
+    this.props.fetchRecentSynopsisReports(this.state.content.id);
     this.setState({ modal: !this.state.modal });
   }
 

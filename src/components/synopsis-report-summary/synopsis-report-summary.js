@@ -29,11 +29,10 @@ class SynopsisReportSummary extends React.Component {
       </Tooltip>
     );
     
-    debugger;
     if (!this.props.synopsisReport) return null;
 
     const { synopsisReport } = this.props;
-    const playingTimeOnly = synopsisReport.Playing_Time_Only__c;
+    const playingTimeOnly = synopsisReport.Synopsis_Report_Status__c === 'Playing time only';
 
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>

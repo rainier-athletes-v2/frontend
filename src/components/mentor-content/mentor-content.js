@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SynopsisReportsTable from '../synopsis-reports-table/synopsis-reports-table';
-import AdminPickStudent from '../admin-pick-student/admin-pick-student';
+// import AdminPickStudent from '../admin-pick-student/admin-pick-student';
 import * as util from '../../lib/utils';
 
 import './_mentor-content.scss';

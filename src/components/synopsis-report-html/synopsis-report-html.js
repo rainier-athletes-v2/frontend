@@ -4,13 +4,13 @@ import './synopsis-report-html.scss';
 
 export default function SynopsisReportHtml(props) {
   const { synopsisReport, student } = props;
-
-  // const studentsSchool = student.studentData.school.find(s => s.currentSchool);
-  const studentsSchoolName = 'School Name'; // studentsSchool ? studentsSchool.schoolName : 'Score Table';
+  const pointTrackers = synopsisReport.pointsTrackers__r.records;
+  const studentsSchoolName = pointTrackers[0] && pointTrackers[0].Class__r.School__r.Name;
   const gradeLevel = synopsisReport.Student__r.Student_Grade__c;
   const isMiddleSchool = gradeLevel > 5 && gradeLevel < 9;
   const playingTimeOverride = synopsisReport.Mentor_Granted_Playing_Time__c !== ''
     && synopsisReport.Mentor_Granted_Playing_Time__c !== synopsisReport.Earned_Playing_Time__c;
+  const playingTimeOnly = synopsisReport.Synopsis_Report_Status__c === 'Playing time only';
 
   const pointPercentage = (subject) => {
     const excusedDays = subject.Excused_Days__c;
@@ -48,11 +48,11 @@ export default function SynopsisReportHtml(props) {
               {isMiddleSchool ? <td>{subject.Class__r.Teacher__r.LastName}</td> : ''}
               <td key={ `${subject.Class__r.LastName}${row}1` }>{ subject.Class__r.Name }</td>
               {isMiddleSchool ? <td>{ subject.Grade__c }</td> : ''}
-              <td key={ `${subject.Class__r.Name}${row}2` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Excused_Days__c : 'N/A' } </td>
-              <td key={ `${subject.Class__r.Name}${row}3` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Stamps__c : 'N/A' }</td>
-              <td key={ `${subject.Class__r.Name}${row}4` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Half_Stamps__c : 'N/A' }</td>
-              <td key={ `${subject.Class__r.Name}${row}5` }>{ !synopsisReport.Playing_Time_Only__c ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.scoring.Half_Stamps__c : 'N/A' }</td>
-              <td key={ `${subject.Class__r.Name}${row}6` }>{ !synopsisReport.Playing_Time_Only__c ? pointPercentage(subject) : 'N/A' }</td>
+              <td key={ `${subject.Class__r.Name}${row}2` }>{ !playingTimeOnly ? subject.Excused_Days__c : 'N/A' } </td>
+              <td key={ `${subject.Class__r.Name}${row}3` }>{ !playingTimeOnly ? subject.Stamps__c : 'N/A' }</td>
+              <td key={ `${subject.Class__r.Name}${row}4` }>{ !playingTimeOnly ? subject.Half_Stamps__c : 'N/A' }</td>
+              <td key={ `${subject.Class__r.Name}${row}5` }>{ !playingTimeOnly ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.scoring.Half_Stamps__c : 'N/A' }</td>
+              <td key={ `${subject.Class__r.Name}${row}6` }>{ !playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
             </tr>
             );
           }
@@ -66,11 +66,11 @@ export default function SynopsisReportHtml(props) {
                 {isMiddleSchool ? <td></td> : ''}
                 <td key={ `${subject.Class__r.Name}${row}1` }>{ subject.Class__r.Name }</td>
                 <td key={ `${subject.Class__r.Name}${row}1.5` }>{ '' }</td>
-                <td key={ `${subject.Class__r.Name}${row}2` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Excused_Days__c : 'N/A' } </td>
-                <td key={ `${subject.Class__r.Name}${row}3` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Stamps__c : 'N/A' }</td>
-                <td key={ `${subject.Class__r.Name}${row}4` }>{ !synopsisReport.Playing_Time_Only__c ? subject.Half_Stamps__c : 'N/A' }</td>
-                <td key={ `${subject.Class__r.Name}${row}5` }>{ !synopsisReport.Playing_Time_Only__c ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.Half_Stamps__c : 'N/A' }</td>
-                <td key={ `${subject.Class__r.Name}${row}6` }>{ !synopsisReport.Playing_Time_Only__c ? pointPercentage(subject) : 'N/A' }</td>
+                <td key={ `${subject.Class__r.Name}${row}2` }>{ !playingTimeOnly ? subject.Excused_Days__c : 'N/A' } </td>
+                <td key={ `${subject.Class__r.Name}${row}3` }>{ !playingTimeOnly ? subject.Stamps__c : 'N/A' }</td>
+                <td key={ `${subject.Class__r.Name}${row}4` }>{ !playingTimeOnly ? subject.Half_Stamps__c : 'N/A' }</td>
+                <td key={ `${subject.Class__r.Name}${row}5` }>{ !playingTimeOnly ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.Half_Stamps__c : 'N/A' }</td>
+                <td key={ `${subject.Class__r.Name}${row}6` }>{ !playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
               </tr>
               );
             }
@@ -112,7 +112,7 @@ export default function SynopsisReportHtml(props) {
   const playingTimeJSX = <React.Fragment>
     <div className="row">
       <div className="left">
-        { !synopsisReport.Playing_Time_Only__c 
+        { !synopsisReport.playingTimeOnly 
           && synopsisReport.Point_Sheet_Status__c === 'Turned In'
           && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
@@ -127,7 +127,7 @@ export default function SynopsisReportHtml(props) {
     </div>
   </React.Fragment>;
 
-  const mentorCommentsJSX = playingTimeOverride || synopsisReport.Playing_Time_Only__c
+  const mentorCommentsJSX = playingTimeOverride || synopsisReport.playingTimeOnly
     ? <div>
         <h3>Mentor&#39;s Comments re: Playing Time</h3>
           <p>{synopsisReport.Mentor_Granted_Playing_Time_Explanation__c}</p>
@@ -160,7 +160,7 @@ export default function SynopsisReportHtml(props) {
 
     </body>
   </React.Fragment>;
-
+  console.log(synopsisReportHTML);
   return synopsisReportHTML;
 }
 

@@ -101,7 +101,7 @@ const synopsisReportToHTML = (synopsisReport, student) => {
 };
 
 export const createSynopsisReportPdf = synopsisReport => (store) => {
-  // const { token } = store.getState();
+  const { token } = store.getState();
   // const { student, studentName, title } = synopsisReport
 
   // const data = {

@@ -27,7 +27,6 @@ const emptySR = {
     },
     grade: 'N/A', // records[n].Grade__c
   }],
-  playingTimeOnly: true, // records[0].Playing_Time_Only__c
   mentorMadeScheduledCheckin: -1, // records[0].Weekly_Check_In_Status__c
   studentMissedScheduledCheckin: -1, // same as above
   communications: [
@@ -372,7 +371,7 @@ class SynopsisReportForm extends React.Component {
 
   validMentorInput = (sr) => {
     const playingTimeGranted = sr.Point_Sheet_Status__c === 'Turned In' || !!sr.Mentor_Granted_Playing_Time__c;
-    const commentsRequired = sr.Playing_Time_Only__c
+    const commentsRequired = sr.Synopsis_Report_Status__c === 'Playing time only'
       || !sr.Point_Sheet_Status__c === 'Turned In'
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
@@ -411,11 +410,12 @@ class SynopsisReportForm extends React.Component {
   handleFullReportSubmit = (event) => {
     event.preventDefault();
     const { synopsisReport, communications } = this.state;
-    synopsisReport.Playing_Time_Only__c = false;
+    synopsisReport.Synopsis_Report_Status__c = 'Completed';
     const validMentorInput = this.validMentorInput(synopsisReport);
     if (validMentorInput && (synopsisReport.Point_Sheet_Status__c === 'Turned In' ? this.validPointTrackerScores(synopsisReport) : true)) {      
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
+      mergedSynopsisReport.Synopsis_Report_Status__c = 'Completed';
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
       this.props.createSynopsisReportPdf({ ...synopsisReport });
       // this.setState({ synopsisReport: null });
@@ -427,12 +427,12 @@ class SynopsisReportForm extends React.Component {
   handlePlayingTimeSubmit = (event) => {
     event.preventDefault();
     const { synopsisReport } = this.state;
-    synopsisReport.Playing_Time_Only__c = true;
+    synopsisReport.Synopsis_Report_Status__c = 'Playing time only';
     if (this.validMentorInput(synopsisReport)) {
-      this.setState({ ...this.state, waitingOnSaves: true, synopsisReport });
+      this.setState({ ...this.state, waitingOnSaves: true });
       this.props.saveSynopsisReport({ ...synopsisReport });
       this.props.createSynopsisReportPdf({ ...synopsisReport });
-      this.setState({ synopsisReport: null });
+      // this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting playing time.'); // eslint-disable-line
     }
@@ -866,7 +866,7 @@ class SynopsisReportForm extends React.Component {
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header">
+            <div className="modal-header">sf
               <h5 className="modal-title">SYNOPSIS REPORT</h5>
               <button type="button" className="close" onClick={ this.props.buttonClick } data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
