@@ -624,8 +624,9 @@ class SynopsisReportForm extends React.Component {
 
     const oneTeamJSX = (
       <fieldset>
-        <div className="survey-questions">
-        <span className="title">One Team Face-to-Face Meet-Ups</span>
+        <div className="mentor-met-container">
+        <label className="title">One Team Face-to-Face Meet-Ups</label>
+        <TooltipItem id="tooltip-oneTeamMeetups" text="Indicate which, if any, One Team activities you participated in this week."/>
         {oneTeam.map((keyName, i) => (
           <div className="survey-question-container" key={ i }>
             <input
