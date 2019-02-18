@@ -13,7 +13,8 @@ export const clearSynopsisReport = () => ({
 
 export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
   const { token } = store.getState();
-  console.log('fetchSR');
+  console.log('fetchSR srId:', srId);
+  debugger;
   return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}/${srId}`)
     .set('Authorization', `Bearer ${token}`)
     .send('Content-Type', 'application/json')

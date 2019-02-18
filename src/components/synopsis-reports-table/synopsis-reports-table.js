@@ -35,7 +35,7 @@ class SynopsisReportsTable extends React.Component {
                         <td>{sr.title}</td>
                         <td>{sr.synopsisReportStatus}</td>
                         <td>{sr.pointSheetStatus}</td>
-                        <td><button className="btn-link-1" onClick={this.props.onClick} value={sr.id}>EDIT</button></td>
+                        <td><button className="btn-link-1" onClick={this.props.onClick} value={sr.id} name="SynopsisReportTable">EDIT</button></td>
                       </tr>;
                   })
                   : null

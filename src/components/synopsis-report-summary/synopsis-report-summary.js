@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as pl from '../../lib/pick-list-tests';
 import './synopsis-report-summary.scss';
 
 const mapStateToProps = state => ({
@@ -32,7 +33,7 @@ class SynopsisReportSummary extends React.Component {
     if (!this.props.synopsisReport) return null;
 
     const { synopsisReport } = this.props;
-    const playingTimeOnly = synopsisReport.Synopsis_Report_Status__c === 'Playing time only';
+    const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
 
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
@@ -45,11 +46,11 @@ class SynopsisReportSummary extends React.Component {
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
         {/* <br /> */}
-        { synopsisReport.Point_Sheet_Status__c === 'Turned In' ? null
+        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
           : <React.Fragment>
             <p>Point Sheet not turned in.</p>
             </React.Fragment> }
-        { synopsisReport.Point_Sheet_Status__c === 'Turned In' 
+        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
           && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <span className="title">
@@ -93,7 +94,13 @@ class SynopsisReportSummary extends React.Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title title">{ playingTimeOnly ? 'Playing Time Saved' : 'Rainier Athletes Weekly Summary' }</h5>
-              <button type="button" className="close" onClick={ this.props.onClose } data-dismiss="modal" aria-label="Close">
+              <button type="button" 
+                className="close" 
+                onClick={ this.props.onClose } 
+                data-dismiss="modal" 
+                aria-label="Close" 
+                value={this.props.synopsisReport.id}
+                name="SynopsisReportSummary">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>

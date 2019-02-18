@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as pl from '../../lib/pick-list-tests';
 import './synopsis-report-html.scss';
 
 export default function SynopsisReportHtml(props) {
@@ -113,7 +114,7 @@ export default function SynopsisReportHtml(props) {
     <div className="row">
       <div className="left">
         { !synopsisReport.playingTimeOnly 
-          && synopsisReport.Point_Sheet_Status__c === 'Turned In'
+          && pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
           && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <h3>Game Eligibility Earned</h3>
@@ -142,7 +143,7 @@ export default function SynopsisReportHtml(props) {
           <h1>{synopsisReport.Student__r.Name}</h1>
           <h2>{synopsisReport.Week__c}</h2>
           <h3>{studentsSchoolName}</h3>
-          { synopsisReport.Point_Sheet_Status__c === 'Turned In' ? null
+          { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
             : <React.Fragment>
               <p>Point Sheet not turned in.</p>
               </React.Fragment> }

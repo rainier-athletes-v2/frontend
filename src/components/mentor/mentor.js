@@ -108,7 +108,10 @@ class Mentor extends React.Component {
 
   handleButtonClick = (e) => {
     e.preventDefault();
-    this.props.fetchSynopsisReport(e.target.value);
+    console.log('name', e.target.name);
+    console.log('value', e.target.value);
+    debugger;
+    if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
     this.props.fetchRecentSynopsisReports(this.state.content.id);
     this.setState({ modal: !this.state.modal });
   }

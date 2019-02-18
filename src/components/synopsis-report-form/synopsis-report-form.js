@@ -8,99 +8,100 @@ import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-su
 import TooltipItem from '../tooltip/tooltip';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
+import * as pl from '../../lib/pick-list-tests';
 
 import './synopsis-report-form.scss';
 
-const emptySR = {
-  date: new Date(Date.now()).toDateString(), // records[0].Start_Date__c
-  title: '', // records[0].Week__c
-  student: '', // undefined
-  studentName: '', // records[0].Student__r.Name
-  subjects: [{ // records[0].PointTrackers__r.records[n]
-    subjectName: 'Tutorial', // ...Class__r.Name
-    period: '', // ...Class__r.Period__c,
-    teacher: '', // ...Class__r.Teacher__r.Name
-    scoring: {
-      excusedDays: 0, // records[n].Excused_Days__c
-      stamps: 0, // records[n].Stamps__c,
-      halfStamps: 0, // records[n].Half_Stamps__c
-    },
-    grade: 'N/A', // records[n].Grade__c
-  }],
-  mentorMadeScheduledCheckin: -1, // records[0].Weekly_Check_In_Status__c
-  studentMissedScheduledCheckin: -1, // same as above
-  communications: [
-    {
-      with: 'Student', // records[0].Student_Touch_Points__c
-      role: 'student',
-      f2fCheckIn: false,
-      f2fRaEvent: false,
-      f2fGameOrPractice: false,
-      basecampOrEmail: false,
-      phoneOrText: false,
-      familyMeeting: false,
-      notes: '', // records[0].Student_Touch_Points_Other_c
-    },
-    {
-      with: 'Family', // records[0].Family_Touch_Points__c
-      role: 'family',
-      f2fCheckIn: false,
-      f2fRaEvent: false,
-      f2fGameOrPractice: false,
-      basecampOrEmail: false,
-      phoneOrText: false,
-      familyMeeting: false,
-      notes: '', // records[0].Family_Touch_Points_Other__c
-    },
-    {
-      with: 'Teacher', // records[0].Teacher_Touch_Points__c
-      role: 'teacher',
-      f2fCheckIn: false,
-      f2fRaEvent: false,
-      f2fGameOrPractice: false,
-      basecampOrEmail: false,
-      phoneOrText: false,
-      familyMeeting: false,
-      notes: '', // records[0].Teacher_Touch_Points_Other__c
-    },
-    {
-      with: 'Coach', // records[0].Coach_Touch_Points__c
-      role: 'coach',
-      f2fCheckIn: false,
-      f2fRaEvent: false,
-      f2fGameOrPractice: false,
-      basecampOrEmail: false,
-      phoneOrText: false,
-      familyMeeting: false,
-      notes: '', // records[0].Coach_Touch_Points_Other__c
-    },
-  ],
-  oneTeam: {
-    wednesdayCheckin: false, // records[0].Wednesday_Check_In__c
-    mentorMeal: false, // records[0].Mentor_Meal__c
-    sportsGame: false, // records[0].Sports_Game__c
-    communityEvent: false, // records[0].Community_event__c
-    iepSummerReview: false, // records[0].IEP_Summer_Review_Meeting__c
-    other: false, // records[0].Other_Meetup__c
-  },
-  oneTeamNotes: '', // records[0].One_Team_Notes__c
-  pointSheetStatus: { // records[0].Point_Sheet_Status__c,
-    turnedIn: true,
-    lost: false,
-    incomplete: false,
-    absent: false,
-    other: false,
-  },
-  pointSheetStatusNotes: '', // records[0].Point_Sheet_Status_Notes__c
-  earnedPlayingTime: '', // records[0].Earned_Playing_Time__c
-  mentorGrantedPlayingTime: '', // records[0].Mentor_Granted_Playing_Time__c
-  synopsisComments: {
-    mentorGrantedPlayingTimeComments: '', // records[0].Mentor_Granted_Playing_Time_Explanation__c
-    studentActionItems: '', // records[0].Student_Action_Items__c
-    sportsUpdate: '', // records[0].Sports_Update__c
-    additionalComments: '', // records[0].Additional_Comments__c
-  },
-};
+// const emptySR = {
+//   date: new Date(Date.now()).toDateString(), // records[0].Start_Date__c
+//   title: '', // records[0].Week__c
+//   student: '', // undefined
+//   studentName: '', // records[0].Student__r.Name
+//   subjects: [{ // records[0].PointTrackers__r.records[n]
+//     subjectName: 'Tutorial', // ...Class__r.Name
+//     period: '', // ...Class__r.Period__c,
+//     teacher: '', // ...Class__r.Teacher__r.Name
+//     scoring: {
+//       excusedDays: 0, // records[n].Excused_Days__c
+//       stamps: 0, // records[n].Stamps__c,
+//       halfStamps: 0, // records[n].Half_Stamps__c
+//     },
+//     grade: 'N/A', // records[n].Grade__c
+//   }],
+//   mentorMadeScheduledCheckin: -1, // records[0].Weekly_Check_In_Status__c
+//   studentMissedScheduledCheckin: -1, // same as above
+//   communications: [
+//     {
+//       with: 'Student', // records[0].Student_Touch_Points__c
+//       role: 'student',
+//       f2fCheckIn: false,
+//       f2fRaEvent: false,
+//       f2fGameOrPractice: false,
+//       basecampOrEmail: false,
+//       phoneOrText: false,
+//       familyMeeting: false,
+//       notes: '', // records[0].Student_Touch_Points_Other_c
+//     },
+//     {
+//       with: 'Family', // records[0].Family_Touch_Points__c
+//       role: 'family',
+//       f2fCheckIn: false,
+//       f2fRaEvent: false,
+//       f2fGameOrPractice: false,
+//       basecampOrEmail: false,
+//       phoneOrText: false,
+//       familyMeeting: false,
+//       notes: '', // records[0].Family_Touch_Points_Other__c
+//     },
+//     {
+//       with: 'Teacher', // records[0].Teacher_Touch_Points__c
+//       role: 'teacher',
+//       f2fCheckIn: false,
+//       f2fRaEvent: false,
+//       f2fGameOrPractice: false,
+//       basecampOrEmail: false,
+//       phoneOrText: false,
+//       familyMeeting: false,
+//       notes: '', // records[0].Teacher_Touch_Points_Other__c
+//     },
+//     {
+//       with: 'Coach', // records[0].Coach_Touch_Points__c
+//       role: 'coach',
+//       f2fCheckIn: false,
+//       f2fRaEvent: false,
+//       f2fGameOrPractice: false,
+//       basecampOrEmail: false,
+//       phoneOrText: false,
+//       familyMeeting: false,
+//       notes: '', // records[0].Coach_Touch_Points_Other__c
+//     },
+//   ],
+//   oneTeam: {
+//     wednesdayCheckin: false, // records[0].Wednesday_Check_In__c
+//     mentorMeal: false, // records[0].Mentor_Meal__c
+//     sportsGame: false, // records[0].Sports_Game__c
+//     communityEvent: false, // records[0].Community_event__c
+//     iepSummerReview: false, // records[0].IEP_Summer_Review_Meeting__c
+//     other: false, // records[0].Other_Meetup__c
+//   },
+//   oneTeamNotes: '', // records[0].One_Team_Notes__c
+//   pointSheetStatus: { // records[0].Point_Sheet_Status__c,
+//     turnedIn: true,
+//     lost: false,
+//     incomplete: false,
+//     absent: false,
+//     other: false,
+//   },
+//   pointSheetStatusNotes: '', // records[0].Point_Sheet_Status_Notes__c
+//   earnedPlayingTime: '', // records[0].Earned_Playing_Time__c
+//   mentorGrantedPlayingTime: '', // records[0].Mentor_Granted_Playing_Time__c
+//   synopsisComments: {
+//     mentorGrantedPlayingTimeComments: '', // records[0].Mentor_Granted_Playing_Time_Explanation__c
+//     studentActionItems: '', // records[0].Student_Action_Items__c
+//     sportsUpdate: '', // records[0].Sports_Update__c
+//     additionalComments: '', // records[0].Additional_Comments__c
+//   },
+// };
 
 const oneTeam = [
   'wednesdayCheckin',
@@ -111,12 +112,12 @@ const oneTeam = [
   'oneTeamOther',
 ];
 
-const commPillars = [
-  'Student',
-  'Family',
-  'Teacher',
-  'Coach',
-];
+// const commPillars = [
+//   'Student',
+//   'Family',
+//   'Teacher',
+//   'Coach',
+// ];
 
 const names = {
   turnedIn: 'Point Sheet turned in and at least 25% complete: ',
@@ -264,28 +265,28 @@ class SynopsisReportForm extends React.Component {
 
     this.setState((prevState) => {
       const newState = { ...prevState };
-    //   newState = lastPointTracker || emptySR;
-    //   newState.student = selectedStudent;
-    //   newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
-    //   newState.isElementaryStudent = selectedStudent.studentData.school
-    //     && selectedStudent.studentData.school.length
-    //     ? selectedStudent.studentData.school.find(s => s.currentSchool).isElementarySchool
-    //     : false;
-    //   newState.mentorMadeScheduledCheckin = -1;
-    //   newState.studentMissedScheduledCheckin = -1;
-    //   newState.playingTimeOnly = false;
-    //   // elementary has no tutorial so pop it from the empty point tracker
-    //   if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
-    //   newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
+      //   newState = lastPointTracker || emptySR;
+      //   newState.student = selectedStudent;
+      //   newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
+      //   newState.isElementaryStudent = selectedStudent.studentData.school
+      //     && selectedStudent.studentData.school.length
+      //     ? selectedStudent.studentData.school.find(s => s.currentSchool).isElementarySchool
+      //     : false;
+      //   newState.mentorMadeScheduledCheckin = -1;
+      //   newState.studentMissedScheduledCheckin = -1;
+      //   newState.playingTimeOnly = false;
+      //   // elementary has no tutorial so pop it from the empty point tracker
+      //   if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
+      //   newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
       newState.synopsisSaved = false;
-    //   newState.mentorGrantedPlayingTime = '';
-    //   newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
-    //   newState.pointSheetStatusNotes = '';
-    //   newState.pointSheetStatus.lost = false;
-    //   newState.pointSheetStatus.incomplete = false;
-    //   newState.pointSheetStatus.absent = false;
-    //   newState.pointSheetStatus.other = false;
-    //   newState.teachers = this.props.content.studentData.teachers;
+      //   newState.mentorGrantedPlayingTime = '';
+      //   newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
+      //   newState.pointSheetStatusNotes = '';
+      //   newState.pointSheetStatus.lost = false;
+      //   newState.pointSheetStatus.incomplete = false;
+      //   newState.pointSheetStatus.absent = false;
+      //   newState.pointSheetStatus.other = false;
+      //   newState.teachers = this.props.content.studentData.teachers;
       newState.communications = this.initCommunicationsState(this.props.synopsisReport);
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
@@ -370,15 +371,15 @@ class SynopsisReportForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const playingTimeGranted = sr.Point_Sheet_Status__c === 'Turned In' || !!sr.Mentor_Granted_Playing_Time__c;
-    const commentsRequired = sr.Synopsis_Report_Status__c === 'Playing time only'
-      || !sr.Point_Sheet_Status__c === 'Turned In'
+    const playingTimeGranted = pl.turnedIn(sr.Point_Sheet_Status__c) || !!sr.Mentor_Granted_Playing_Time__c;
+    const commentsRequired = pl.playingTimeOnly(sr.Synopsis_Report_Status__c)
+      || !pl.turnedIn(sr.Point_Sheet_Status__c)
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
-    const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned In' 
-      || (sr.Point_Sheet_Status__c !== 'Turned In' && !!sr.Point_Sheet_Status_Notes__c);
+    const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
+      || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
 
     this.setState({
       playingTimeGranted,
@@ -396,7 +397,7 @@ class SynopsisReportForm extends React.Component {
   }
 
   validPointTrackerScores = (sr) => {
-    if (sr.Point_Sheet_Status__c !== 'Turned In') return false;
+    if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return false;
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
       subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
@@ -410,14 +411,14 @@ class SynopsisReportForm extends React.Component {
   handleFullReportSubmit = (event) => {
     event.preventDefault();
     const { synopsisReport, communications } = this.state;
-    synopsisReport.Synopsis_Report_Status__c = 'Completed';
+    synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
-    if (validMentorInput && (synopsisReport.Point_Sheet_Status__c === 'Turned In' ? this.validPointTrackerScores(synopsisReport) : true)) {      
+    if (validMentorInput && (pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? this.validPointTrackerScores(synopsisReport) : true)) {      
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
-      mergedSynopsisReport.Synopsis_Report_Status__c = 'Completed';
+      // mergedSynopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      this.props.createSynopsisReportPdf({ ...synopsisReport });
+      this.props.createSynopsisReportPdf({ ...mergedSynopsisReport });
       // this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
@@ -427,7 +428,8 @@ class SynopsisReportForm extends React.Component {
   handlePlayingTimeSubmit = (event) => {
     event.preventDefault();
     const { synopsisReport } = this.state;
-    synopsisReport.Synopsis_Report_Status__c = 'Playing time only';
+    synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.PlayingTimeOnly;
+    debugger;
     if (this.validMentorInput(synopsisReport)) {
       this.setState({ ...this.state, waitingOnSaves: true });
       this.props.saveSynopsisReport({ ...synopsisReport });
@@ -670,20 +672,20 @@ class SynopsisReportForm extends React.Component {
               <option key="4" value="Absent">Absent</option>
               <option key="5" value="Other">Other</option>
             </select>
-            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In'
+            { this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
               ? <div className="survey-question-container">
                   <span className={`title ${this.state.pointSheetStatusNotesOK 
                     ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</span>
                     <textarea
                       name="Point_Sheet_Status_Notes__c"
-                      placeholder={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Other' 
+                      placeholder={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c) 
                         ? 'Please explain selected status...' 
                         : ''}
                       onChange={ this.handleTextAreaChange }
                       value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
                         ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
                         : '' }
-                      required={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Other'}
+                      required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
                       rows="2"
                       cols="80"
                       wrap="hard"
@@ -748,7 +750,7 @@ class SynopsisReportForm extends React.Component {
     const playingTimeJSX = (
       <React.Fragment>
         <div className="row">
-          { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned In'
+          { this.state.synopsisReport && pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
             ? <div className="col-md-6">
                 <span className="title">Game Eligibility Earned</span>
                 <span className="name">{ this.calcPlayingTime() } </span>
@@ -757,7 +759,7 @@ class SynopsisReportForm extends React.Component {
           <div className="col-md-6">
             <span className={`title ${this.state.playingTimeGranted ? '' : 'required'}`} 
               htmlFor="Mentor_Granted_Playing_Time__c">
-              Mentor Granted Playing Time { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In' ? '(Required)' : '' } :</span>
+              Mentor Granted Playing Time { this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) ? '(Required)' : '' } :</span>
             <select
               name="Mentor_Granted_Playing_Time__c"
               onChange={ this.handleSimpleFieldChange }
@@ -782,7 +784,7 @@ class SynopsisReportForm extends React.Component {
       <div className="synopsis">
         {
           this.state.synopsisReport
-            && (this.state.synopsisReport.Point_Sheet_Status__c !== 'Turned In'
+            && (!pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
             || this.state.synopsisReport.Earned_Playing_Time__c !== this.state.synopsisReport.Mentor_Granted_Playing_Time__c)
             ? <div key="mentorGrantedPlayingTimeComments">
                 <label className={`title ${this.state.commentsMade ? '' : 'required'}`} 
@@ -843,14 +845,14 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    const isValidSynopsisReport = (
-      this.props.synopsisReport
-      && this.props.synopsisReport.PointTrackers__r
-      && this.props.synopsisReport.PointTrackers__r.records
-      && this.props.synopsisReport.PointTrackers__r.records[0].Class__r
-      && this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r
-      && this.props.synopsisReport.Student__r
-    );
+    // const isValidSynopsisReport = (
+    //   this.props.synopsisReport
+    //   && this.props.synopsisReport.PointTrackers__r
+    //   && this.props.synopsisReport.PointTrackers__r.records
+    //   && this.props.synopsisReport.PointTrackers__r.records[0].Class__r
+    //   && this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r
+    //   && this.props.synopsisReport.Student__r
+    // );
     // isValidSynopsisReport = () => {
     //   const sr = !!this.props.synopsisReport;
     //   const srpt = !!this.propslsynopsisReport.PointTrackers__r;
@@ -866,9 +868,10 @@ class SynopsisReportForm extends React.Component {
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header">sf
+            <div className="modal-header">
               <h5 className="modal-title">SYNOPSIS REPORT</h5>
-              <button type="button" className="close" onClick={ this.props.buttonClick } data-dismiss="modal" aria-label="Close">
+              <button type="button" className="close" onClick={ this.props.buttonClick } data-dismiss="modal" aria-label="Close"
+                name="SynopsisReportForm" value="">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -881,16 +884,11 @@ class SynopsisReportForm extends React.Component {
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
                 { submitPlayingTimeOnlyButtonJSX }
-                { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned In'
+                { this.state.synopsisReport && pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
                   ? <PointTrackerTable
                     handleSubjectChange={ this.handleSubjectChange }
                     synopsisReport={ this.state.synopsisReport }
-                    // teachers={ this.props.content.studentData.teachers.filter(t => t.currentTeacher) }
-                    // deleteSubject= { this.deleteSubject }
-                    // createSubject={ this.createSubject }
-                    // isElementaryStudent={this.state.isElementaryStudent}
                     myRole={this.props.myRole}
-                    // saveSubjectTable={this.saveSubjectTable}
                   />
                   : null }
                 { communicationPillarsTableJSX }
