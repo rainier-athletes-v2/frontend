@@ -19,10 +19,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   doLogout: () => dispatch(authActions.logout()),
-  fetchProfiles: profile => dispatch(profileActions.fetchProfileReq(profile)),
+  // fetchProfiles: profile => dispatch(profileActions.fetchProfileReq(profile)),
   fetchMyProfile: profile => dispatch(profileActions.fetchMyProfileReq(profile)),
-  fetchStudents: studentIds => dispatch(profileActions.fetchStudentsReq(studentIds)),
-  fetchTeachers: studentIds => dispatch(profileActions.fetchTeachersReq(studentIds)),
+  // fetchStudents: studentIds => dispatch(profileActions.fetchStudentsReq(studentIds)),
+  // fetchTeachers: studentIds => dispatch(profileActions.fetchTeachersReq(studentIds)),
 });
 
 class Navbar extends React.Component {
@@ -34,7 +34,7 @@ class Navbar extends React.Component {
     };
   }
 
-  setSfOAuthUrl = () => {
+  setSFOAuthUrl = () => {
     const baseUrl = SF_OAUTH_AUTHORIZE_URL; // change test to login to move to production instance
     const redirect = `redirect_uri=${API_URL}/oauth/sf`;
     const scope = 'scope=id%20openid%20email%20profile%20api';
@@ -59,16 +59,16 @@ class Navbar extends React.Component {
     return <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>;
   }
 
-  renderAdmin = () => {
-    return <React.Fragment>
-      <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>
-      <li className="nav-item"><Link to="/admin" className="nav-link">Admin</Link></li>
-    </React.Fragment>;
-  }
+  // renderAdmin = () => {
+  //   return <React.Fragment>
+  //     <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>
+  //     <li className="nav-item"><Link to="/admin" className="nav-link">Admin</Link></li>
+  //   </React.Fragment>;
+  // }
 
   determineRole = () => {
     if (this.props.myProfile) {
-      return this.props.myProfile.role === 'mentor' ? this.renderMentor() : this.renderAdmin();
+      return this.renderMentor(); //this.props.myProfile.role === 'mentor' ? this.renderMentor() : this.renderAdmin();
     }
     return null;
   }
@@ -77,7 +77,7 @@ class Navbar extends React.Component {
     const JSXNotLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo" src={ rainierBtn } /></Link>
-        <span className="login nav-content"><a href={ this.setSfOAuthUrl() }><img className="google-btn" src={ googleBtn } /></a></span>
+        <span className="login nav-content"><a href={ this.setSFOAuthUrl() }><img className="google-btn" src={ googleBtn } /></a></span>
       </React.Fragment>
     );
 
@@ -94,14 +94,15 @@ class Navbar extends React.Component {
             {
               this.props.myProfile ? this.determineRole() : null
             }
-            <li className="nav-item dropdown">
+            {/* <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Welcome, { name }
               </a>
               <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a className="dropdown-item" onClick={ this.props.doLogout }>Logout</a>
               </div>
-            </li>
+            </li> */}
+            <li className="nav-item"><a className="nav-link" onClick={ this.props.doLogout }>Logout</a></li>
             <li className="nav-item">
               <a className="nav-link help" href="https://docs.google.com/presentation/d/e/2PACX-1vTRSMVBEvObOl1sCKPmXMChP8A4eZScVmrRrzS6mDw0Imi5LkbFd1sSgqDS-QEPcBD-gvBFwmanrPIC/pub"alt="Help Documentation" target="_blank" rel="noopener noreferrer">Help</a>
             </li>

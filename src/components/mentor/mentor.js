@@ -3,21 +3,26 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
-import PointTrackerForm from '../point-tracker-form/point-tracker-form';
+import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 
 import * as profileActions from '../../actions/profile';
-import * as scheduleActions from '../../actions/schedule';
+import * as srListActions from '../../actions/synopsis-report-list';
+import * as srActions from '../../actions/synopsis-report';
+import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_mentor.scss';
 
 const mapStateToProps = state => ({
   myStudents: state.myStudents,
   myProfile: state.myProfile,
+  synopsisReport: state.synopsisReport,
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchMyStudents: profile => dispatch(profileActions.fetchMyStudentsReq(profile)),
-  fetchStudentSchedule: studentId => dispatch(scheduleActions.fetchClassScheduleData(studentId)),
+  fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
+  fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
+  fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
+  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
 });
 
 class Mentor extends React.Component {
@@ -35,7 +40,6 @@ class Mentor extends React.Component {
     if (nextProps.myStudents) {
       return { myStudents: nextProps.myStudents };
     }
-
     return null;
   }
 
@@ -43,10 +47,17 @@ class Mentor extends React.Component {
     this.props.fetchMyStudents();
   }
 
+  // componentDidUpdate = (prevProps, prevState) => {
+  //   debugger;
+  //   if (!prevProps.synopsisReport && this.props.synopsisReport) {
+  //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
+  //   }
+  // }
+
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
     if (this.props.myStudents[i].role === 'student') {
-      // this.props.fetchStudentSchedule(this.props.myStudents[i].id);
+      this.props.fetchRecentSynopsisReports(this.props.myStudents[i].id);
       this.setState({
         ...this.state,
         content: this.props.myStudents[i],
@@ -62,7 +73,7 @@ class Mentor extends React.Component {
         return (
           <li
             className={ this.state.selected === i.toString() ? 'nav-item selected' : 'nav-item' }
-            key={student.schoolId}
+            key={i}
             data-index={i}
             onClick={ this.handleSidebarClick.bind(this) }>
             <a className="nav-link">
@@ -73,7 +84,7 @@ class Mentor extends React.Component {
       });
     }
 
-    return 'loading';
+    return 'Loading...';
   }
 
   checkRole() {
@@ -97,8 +108,22 @@ class Mentor extends React.Component {
     return null;
   }
 
-  handleButtonClick = () => {
-    console.log('mentor.js handleButtonClick');
+  handleSaveButtonClick = (e) => {
+    e.preventDefault();
+    if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
+    this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
+    this.setState({ modal: !this.state.modal });
+  }
+
+  handleEditSRClick = (e) => {
+    e.preventDefault();
+    this.props.clearSynopsisReportLink();
+    this.props.fetchSynopsisReport(e.target.value);
+    this.setState({ modal: !this.state.modal });
+  }
+
+  handleCancelButton = (e) => {
+    e.preventDefault();
     this.setState({ modal: !this.state.modal });
   }
 
@@ -116,10 +141,11 @@ class Mentor extends React.Component {
       <React.Fragment>
         <div className="container-fluid">
           <div className="row">
-          <Sidebar content={ this.fetchStudents() } role={ this.checkRole() }/>
-          <MentorContent content={ this.state.content } subPT={ this.state.subPT } buttonClick={ this.handleButtonClick } >
+          <Sidebar content={ this.fetchStudents() } role={ null }/>
+          <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
             {
-              this.state.modal ? <PointTrackerForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
+              this.state.modal ? <SynopsisReportForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
+                cancelClick={this.handleCancelButton}/> : null
             }
           </ MentorContent>
           </div>
@@ -131,9 +157,12 @@ class Mentor extends React.Component {
 
 Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
-  fetchStudentSchedule: PropTypes.func,
+  fetchRecentSynopsisReports: PropTypes.func,
+  fetchSynopsisReport: PropTypes.func,
+  clearSynopsisReportLink: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
+  synopsisReport: PropTypes.object,
 };
 
 

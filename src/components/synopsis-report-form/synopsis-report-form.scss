@@ -1,5 +1,10 @@
 @import '../../style/vars';
 
+span .title {
+  padding-top: 5px;
+  margin-top: 0px;
+}
+
 .point-tracker-modal {
     position: absolute;
     height: 77vh;
@@ -24,12 +29,47 @@
       border: 0 !important;
     }
 
+    .modal-header {
+      // outline: 1px solid red;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      height: 3em;
+
+      .title {
+        margin-top: 5px;
+      }
+
+      .modal-title {
+        // outline: 1px solid red;
+        padding: 0px;
+        margin: 0px;
+      }
+
+      .close {
+        display: inline;
+        margin: -1rem -1rem 0rem auto;
+      }
+    }
+
     .close > span {
       font-size: 2.5em;
       line-height: 0em;
       height: 0px;
       margin-bottom: 0px;
     }
+}
+
+label.title {
+  margin: 0px;
+  padding: 0px;
+}
+
+span.title {
+  // margin: 0px;
+  margin-top: 2px;
+  // padding: 0px;
 }
 
 .select-student, .select-date {
@@ -46,10 +86,13 @@ select {
 }
 
 .mentor-met-container {
+  // outline: 1px solid red;
   width: 100%;
   clear: both;
   line-height: 18px;
-  margin-top: 18px;
+  margin-top: 0px;
+  padding-top: 0px;
+
   .inline {
     margin-left: 12px;
   }
@@ -101,6 +144,10 @@ select {
     }
 
     h4 {
+      padding-top: 1em;
+    }
+
+    h5 {
       padding-top: 1em;
     }
 
