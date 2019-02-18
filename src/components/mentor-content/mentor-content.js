@@ -15,40 +15,35 @@ class MentorContent extends React.Component {
     const currentSchool = haveData ? student.studentData.school && student.studentData.school.find(s => s.currentSchool) : null;
     const currentSchoolName = currentSchool ? currentSchool.schoolName : '';
 
-    const currentSportsJSX = haveData ? (student.studentData.sports && student.studentData.sports.filter(s => s.currentlyPlaying).map((s, i) => (
+    const currentSportsJSX = haveData ? (student.studentData.teams && student.studentData.teams.filter(t => t.currentlyPlaying).map((t, i) => (
       <div className="team-info" key={`sport-${i}`}>
-        <span className="label">Sport: {s.sport}</span>
-        <span className="label">Team: {s.team}</span>
-        <span className="label">League: {s.league}</span>
-        <span className="label">Calendar: <a href={s.teamCalendarUrl ? s.teamCalendarUrl : '#'}
+        <span className="label">Team: {t.teamName}</span>
+        <span className="indented label">Sport: {t.sport}</span>
+        <span className="indented label">League: {t.league}</span>
+        <span className="indented label">Calendar: <a href={t.teamCalendarUrl ? t.teamCalendarUrl : '#'}
             alt="team calendar url"
             target="_blank"
             rel="noopener noreferrer"
             className="team-calendar-url">Click here</a></span>
+        <span className="indented label">Coach: {t.coach}</span>
+        <span className="indented label">Phone: {t.phone}</span>
+        <span className="indented label">Email: <a
+          href={t.email ? `mailto:${t.email}` : '#'}
+          target="_blank"
+          rel="noopener noreferrer">{t.email}</a></span>
       </div>
     ))) : null;
 
-    const currentCoachesJSX = haveData ? (student.studentData.coaches && student.studentData.coaches.filter(c => c.currentCoach).map(c => (
-      <div className="current-coaches" key={c._id}>
-        <span className="label">Name: {c.coach.name}</span>
-        <span className="label">Phone: {c.coach.phone}</span>
-        <span className="label">Email: <a
-          href={c.coach.email ? `mailto:${c.coach.email}` : '#'}
+    const familyMembersJSX = haveData ? (student.studentData.family && student.studentData.family.map((f, i) => (
+      <div className="current-family" key={ i }>
+        <span className="label">Name: {`${f.name}`}</span>
+        {/* <span className="label">Student Residence: {f.weekdayGuardian ? 'weekdays' : ''} {f.weekendGuardian ? 'weekends' : ''}</span> */}
+        {/* <span className="label">Cell: {f.member.cellPhone ? f.member.cellPhone : ''}</span> */}
+        <span className="indented label">Phone: {f.phone ? f.phone : ''}</span>
+        <span className="indented label">Email: <a
+          href={f.email ? `mailto:${f.email}` : '#'}
           target="_blank"
-          rel="noopener noreferrer">{c.coach.primaryEmail}</a></span>
-      </div>
-    ))) : null;
-
-    const familyMembersJSX = haveData ? (student.studentData.family && student.studentData.family.map(f => (
-      <div className="current-family" key={f._id}>
-        <span className="label">Name: {`${f.member.firstName} ${f.member.lastName}`}</span>
-        <span className="label">Student Residence: {f.weekdayGuardian ? 'weekdays' : ''} {f.weekendGuardian ? 'weekends' : ''}</span>
-        <span className="label">Cell: {f.member.cellPhone ? f.member.cellPhone : ''}</span>
-        <span className="label">Phone: {f.member.phone ? f.member.phone : ''}</span>
-        <span className="label">Primary email: <a
-          href={f.member.primaryEmail ? `mailto:${f.member.primaryEmail}` : '#'}
-          target="_blank"
-          rel="noopener noreferrer">{f.member.primaryEmail}</a></span>
+          rel="noopener noreferrer">{f.email}</a></span>
       </div>
     ))) : null;
 
@@ -80,17 +75,21 @@ class MentorContent extends React.Component {
               { student.primaryEmail }
             </span>
           </div>
-          {/* <div className="col-md-6">
-            <span className="title">Synergy Account</span>
+          <div className="col-md-6">
+            <span className="title"><a href="https://wa-bsd405-psv.edupoint.com/PXP2_Login_Student.aspx?regenerateSessionId=True"
+              alt="team calendar url"
+              target="_blank"
+              rel="noopener noreferrer">Synergy Account (Click to Visit)</a>
+            </span>
             <span>
               <FontAwesomeIcon icon="user" className="fa-2x"/>
-              {haveData ? student.studentData.synergy && student.studentData.synergy.username : ''}
+              {haveData ? student.studentData.synergyUsername : ''}
             </span>
             <span>
               <FontAwesomeIcon icon="key" className="fa-2x"/>
-              {haveData ? student.studentData.synergy && Buffer.from(student.studentData.synergy.password, 'base64').toString() : ''}
+              {haveData ? student.studentData.synergyPassword : ''} {/* Buffer.from(student.studentData.synergyPassword, 'base64').toString() */}
             </span>
-          </div> */}
+          </div>
         </div>
         <div className="row">
           <div className="profile-link">
@@ -113,12 +112,6 @@ class MentorContent extends React.Component {
           <div className="col-md-6">
             <span className="title">Sport Info</span>
             {currentSportsJSX}
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-6">
-            <span className="title">Current Coaches</span>
-            {currentCoachesJSX}
           </div>
         </div>
         <div className="row">

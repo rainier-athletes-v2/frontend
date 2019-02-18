@@ -87,12 +87,21 @@
     text-transform: uppercase;
     color: #A9A9A9;
     margin-top: 12px;
+    margin-bottom: 15px;
     font-weight: 600;
   }
 
   .label {
     color:black;
     font-weight: 600;
+    height: 1em;
+    line-height: 1em;
+    margin-bottom: 8px;
+
+  }
+  
+  .indented {
+    margin-left: 10px;
   }
 
   .name {
