@@ -747,6 +747,23 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
+    const synergyJSX = (
+      <div className="col-md-6">
+        <span className="title"><a href="https://wa-bsd405-psv.edupoint.com/PXP2_Login_Student.aspx?regenerateSessionId=True"
+          alt="team calendar url"
+          target="_blank"
+          rel="noopener noreferrer">Synergy Account (Click to Visit)</a></span>
+        <span>
+          <FontAwesomeIcon icon="user" className="fa-2x"/>
+          {this.props.content && this.props.content.studentData.synergyUsername}
+        </span>
+        <span>
+          <FontAwesomeIcon icon="key" className="fa-2x"/>
+          {this.props.content && this.props.content.studentData.synergyPassword} {/* Buffer.from(this.props.content.studentData.synergy.password, 'base64').toString()} */}
+        </span>
+      </div>
+    );
+
     // // add back in calc playing time calc below
     const playingTimeJSX = (
       <React.Fragment>
@@ -895,6 +912,7 @@ class SynopsisReportForm extends React.Component {
                     myRole={this.props.myRole}
                   />
                   : null }
+                { synergyJSX }
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
                 { synopsisCommentsJSX }
