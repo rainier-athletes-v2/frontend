@@ -371,9 +371,9 @@ class SynopsisReportForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const playingTimeGranted = pl.turnedIn(sr.Point_Sheet_Status__c) || !!sr.Mentor_Granted_Playing_Time__c;
-    const commentsRequired = pl.playingTimeOnly(sr.Synopsis_Report_Status__c)
-      || !pl.turnedIn(sr.Point_Sheet_Status__c)
+    const playingTimeGranted = !!sr.Mentor_Granted_Playing_Time__c || (pl.turnedIn(sr.Point_Sheet_Status__c) && this.validPointTrackerScores(sr));
+    const commentsRequired = (pl.playingTimeOnly(sr.Synopsis_Report_Status__c) && !pl.turnedIn(sr.Point_Sheet_Status__c))
+      // || !pl.turnedIn(sr.Point_Sheet_Status__c)
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
@@ -400,11 +400,12 @@ class SynopsisReportForm extends React.Component {
     if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return false;
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
-      subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
+      subject.Stamps__c && subject.Half_Stamps__c && subject.Excused_Days__c
+      && subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
     ));
-    const isElementaryStudent = sr.Student_Grade__c < 6;
+    const isElementaryStudent = sr.Student_Grade__c && sr.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
-      || sr.PointTrackers__r.records.every(subject => subject.Grade__c !== '');
+      || sr.PointTrackers__r.records.every(subject => !!subject.Grade__c);
     return goodSubjectStamps && goodSubjectGrades;
   }
 
@@ -429,7 +430,7 @@ class SynopsisReportForm extends React.Component {
     event.preventDefault();
     const { synopsisReport } = this.state;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.PlayingTimeOnly;
-    debugger;
+
     if (this.validMentorInput(synopsisReport)) {
       this.setState({ ...this.state, waitingOnSaves: true });
       this.props.saveSynopsisReport({ ...synopsisReport });
@@ -870,8 +871,11 @@ class SynopsisReportForm extends React.Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">SYNOPSIS REPORT</h5>
-              <button type="button" className="close" onClick={ this.props.buttonClick } data-dismiss="modal" aria-label="Close"
-                name="SynopsisReportForm" value="">
+              <button type="button" 
+                className="close" 
+                onClick={ this.props.cancelClick }
+                data-dismiss="modal" 
+                aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -911,7 +915,7 @@ class SynopsisReportForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state.synopsisReport} onClose={ this.props.buttonClick }/> : synopsisReportForm }
+        { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state.synopsisReport} onClose={ this.props.saveClick }/> : synopsisReportForm }
         {/* { synopsisReportForm } */}
       </div>
     );
@@ -925,7 +929,8 @@ SynopsisReportForm.propTypes = {
   handleChange: PropTypes.func,
   saveSynopsisReport: PropTypes.func,
   createSynopsisReportPdf: PropTypes.func,
-  buttonClick: PropTypes.func,
+  saveClick: PropTypes.func,
+  cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
 };

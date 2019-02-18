@@ -8,6 +8,7 @@ import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
+import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_mentor.scss';
 
@@ -21,6 +22,7 @@ const mapDispatchToProps = dispatch => ({
   fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
+  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
 });
 
 class Mentor extends React.Component {
@@ -106,13 +108,22 @@ class Mentor extends React.Component {
     return null;
   }
 
-  handleButtonClick = (e) => {
+  handleSaveButtonClick = (e) => {
     e.preventDefault();
-    console.log('name', e.target.name);
-    console.log('value', e.target.value);
-    debugger;
     if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
-    this.props.fetchRecentSynopsisReports(this.state.content.id);
+    this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
+    this.setState({ modal: !this.state.modal });
+  }
+
+  handleEditSRClick = (e) => {
+    e.preventDefault();
+    this.props.clearSynopsisReportLink();
+    this.props.fetchSynopsisReport(e.target.value);
+    this.setState({ modal: !this.state.modal });
+  }
+
+  handleCancelButton = (e) => {
+    e.preventDefault();
     this.setState({ modal: !this.state.modal });
   }
 
@@ -131,9 +142,10 @@ class Mentor extends React.Component {
         <div className="container-fluid">
           <div className="row">
           <Sidebar content={ this.fetchStudents() } role={ null }/>
-          <MentorContent content={ this.state.content } subPT={ this.state.subPT } buttonClick={ this.handleButtonClick } >
+          <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
             {
-              this.state.modal ? <SynopsisReportForm content={ this.state.content } buttonClick={ this.handleButtonClick } /> : null
+              this.state.modal ? <SynopsisReportForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
+                cancelClick={this.handleCancelButton}/> : null
             }
           </ MentorContent>
           </div>
@@ -147,6 +159,7 @@ Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
+  clearSynopsisReportLink: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,

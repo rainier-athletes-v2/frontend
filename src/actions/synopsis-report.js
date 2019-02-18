@@ -13,8 +13,7 @@ export const clearSynopsisReport = () => ({
 
 export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
   const { token } = store.getState();
-  console.log('fetchSR srId:', srId);
-  debugger;
+
   return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}/${srId}`)
     .set('Authorization', `Bearer ${token}`)
     .send('Content-Type', 'application/json')
@@ -30,8 +29,5 @@ export const saveSynopsisReport = (sr) => (store) => { // eslint-disable-line
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
-    .then((res) => {
-      console.log('saveSR response.status', res.status);
-      // return store.dispatch(clearSynopsisReport());
-    });
+    .then();
 };

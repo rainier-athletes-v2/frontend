@@ -135,7 +135,7 @@ class MentorContent extends React.Component {
       <div role="main" className="col-md-8 panel content-panel" style={ { overflow: 'scroll' } }>
         <div className="sidebar-sticky">
           <span className="content-heading">{`Student Profile: ${student.firstName ? student.firstName : ''} ${student.lastName ? student.lastName : ''}`}</span>
-          <SynopsisReportsTable onClick={ this.props.buttonClick }/>
+          <SynopsisReportsTable onClick={ this.props.editSrClick }/>
           { student.studentData ? studentProfile : null }
         </div>
       </div>
@@ -152,7 +152,7 @@ MentorContent.propTypes = {
   title: PropTypes.string,
   btnClick: PropTypes.func,
   children: PropTypes.node,
-  buttonClick: PropTypes.func,
+  editSrClick: PropTypes.func,
 };
 
 export default MentorContent;
