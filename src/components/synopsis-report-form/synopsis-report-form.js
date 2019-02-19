@@ -146,7 +146,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  createSynopsisReportPdf: sr => dispatch(srPdfActions.createSynopsisReportPdf(sr)),
+  createSynopsisReportPdf: (student, sr) => dispatch(srPdfActions.createSynopsisReportPdf(student, sr)),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -400,12 +400,13 @@ class SynopsisReportForm extends React.Component {
     if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return false;
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
-      subject.Stamps__c && subject.Half_Stamps__c && subject.Excused_Days__c
+      subject.Stamps__c >= 0 && subject.Half_Stamps__c >= 0 && subject.Excused_Days__c >= 0 
       && subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
     ));
-    const isElementaryStudent = sr.Student_Grade__c && sr.Student_Grade__c < 6;
+    const isElementaryStudent = sr.Student__r && sr.Student__r.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
       || sr.PointTrackers__r.records.every(subject => !!subject.Grade__c);
+
     return goodSubjectStamps && goodSubjectGrades;
   }
 
@@ -419,7 +420,7 @@ class SynopsisReportForm extends React.Component {
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       // mergedSynopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      this.props.createSynopsisReportPdf({ ...mergedSynopsisReport });
+      this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
       // this.setState({ synopsisReport: null });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line

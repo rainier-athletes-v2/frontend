@@ -23,8 +23,8 @@ export const clearSynopsisReportLink = () => ({
   type: 'SYNOPSIS_REPORT_LINK_CLEAR',
 });
 
-const synopsisReportToHTML = (synopsisReport, student) => {
-  const synopsisReportHTML = <SynopsisReportHtml synopsisReport={synopsisReport} student={student}/>;
+const synopsisReportToHTML = (student, synopsisReport) => {
+  const synopsisReportHTML = <SynopsisReportHtml student={student} synopsisReport={synopsisReport}/>;
 
   // this css styles the html created in components/synopsis-report
   return (
@@ -100,22 +100,26 @@ const synopsisReportToHTML = (synopsisReport, student) => {
   );
 };
 
-export const createSynopsisReportPdf = synopsisReport => (store) => {
+export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
   const { token } = store.getState();
+  const studentName = synopsisReport.Student__r.Name;
+  const title = synopsisReport.Week__c;
+
   // const { student, studentName, title } = synopsisReport
 
-  // const data = {
-  //   name: studentName,
-  //   title,
-  //   html: synopsisReportToHTML(pointTracker, student),
-  // };
+  const data = {
+    name: studentName,
+    title,
+    html: synopsisReportToHTML(student, synopsisReport),
+  };
 
-  // return superagent.post(`${API_URL}${routes.SYNOPSIS_REPORT}`)
-  //   .set('Authorization', `Bearer ${token}`)
-  //   .set('Content-Type', 'application/json')
-  //   .send(data)
-  //   .then((res) => {
-  //     return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
-  //   });
+  return superagent.post(`${API_URL}${routes.SYNOPSIS_PDF_ROUTE}`)
+    .set('Authorization', `Bearer ${token}`)
+    .set('Content-Type', 'application/json')
+    .send(data)
+    .then((res) => {
+      console.log('post sr response body', res.body);
+      return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+    });
   return store.dispatch(setSynopsisReportLink('http://www.google.com'));
 };
