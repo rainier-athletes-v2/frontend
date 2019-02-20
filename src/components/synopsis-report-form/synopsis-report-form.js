@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { getReportingPeriods } from '../../lib/utils';
 import PointTrackerTable from '../point-tracker-table/point-tracker-table';
 import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
@@ -11,97 +10,6 @@ import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
 
 import './synopsis-report-form.scss';
-
-// const emptySR = {
-//   date: new Date(Date.now()).toDateString(), // records[0].Start_Date__c
-//   title: '', // records[0].Week__c
-//   student: '', // undefined
-//   studentName: '', // records[0].Student__r.Name
-//   subjects: [{ // records[0].PointTrackers__r.records[n]
-//     subjectName: 'Tutorial', // ...Class__r.Name
-//     period: '', // ...Class__r.Period__c,
-//     teacher: '', // ...Class__r.Teacher__r.Name
-//     scoring: {
-//       excusedDays: 0, // records[n].Excused_Days__c
-//       stamps: 0, // records[n].Stamps__c,
-//       halfStamps: 0, // records[n].Half_Stamps__c
-//     },
-//     grade: 'N/A', // records[n].Grade__c
-//   }],
-//   mentorMadeScheduledCheckin: -1, // records[0].Weekly_Check_In_Status__c
-//   studentMissedScheduledCheckin: -1, // same as above
-//   communications: [
-//     {
-//       with: 'Student', // records[0].Student_Touch_Points__c
-//       role: 'student',
-//       f2fCheckIn: false,
-//       f2fRaEvent: false,
-//       f2fGameOrPractice: false,
-//       basecampOrEmail: false,
-//       phoneOrText: false,
-//       familyMeeting: false,
-//       notes: '', // records[0].Student_Touch_Points_Other_c
-//     },
-//     {
-//       with: 'Family', // records[0].Family_Touch_Points__c
-//       role: 'family',
-//       f2fCheckIn: false,
-//       f2fRaEvent: false,
-//       f2fGameOrPractice: false,
-//       basecampOrEmail: false,
-//       phoneOrText: false,
-//       familyMeeting: false,
-//       notes: '', // records[0].Family_Touch_Points_Other__c
-//     },
-//     {
-//       with: 'Teacher', // records[0].Teacher_Touch_Points__c
-//       role: 'teacher',
-//       f2fCheckIn: false,
-//       f2fRaEvent: false,
-//       f2fGameOrPractice: false,
-//       basecampOrEmail: false,
-//       phoneOrText: false,
-//       familyMeeting: false,
-//       notes: '', // records[0].Teacher_Touch_Points_Other__c
-//     },
-//     {
-//       with: 'Coach', // records[0].Coach_Touch_Points__c
-//       role: 'coach',
-//       f2fCheckIn: false,
-//       f2fRaEvent: false,
-//       f2fGameOrPractice: false,
-//       basecampOrEmail: false,
-//       phoneOrText: false,
-//       familyMeeting: false,
-//       notes: '', // records[0].Coach_Touch_Points_Other__c
-//     },
-//   ],
-//   oneTeam: {
-//     wednesdayCheckin: false, // records[0].Wednesday_Check_In__c
-//     mentorMeal: false, // records[0].Mentor_Meal__c
-//     sportsGame: false, // records[0].Sports_Game__c
-//     communityEvent: false, // records[0].Community_event__c
-//     iepSummerReview: false, // records[0].IEP_Summer_Review_Meeting__c
-//     other: false, // records[0].Other_Meetup__c
-//   },
-//   oneTeamNotes: '', // records[0].One_Team_Notes__c
-//   pointSheetStatus: { // records[0].Point_Sheet_Status__c,
-//     turnedIn: true,
-//     lost: false,
-//     incomplete: false,
-//     absent: false,
-//     other: false,
-//   },
-//   pointSheetStatusNotes: '', // records[0].Point_Sheet_Status_Notes__c
-//   earnedPlayingTime: '', // records[0].Earned_Playing_Time__c
-//   mentorGrantedPlayingTime: '', // records[0].Mentor_Granted_Playing_Time__c
-//   synopsisComments: {
-//     mentorGrantedPlayingTimeComments: '', // records[0].Mentor_Granted_Playing_Time_Explanation__c
-//     studentActionItems: '', // records[0].Student_Action_Items__c
-//     sportsUpdate: '', // records[0].Sports_Update__c
-//     additionalComments: '', // records[0].Additional_Comments__c
-//   },
-// };
 
 const oneTeam = [
   'wednesdayCheckin',
@@ -112,19 +20,7 @@ const oneTeam = [
   'oneTeamOther',
 ];
 
-// const commPillars = [
-//   'Student',
-//   'Family',
-//   'Teacher',
-//   'Coach',
-// ];
-
 const names = {
-  turnedIn: 'Point Sheet turned in and at least 25% complete: ',
-  lost: 'Point Sheet Lost',
-  incomplete: 'Point Sheet less than 25% completed',
-  absent: 'Student Reported Absent',
-  other: 'Other',
   mentorGrantedPlayingTimeComments: { text: 'Mentor Granted Playing Time Explanation:', prop: 'Mentor_Granted_Playing_Time_Explanation__c' },
   studentActionItems: { text: 'Student Action Items:', prop: 'Student_Action_Items__c' },
   sportsUpdate: { text: 'Sports Update:', prop: 'Sports_Update__c' },
@@ -146,7 +42,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  createSynopsisReportPdf: sr => dispatch(srPdfActions.createSynopsisReportPdf(sr)),
+  createSynopsisReportPdf: (student, sr) => dispatch(srPdfActions.createSynopsisReportPdf(student, sr)),
+  setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -177,27 +74,6 @@ class SynopsisReportForm extends React.Component {
       });
     }
   }
-
-  // shouldComponentUpdate = (prevProps, prevState) => {
-  //   if (prevState.synopsisReport) return false;
-  //   return true;
-  // }
-
-  // static getDerivedStateFromProps = (nextProps) => {
-  //   console.log('sr getDerivedState', nextProps);
-  //   if (nextProps.synopsisReport) {
-  //     return { synopsisReport: nextProps.synopsisReport };
-  //   }
-
-  //   return null;
-  // }
-
-  // componentDidUpdate = (prevProps, prevState) => {
-  //   debugger;
-  //   if (!prevProps.synopsisReport && this.props.synopsisReport) {
-  //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
-  //   }
-  // }
 
   initCommunicationsState = (sr) => {
     if (!sr) return null;
@@ -260,49 +136,18 @@ class SynopsisReportForm extends React.Component {
   }
 
   componentDidMount = () => {
-    // const selectedStudent = this.props.content;
-    // const { lastPointTracker } = selectedStudent.studentData;
-
     this.setState((prevState) => {
       const newState = { ...prevState };
-      //   newState = lastPointTracker || emptySR;
-      //   newState.student = selectedStudent;
-      //   newState.studentName = `${selectedStudent.firstName} ${selectedStudent.lastName}`;
-      //   newState.isElementaryStudent = selectedStudent.studentData.school
-      //     && selectedStudent.studentData.school.length
-      //     ? selectedStudent.studentData.school.find(s => s.currentSchool).isElementarySchool
-      //     : false;
-      //   newState.mentorMadeScheduledCheckin = -1;
-      //   newState.studentMissedScheduledCheckin = -1;
-      //   newState.playingTimeOnly = false;
-      //   // elementary has no tutorial so pop it from the empty point tracker
-      //   if (newState.isElementaryStudent && !lastPointTracker) newState.subjects.pop();
-      //   newState.title = `${newState.studentName}: ${getReportingPeriods()[1]}`;
       newState.synopsisSaved = false;
-      //   newState.mentorGrantedPlayingTime = '';
-      //   newState.synopsisComments.mentorGrantedPlayingTimeComments = '';
-      //   newState.pointSheetStatusNotes = '';
-      //   newState.pointSheetStatus.lost = false;
-      //   newState.pointSheetStatus.incomplete = false;
-      //   newState.pointSheetStatus.absent = false;
-      //   newState.pointSheetStatus.other = false;
-      //   newState.teachers = this.props.content.studentData.teachers;
       newState.communications = this.initCommunicationsState(this.props.synopsisReport);
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
       newState.metWithMentee = true;
-      // newState.studentMissedMentor = true;
       newState.pointSheetStatusOK = true;
       newState.pointSheetStatusNotesOK = true;
       return newState;
     });
   }
-
-  // handleTitleChange = (event) => {
-  //   const newState = { ...this.state, synopsisSaved: false };
-  //   newState.title = `${newState.studentName}: ${event.target.value}`;
-  //   this.setState(newState);
-  // }
 
   handleSubjectChange = (event) => {
     event.persist();
@@ -400,12 +245,13 @@ class SynopsisReportForm extends React.Component {
     if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return false;
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
-      subject.Stamps__c && subject.Half_Stamps__c && subject.Excused_Days__c
+      subject.Stamps__c >= 0 && subject.Half_Stamps__c >= 0 && subject.Excused_Days__c >= 0 
       && subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
     ));
-    const isElementaryStudent = sr.Student_Grade__c && sr.Student_Grade__c < 6;
+    const isElementaryStudent = sr.Student__r && sr.Student__r.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
       || sr.PointTrackers__r.records.every(subject => !!subject.Grade__c);
+
     return goodSubjectStamps && goodSubjectGrades;
   }
 
@@ -417,10 +263,8 @@ class SynopsisReportForm extends React.Component {
     if (validMentorInput && (pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? this.validPointTrackerScores(synopsisReport) : true)) {      
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
-      // mergedSynopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      this.props.createSynopsisReportPdf({ ...mergedSynopsisReport });
-      // this.setState({ synopsisReport: null });
+      this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -434,8 +278,7 @@ class SynopsisReportForm extends React.Component {
     if (this.validMentorInput(synopsisReport)) {
       this.setState({ ...this.state, waitingOnSaves: true });
       this.props.saveSynopsisReport({ ...synopsisReport });
-      this.props.createSynopsisReportPdf({ ...synopsisReport });
-      // this.setState({ synopsisReport: null });
+      this.props.setSynopsisReportLink('playing time only'); // so SR summary model is triggered.
     } else {
       alert('Please provide required information before submitting playing time.'); // eslint-disable-line
     }
@@ -506,7 +349,7 @@ class SynopsisReportForm extends React.Component {
   handleCommPillarChange = (event) => {
     const { name, options } = event.target;
 
-    let selectValues = ''; // this.state.synopsisReport && this.state.synopsisReport[`${name}_Touch_Points__c`];
+    let selectValues = '';
     for (let i = 0; i < options.length; i++) {
       if (options[i].selected) {
         selectValues += `${selectValues.length > 0 ? ';' : ''}${options[i].value}`;
@@ -633,7 +476,7 @@ class SynopsisReportForm extends React.Component {
               type="checkbox"
               name={ names[keyName].prop} // oneTeamQuestion }
               onChange= { this.handleCheckboxChange }
-              checked={ this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop] }/>
+              checked={ (this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop]) || false }/>
             <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
           </div>
         ))
@@ -842,7 +685,6 @@ class SynopsisReportForm extends React.Component {
     );
 
     const synopsisComments = [
-      // 'mentorGrantedPlayingTimeComments', // records[0].Mentor_Granted_Playing_Time_Explanation__c
       'studentActionItems', // records[0].Student_Action_Items__c
       'sportsUpdate', // records[0].Sports_Update__c
       'additionalComments', // records[0].Additional_Comments__c
@@ -870,25 +712,7 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    // const isValidSynopsisReport = (
-    //   this.props.synopsisReport
-    //   && this.props.synopsisReport.PointTrackers__r
-    //   && this.props.synopsisReport.PointTrackers__r.records
-    //   && this.props.synopsisReport.PointTrackers__r.records[0].Class__r
-    //   && this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r
-    //   && this.props.synopsisReport.Student__r
-    // );
-    // isValidSynopsisReport = () => {
-    //   const sr = !!this.props.synopsisReport;
-    //   const srpt = !!this.propslsynopsisReport.PointTrackers__r;
-    //   const srptr = !!this.props.synopsisReport.PointTrackers__r.records;
-    //   const srptr0c = !!this.props.synopsisReport.PointTrackers__r.records[0].Class__r;
-    //   const srptr0ct = !! this.props.synopsisReport.PointTrackers__r.records[0].Class__r.Teacher__r;
-    //   const srs = !!this.props.synopsisReport.Student__r;
-    //   return sr && srpt && srptr && srptr0c && srptr0ct & srs;
-    // };
-
-    const synopsisReportForm = this.props.synopsisReport // || isValidSynopsisReport
+    const synopsisReportForm = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
@@ -936,12 +760,15 @@ class SynopsisReportForm extends React.Component {
         </div>
       </div>
       )
-      : null; // alert('Student does not have properly initialized data.');
+      : null; 
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved ? <SynopsisReportSummary synopsisReport={this.state.synopsisReport} onClose={ this.props.saveClick }/> : synopsisReportForm }
-        {/* { synopsisReportForm } */}
+        { this.state.synopsisSaved 
+          ? <SynopsisReportSummary 
+            synopsisReport={this.state.synopsisReport} 
+            onClose={ this.props.saveClick }/> 
+          : synopsisReportForm }
       </div>
     );
   }
@@ -954,6 +781,7 @@ SynopsisReportForm.propTypes = {
   handleChange: PropTypes.func,
   saveSynopsisReport: PropTypes.func,
   createSynopsisReportPdf: PropTypes.func,
+  setSynopsisReportLink: PropTypes.func,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,

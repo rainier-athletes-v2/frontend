@@ -4,19 +4,21 @@ import * as pl from '../../lib/pick-list-tests';
 import './synopsis-report-html.scss';
 
 export default function SynopsisReportHtml(props) {
-  const { synopsisReport, student } = props;
-  const pointTrackers = synopsisReport.pointsTrackers__r.records;
+  const { student, synopsisReport } = props;
+  const pointTrackers = synopsisReport.PointTrackers__r.records;
   const studentsSchoolName = pointTrackers[0] && pointTrackers[0].Class__r.School__r.Name;
   const gradeLevel = synopsisReport.Student__r.Student_Grade__c;
   const isMiddleSchool = gradeLevel > 5 && gradeLevel < 9;
+  // const isElementarySchool = gradeLevel < 6;
+  // const isHighSchool = gradeLevel > 8;
   const playingTimeOverride = synopsisReport.Mentor_Granted_Playing_Time__c !== ''
     && synopsisReport.Mentor_Granted_Playing_Time__c !== synopsisReport.Earned_Playing_Time__c;
-  const playingTimeOnly = synopsisReport.Synopsis_Report_Status__c === 'Playing time only';
+  const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
 
   const pointPercentage = (subject) => {
-    const excusedDays = subject.Excused_Days__c;
-    const stamps = subject.Stamps__c;
-    const halfStamps = subject.Half_Stamps__c;
+    const excusedDays = subject.Excused_Days__c || 0;
+    const stamps = subject.Stamps__c || 0;
+    const halfStamps = subject.Half_Stamps__c || 0;
     
     const maxPointsPossible = subject.Class__r.Name.toLowerCase() !== 'tutorial'
       ? (40 - excusedDays * 8)
@@ -26,7 +28,7 @@ export default function SynopsisReportHtml(props) {
     return Math.round((percentage * 100));
   };
 
-  // styling for this html is in actions/point-tracker.js
+  // styling for this html is in actions/synopsis-report-pdf.js
   const scoreTableJSX = <React.Fragment>
     <table className="scoring-table">
       <thead>
@@ -42,7 +44,7 @@ export default function SynopsisReportHtml(props) {
         </tr>
       </thead>
       <tbody>
-        {synopsisReport.PointTrackers__r.records.map((subject, row) => {
+        {pointTrackers.map((subject, row) => {
           if (subject.Class__r.Name.toLowerCase() !== 'tutorial') {
             return (
             <tr key={ subject.Class__r.Name }>
@@ -52,7 +54,7 @@ export default function SynopsisReportHtml(props) {
               <td key={ `${subject.Class__r.Name}${row}2` }>{ !playingTimeOnly ? subject.Excused_Days__c : 'N/A' } </td>
               <td key={ `${subject.Class__r.Name}${row}3` }>{ !playingTimeOnly ? subject.Stamps__c : 'N/A' }</td>
               <td key={ `${subject.Class__r.Name}${row}4` }>{ !playingTimeOnly ? subject.Half_Stamps__c : 'N/A' }</td>
-              <td key={ `${subject.Class__r.Name}${row}5` }>{ !playingTimeOnly ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.scoring.Half_Stamps__c : 'N/A' }</td>
+              <td key={ `${subject.Class__r.Name}${row}5` }>{ !playingTimeOnly ? 20 - subject.Excused_Days__c * 4 - subject.Stamps__c - subject.Half_Stamps__c : 'N/A' }</td>
               <td key={ `${subject.Class__r.Name}${row}6` }>{ !playingTimeOnly ? pointPercentage(subject) : 'N/A' }</td>
             </tr>
             );
@@ -82,29 +84,31 @@ export default function SynopsisReportHtml(props) {
     </table>
     </React.Fragment>;
   
-  // const sportsInfoJSX = <React.Fragment>
-  //   <h3>Team Information</h3>
-  //   <table>
-  //     <thead>
-  //       <tr>
-  //         <th>Team</th>
-  //         <th>Sport</th>
-  //         <th>League</th>
-  //         <th>Calendar</th>
-  //       </tr>
-  //     </thead>
-  //     <tbody>
-  //       {student.studentData.sports.filter(s => s.currentlyPlaying).map((sport, i) => (
-  //         <tr key={sport.sport}>
-  //           <td key={`${sport.team}${i}`}>{sport.team}</td>
-  //           <td key={`${sport.sport}${i}`}>{sport.sport}</td>
-  //           <td key={`${sport.league}${i}`}>{sport.league}</td>
-  //           <td key={`calendar${i}`}><a href={sport.teamCalendarUrl} target="_blank" rel="noopener noreferrer">Calendar</a></td>
-  //         </tr>
-  //       ))}
-  //     </tbody>
-  //   </table>
-  // </React.Fragment>;
+  const sportsInfoJSX = <React.Fragment>
+    <h3>Team Information</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Coach</th>
+          <th>Coach&#39;s Email</th>
+          <th>Coach&#39;s Phone</th>
+          <th>Calendar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {student.studentData.teams.filter(s => s.currentlyPlaying).map((sport, i) => (
+          <tr key={ sport.sport }>
+            <td key={`${sport.teamName}${i}`}>{sport.teamName}</td>
+            <td key={`${sport.coach}${i}`}>{sport.coach}</td>
+            <td key={`${sport.email}${i}`}>{sport.email}</td>
+            <td key={`${sport.phone}${i}`}>{sport.phone}</td>
+            <td key={`calendar${i}`}><a href={sport.teamCalendarUrl} target="_blank" rel="noopener noreferrer">Calendar</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </React.Fragment>;
 
   const studentCalendarJSX = <React.Fragment>
     <h3><a href={student.studentData.googleCalendarUrl} target="_blank" rel="noopener noreferrer">Student&rsquo;s Google Calendar</a></h3>
@@ -149,7 +153,7 @@ export default function SynopsisReportHtml(props) {
               </React.Fragment> }
           {scoreTableJSX}
           {studentCalendarJSX}
-          {/* {sportsInfoJSX} */}
+          {sportsInfoJSX}
           {playingTimeJSX} 
           {mentorCommentsJSX}        
           <h3>Student Action Items</h3>
@@ -161,7 +165,6 @@ export default function SynopsisReportHtml(props) {
 
     </body>
   </React.Fragment>;
-  console.log(synopsisReportHTML);
   return synopsisReportHTML;
 }
 
