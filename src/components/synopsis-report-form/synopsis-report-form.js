@@ -225,7 +225,9 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-
+    // debugger;
+    // const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) || !sr.Point_Sheet_Status__c
+    //   || sr.Point_Sheet_Status_Notes__c;
     this.setState({
       playingTimeGranted,
       commentsMade,
@@ -519,7 +521,7 @@ class SynopsisReportForm extends React.Component {
               <option key="4" value="Absent">Absent</option>
               <option key="5" value="Other">Other</option>
             </select>
-            { this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
+            { this.state.synopsisReport && !(pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) || pl.none(this.state.synopsisReport.Point_Sheet_Status__c))
               ? <div className="survey-question-container">
                   <label className={`title ${this.state.pointSheetStatusNotesOK 
                     ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</label>
