@@ -4,16 +4,6 @@ import ReactDOMServer from 'react-dom/server';
 import SynopsisReportHtml from '../components/synopsis-report-html/synopsis-report-html';
 import * as routes from '../lib/routes';
 
-// export const setPointTracker = pointTracker => ({
-//   type: 'POINT_TRACKER_SET',
-//   payload: pointTracker,
-// });
-
-// export const setPointTrackers = pointTrackers => ({
-//   type: 'POINT_TRACKERS_SET',
-//   payload: pointTrackers,
-// });
-
 export const setSynopsisReportLink = link => ({
   type: 'SYNOPSIS_REPORT_LINK_SET',
   payload: link,
@@ -102,14 +92,11 @@ const synopsisReportToHTML = (student, synopsisReport) => {
 
 export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
   const { token } = store.getState();
-  const studentName = synopsisReport.Student__r.Name;
-  const title = synopsisReport.Week__c;
-
-  // const { student, studentName, title } = synopsisReport
-
+  
   const data = {
-    name: studentName,
-    title,
+    name: synopsisReport.Student__r.Name,
+    school: synopsisReport.PointTrackers__r.records[0].Class__r.School__r.Name,
+    title: synopsisReport.Week__c,
     html: synopsisReportToHTML(student, synopsisReport),
   };
 
@@ -118,8 +105,9 @@ export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
     .set('Content-Type', 'application/json')
     .send(data)
     .then((res) => {
-      console.log('post sr response body', res.body);
       return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+    })
+    .catch((err) => {
+      return store.dispatch(setSynopsisReportLink(`Error status ${err.status} returned`));
     });
-  return store.dispatch(setSynopsisReportLink('http://www.google.com'));
 };

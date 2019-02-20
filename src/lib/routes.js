@@ -1,11 +1,11 @@
 // export const LOGIN_ROUTE = '/login';
-// export const PROFILE_ROUTE = '/profiles';
+export const PROFILE_ROUTE = '/profiles';
 export const ROOT_ROUTE = '/';
 // export const ADMIN_ROUTE = '/admin';
 // export const ADMIN_DATA_ROUTE = '/admintable';
 // export const ADMIN_DASHBOARD_ROUTE = '/admindashboard';
 export const MENTOR_ROUTE = '/mentor';
-// export const DASHBOARD_ROUTE = '/dashboard';
+export const DASHBOARD_ROUTE = '/dashboard';
 export const SYNOPSIS_REPORTS_ROUTE = '/synopsisreports'; // list of recent SR's retrieved by student Id
 export const SYNOPSIS_REPORT_ROUTE = '/synopsisreport'; // specific SR retrieved by Id
 export const SYNOPSIS_PDF_ROUTE = '/synopsispdf';
