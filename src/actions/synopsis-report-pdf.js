@@ -4,16 +4,6 @@ import ReactDOMServer from 'react-dom/server';
 import SynopsisReportHtml from '../components/synopsis-report-html/synopsis-report-html';
 import * as routes from '../lib/routes';
 
-// export const setPointTracker = pointTracker => ({
-//   type: 'POINT_TRACKER_SET',
-//   payload: pointTracker,
-// });
-
-// export const setPointTrackers = pointTrackers => ({
-//   type: 'POINT_TRACKERS_SET',
-//   payload: pointTrackers,
-// });
-
 export const setSynopsisReportLink = link => ({
   type: 'SYNOPSIS_REPORT_LINK_SET',
   payload: link,
@@ -23,8 +13,8 @@ export const clearSynopsisReportLink = () => ({
   type: 'SYNOPSIS_REPORT_LINK_CLEAR',
 });
 
-const synopsisReportToHTML = (synopsisReport, student) => {
-  const synopsisReportHTML = <SynopsisReportHtml synopsisReport={synopsisReport} student={student}/>;
+const synopsisReportToHTML = (student, synopsisReport) => {
+  const synopsisReportHTML = <SynopsisReportHtml student={student} synopsisReport={synopsisReport}/>;
 
   // this css styles the html created in components/synopsis-report
   return (
@@ -100,22 +90,24 @@ const synopsisReportToHTML = (synopsisReport, student) => {
   );
 };
 
-export const createSynopsisReportPdf = synopsisReport => (store) => {
+export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
   const { token } = store.getState();
-  // const { student, studentName, title } = synopsisReport
+  
+  const data = {
+    name: synopsisReport.Student__r.Name,
+    school: synopsisReport.PointTrackers__r.records[0].Class__r.School__r.Name,
+    title: synopsisReport.Week__c,
+    html: synopsisReportToHTML(student, synopsisReport),
+  };
 
-  // const data = {
-  //   name: studentName,
-  //   title,
-  //   html: synopsisReportToHTML(pointTracker, student),
-  // };
-
-  // return superagent.post(`${API_URL}${routes.SYNOPSIS_REPORT}`)
-  //   .set('Authorization', `Bearer ${token}`)
-  //   .set('Content-Type', 'application/json')
-  //   .send(data)
-  //   .then((res) => {
-  //     return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
-  //   });
-  return store.dispatch(setSynopsisReportLink('http://www.google.com'));
+  return superagent.post(`${API_URL}${routes.SYNOPSIS_PDF_ROUTE}`)
+    .set('Authorization', `Bearer ${token}`)
+    .set('Content-Type', 'application/json')
+    .send(data)
+    .then((res) => {
+      return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+    })
+    .catch((err) => {
+      return store.dispatch(setSynopsisReportLink(`Error status ${err.status} returned`));
+    });
 };

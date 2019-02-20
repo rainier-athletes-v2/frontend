@@ -37,7 +37,8 @@ class Navbar extends React.Component {
   setSFOAuthUrl = () => {
     const baseUrl = SF_OAUTH_AUTHORIZE_URL; // change test to login to move to production instance
     const redirect = `redirect_uri=${API_URL}/oauth/sf`;
-    const scope = 'scope=id%20openid%20email%20profile%20api';
+    // const scope = 'scope=id%20openid%20email%20profile%20api%';
+    const scope = 'api%20id%20profile%20email%20address%20phone%20refresh_token%20offline_access';
     const clientId = `client_id=${SF_OAUTH_ID.trim()}`;
     const prompt = 'prompt=consent%20login'; // '%20login' may be added
     const responseType = 'response_type=code'; 
