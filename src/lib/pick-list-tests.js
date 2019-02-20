@@ -15,6 +15,7 @@ export const lost = status => status === PsStatus.Lost;
 export const incomplete = status => status === PsStatus.Incomplete;
 export const absent = status => status === PsStatus.Absent;
 export const other = status => status === PsStatus.Other;
+export const none = status => status === '';
 
 // Synopsis_Report__c.Synopsis_Report_Status__c values
 export const SrStatus = {
