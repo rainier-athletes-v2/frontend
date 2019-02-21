@@ -23,6 +23,7 @@ const mapDispatchToProps = dispatch => ({
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
   clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
+  clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
 class Mentor extends React.Component {
@@ -47,16 +48,10 @@ class Mentor extends React.Component {
     this.props.fetchMyStudents();
   }
 
-  // componentDidUpdate = (prevProps, prevState) => {
-  //   debugger;
-  //   if (!prevProps.synopsisReport && this.props.synopsisReport) {
-  //     this.state.setState({ ...prevState, synopsisReport: this.props.synopsisReport });
-  //   }
-  // }
-
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
     if (this.props.myStudents[i].role === 'student') {
+      this.props.clearSynopsisReport();
       this.props.fetchRecentSynopsisReports(this.props.myStudents[i].id);
       this.setState({
         ...this.state,
@@ -160,6 +155,7 @@ Mentor.propTypes = {
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
   clearSynopsisReportLink: PropTypes.func,
+  clearSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,

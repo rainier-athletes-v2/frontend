@@ -225,22 +225,24 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-    // debugger;
-    // const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) || !sr.Point_Sheet_Status__c
-    //   || sr.Point_Sheet_Status_Notes__c;
+    const supportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
+      || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
+
     this.setState({
       playingTimeGranted,
       commentsMade,
       metWithMentee,
       pointSheetStatusOK,
       pointSheetStatusNotesOK,
+      supportRequestNotesOK,
     });
 
     return playingTimeGranted 
       && commentsMade 
       && metWithMentee 
       && pointSheetStatusOK
-      && pointSheetStatusNotesOK;
+      && pointSheetStatusNotesOK
+      && supportRequestNotesOK;
   }
 
   validPointTrackerScores = (sr) => {
@@ -714,6 +716,43 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
+    const mentorSupportRequestJSX = (
+      <div className="container">
+        <div className="row ms-select">
+        <span>Do you need additional support from RA staff? </span>
+        <select className="form-control col-md-3"
+          name="Mentor_Support_Request__c"
+          onChange={ this.handleSimpleFieldChange }
+          value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request__c }>
+          <option value="No">No</option>
+          <option value="Student Follow Up">Student Follow Up</option>
+          <option value="Technical Support">Technical Support</option>
+          <option value="Other">Other</option>
+        </select>
+        </div>
+        { this.state.synopsisReport && pl.yes(this.state.synopsisReport.Mentor_Support_Request__c)
+          ? <React.Fragment>
+            <div className="support-request-notes">
+              <label 
+                className={`title ${pl.yes(this.state.synopsisReport.Mentor_Support_Request__c)
+                  && !this.state.synopsisReport.Mentor_Support_Request_Notes__c ? 'required' : ''}`}
+                htmlFor="Mentor_Support_Request_Notes__c">
+                Please explain: </label>
+              <textarea
+                name="Mentor_Support_Request_Notes__c"
+                onChange={this.handleTextAreaChange}
+                value={this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c}
+                rows="2"
+                cols="80"
+                wrap="hard"
+              />
+            </div>
+          </React.Fragment>
+          : null
+        }
+      </div>
+    );
+
     const synopsisReportForm = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
@@ -750,6 +789,7 @@ class SynopsisReportForm extends React.Component {
                 { oneTeamJSX }
                 { synopsisCommentsJSX }
                 <div className="modal-footer">
+                { mentorSupportRequestJSX }
                   { this.state.waitingOnSaves 
                     ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
                     : <h3><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h3> }
