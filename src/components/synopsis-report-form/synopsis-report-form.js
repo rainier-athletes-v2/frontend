@@ -225,22 +225,24 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-    // debugger;
-    // const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) || !sr.Point_Sheet_Status__c
-    //   || sr.Point_Sheet_Status_Notes__c;
+    const supportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
+      || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
+
     this.setState({
       playingTimeGranted,
       commentsMade,
       metWithMentee,
       pointSheetStatusOK,
       pointSheetStatusNotesOK,
+      supportRequestNotesOK,
     });
 
     return playingTimeGranted 
       && commentsMade 
       && metWithMentee 
       && pointSheetStatusOK
-      && pointSheetStatusNotesOK;
+      && pointSheetStatusNotesOK
+      && supportRequestNotesOK;
   }
 
   validPointTrackerScores = (sr) => {
