@@ -35,3 +35,15 @@ export const WciStatus = {
 export const met = status => status === WciStatus.Met;
 export const mentorMissed = status => status === WciStatus.MentorMissed;
 export const studentMissed = status => status === WciStatus.StudentMissed;
+
+// Synopsis_Report__c.Mentor_Support_Request__c values
+export const MaStatus = {
+  No: 'No',
+  StudentFollowUp: 'Student Follow Up',
+  TechnicalSupport: 'Technical Support',
+  Other: 'Other',
+};
+export const yes = status => status !== MaStatus.No;
+export const studentFollowUp = status => status === MaStatus.StudentFollowUp;
+export const technicalSupport = status => status === MaStatus.TechnicalSupport;
+export const maOther = status => status === MaStatus.Other;
