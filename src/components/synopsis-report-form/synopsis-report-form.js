@@ -145,6 +145,8 @@ class SynopsisReportForm extends React.Component {
       newState.metWithMentee = true;
       newState.pointSheetStatusOK = true;
       newState.pointSheetStatusNotesOK = true;
+      newState.mentorSupportRequestOK = true;
+      newState.mentorSupportRequestNotesOK = true;
       return newState;
     });
   }
@@ -225,8 +227,10 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-    const supportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
-      || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
+    const mentorSupportRequestOK = sr.Mentor_Support_Request__c;
+    const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
+      || ((pl.yes(sr.Mentor_Support_Request__c) && !sr.Mentor_Support_Request__c)
+        && !!sr.Mentor_Support_Request_Notes__c);
 
     this.setState({
       playingTimeGranted,
@@ -234,7 +238,8 @@ class SynopsisReportForm extends React.Component {
       metWithMentee,
       pointSheetStatusOK,
       pointSheetStatusNotesOK,
-      supportRequestNotesOK,
+      mentorSupportRequestOK,
+      mentorSupportRequestNotesOK,
     });
 
     return playingTimeGranted 
@@ -242,7 +247,8 @@ class SynopsisReportForm extends React.Component {
       && metWithMentee 
       && pointSheetStatusOK
       && pointSheetStatusNotesOK
-      && supportRequestNotesOK;
+      && mentorSupportRequestOK
+      && mentorSupportRequestNotesOK;
   }
 
   validPointTrackerScores = (sr) => {
@@ -719,18 +725,20 @@ class SynopsisReportForm extends React.Component {
     const mentorSupportRequestJSX = (
       <div className="container">
         <div className="row ms-select">
-        <span>Do you need additional support from RA staff? </span>
-        <select className="form-control col-md-3"
+        <span className={`col-md-5 ${this.state.mentorSupportRequestOK ? '' : 'required'}`}>Do you need additional support from RA staff? </span>
+        <select
           name="Mentor_Support_Request__c"
           onChange={ this.handleSimpleFieldChange }
-          value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request__c }>
+          value={ this.state.synopsisReport && (this.state.synopsisReport.Mentor_Support_Request__c || '') }>
+          <option value="">Pick One...</option>
           <option value="No">No</option>
           <option value="Student Follow Up">Student Follow Up</option>
           <option value="Technical Support">Technical Support</option>
           <option value="Other">Other</option>
         </select>
         </div>
-        { this.state.synopsisReport && pl.yes(this.state.synopsisReport.Mentor_Support_Request__c)
+        { this.state.synopsisReport 
+          && (this.state.synopsisReport.Mentor_Support_Request__c && pl.yes(this.state.synopsisReport.Mentor_Support_Request__c))
           ? <React.Fragment>
             <div className="support-request-notes">
               <label 
