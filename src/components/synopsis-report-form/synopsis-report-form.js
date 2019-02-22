@@ -762,9 +762,6 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-      // className={`title ${pl.yes(this.state.synopsisReport.Mentor_Support_Request__c)
-      // && !this.state.synopsisReport.Mentor_Support_Request_Notes__c ? 'required' : ''}`}
-
     const synopsisReportForm = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
