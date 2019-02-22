@@ -227,10 +227,9 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-    const mentorSupportRequestOK = sr.Mentor_Support_Request__c;
+    const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
-      || ((pl.yes(sr.Mentor_Support_Request__c) && !sr.Mentor_Support_Request__c)
-        && !!sr.Mentor_Support_Request_Notes__c);
+      || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
 
     this.setState({
       playingTimeGranted,
@@ -725,25 +724,27 @@ class SynopsisReportForm extends React.Component {
     const mentorSupportRequestJSX = (
       <div className="container">
         <div className="row ms-select">
-        <span className={`col-md-5 ${this.state.mentorSupportRequestOK ? '' : 'required'}`}>Do you need additional support from RA staff? </span>
-        <select
-          name="Mentor_Support_Request__c"
-          onChange={ this.handleSimpleFieldChange }
-          value={ this.state.synopsisReport && (this.state.synopsisReport.Mentor_Support_Request__c || '') }>
-          <option value="">Pick One...</option>
-          <option value="No">No</option>
-          <option value="Student Follow Up">Student Follow Up</option>
-          <option value="Technical Support">Technical Support</option>
-          <option value="Other">Other</option>
-        </select>
+          <div className="request-prompt-container">
+            <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>Do you need additional support? </span>
+          </div>
+          <div className="request-dropdown-container">
+            <select
+              name="Mentor_Support_Request__c"
+              onChange={ this.handleSimpleFieldChange }
+              value={ this.state.synopsisReport && (this.state.synopsisReport.Mentor_Support_Request__c || '') }>
+              <option value="">Pick One...</option>
+              <option value="No">No</option>
+              <option value="Student Follow Up">Student Follow Up</option>
+              <option value="Technical Support">Technical Support</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
         </div>
-        { this.state.synopsisReport 
-          && (this.state.synopsisReport.Mentor_Support_Request__c && pl.yes(this.state.synopsisReport.Mentor_Support_Request__c))
+        <div className="support-request-notes">
+        { this.state.synopsisReport && !!this.state.synopsisReport.Mentor_Support_Request__c && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
           ? <React.Fragment>
-            <div className="support-request-notes">
               <label 
-                className={`title ${pl.yes(this.state.synopsisReport.Mentor_Support_Request__c)
-                  && !this.state.synopsisReport.Mentor_Support_Request_Notes__c ? 'required' : ''}`}
+                className={this.state.mentorSupportRequestNotesOK ? 'title' : 'title required'}
                 htmlFor="Mentor_Support_Request_Notes__c">
                 Please explain: </label>
               <textarea
@@ -754,10 +755,10 @@ class SynopsisReportForm extends React.Component {
                 cols="80"
                 wrap="hard"
               />
-            </div>
           </React.Fragment>
           : null
         }
+        </div>
       </div>
     );
 
