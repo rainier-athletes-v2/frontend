@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import * as authActions from '../../actions/auth';
 import * as routes from '../../lib/routes';
-import googleBtn from '../../assets/google-btn.png';
+// import googleBtn from '../../assets/google-btn.png';
 import rainierBtn from '../../assets/rainier-logo-horizontal.png';
 
 import './navbar.scss';
@@ -37,8 +37,8 @@ class Navbar extends React.Component {
   setSFOAuthUrl = () => {
     const baseUrl = SF_OAUTH_AUTHORIZE_URL; // change test to login to move to production instance
     const redirect = `redirect_uri=${API_URL}/oauth/sf`;
-    // const scope = 'scope=id%20openid%20email%20profile%20api%';
-    const scope = 'api%20id%20profile%20email%20address%20phone%20refresh_token%20offline_access';
+    const scope = 'id'; // %20refresh_token%20offline_access';
+    // const scope = 'api%20id%20profile%20email%20address%20phone%20refresh_token%20offline_access';
     const clientId = `client_id=${SF_OAUTH_ID.trim()}`;
     const prompt = 'prompt=consent%20login'; // '%20login' may be added
     const responseType = 'response_type=code'; 
@@ -60,13 +60,6 @@ class Navbar extends React.Component {
     return <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>;
   }
 
-  // renderAdmin = () => {
-  //   return <React.Fragment>
-  //     <li className="nav-item"><Link to="/mentor" className="nav-link">Mentor</Link></li>
-  //     <li className="nav-item"><Link to="/admin" className="nav-link">Admin</Link></li>
-  //   </React.Fragment>;
-  // }
-
   determineRole = () => {
     if (this.props.myProfile) {
       return this.renderMentor(); //this.props.myProfile.role === 'mentor' ? this.renderMentor() : this.renderAdmin();
@@ -78,7 +71,7 @@ class Navbar extends React.Component {
     const JSXNotLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo" src={ rainierBtn } /></Link>
-        <span className="login nav-content"><a href={ this.setSFOAuthUrl() }><img className="google-btn" src={ googleBtn } /></a></span>
+        <span className="login nav-content"><a href={ this.setSFOAuthUrl() } className="btn btn-primary">Sign In</a></span>
       </React.Fragment>
     );
 
@@ -87,6 +80,9 @@ class Navbar extends React.Component {
     const JSXLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo navbar-brand" src={ rainierBtn } /></Link>
+        <div>
+          <h3>Welcome {name}</h3>
+        </div>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
         </button>
@@ -95,14 +91,6 @@ class Navbar extends React.Component {
             {
               this.props.myProfile ? this.determineRole() : null
             }
-            {/* <li className="nav-item dropdown">
-              <a className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Welcome, { name }
-              </a>
-              <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a className="dropdown-item" onClick={ this.props.doLogout }>Logout</a>
-              </div>
-            </li> */}
             <li className="nav-item"><a className="nav-link" onClick={ this.props.doLogout }>Logout</a></li>
             <li className="nav-item">
               <a className="nav-link help" href="https://docs.google.com/presentation/d/e/2PACX-1vTRSMVBEvObOl1sCKPmXMChP8A4eZScVmrRrzS6mDw0Imi5LkbFd1sSgqDS-QEPcBD-gvBFwmanrPIC/pub"alt="Help Documentation" target="_blank" rel="noopener noreferrer">Help</a>
