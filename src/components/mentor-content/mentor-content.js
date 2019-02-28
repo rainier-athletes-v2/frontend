@@ -12,8 +12,9 @@ class MentorContent extends React.Component {
     const student = this.props.content;
     const haveData = !!student.studentData;
 
-    const currentSchool = haveData ? student.studentData.school && student.studentData.school.find(s => s.currentSchool) : null;
-    const currentSchoolName = currentSchool ? currentSchool.schoolName : '';
+    // const currentSchool = haveData ? student.studentData.schoolName : '';
+    const currentSchoolName = haveData ? student.studentData.schoolName.trim() : '';
+    const schoolNameText = `${currentSchoolName}${haveData ? `, Grade ${student.studentData.grade}` : ''}`;
 
     const currentSportsJSX = haveData ? (student.studentData.teams && student.studentData.teams.filter(t => t.currentlyPlaying).map((t, i) => (
       <div className="team-info" key={`sport-${i}`}>
@@ -58,7 +59,7 @@ class MentorContent extends React.Component {
             </span>
             <span>
               <FontAwesomeIcon icon="school" className="fa-2x"/>
-              { student.studentData ? currentSchoolName : null }
+              { schoolNameText }
             </span>
           </div>
         </div>

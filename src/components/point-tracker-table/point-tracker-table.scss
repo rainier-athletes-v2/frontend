@@ -27,27 +27,16 @@
     -webkit-appearance: none;
     margin: 0;
   }
-
-  // * {
-  //   display: inline-block;
-  //   height: 3em;
-  //   width: 5em;
-  //   padding: .5em;
-  //   margin: .1em;
-  //   margin-right: 0.5em;
-  //   font-weight: bold;
-  //   border-radius: 0;
-  // }
 }
 
 .elementary-table {
-  grid-template-columns: repeat(5, 15%);
+  grid-template-columns: repeat(5, 10%);
   grid-template-rows: 2em 2em repeat(3, 3em);
 }
 
 .middleschool-table {
   grid-template-columns: repeat(9, 10%);
-  grid-template-rows: 2em 2em repeat(4, 3em);
+  grid-template-rows: 2em 2em repeat(5, 3em);
 }
 
 .column {
