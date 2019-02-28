@@ -7,7 +7,6 @@ import './point-tracker-table.scss';
 const defaultState = {
   subjectName: '',
   teacherId: '',
-  // editing: false,
 };
 
 export default class PointTrackerTable extends React.Component {
@@ -24,74 +23,15 @@ export default class PointTrackerTable extends React.Component {
     this.setState({ [name]: value });
   }
 
-  // handleCreateSubject = () => {
-  //   if (this.state.subjectName && this.state.teacherId) {
-  //     this.props.createSubject(this.state.subjectName, this.state.teacherId);
-  //     this.setState({ ...defaultState, editing: this.state.editing });
-  //   }
-  // }
-
-  // toggleEditing = (e) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   this.setState({ editing: !this.state.editing });
-  // }
-
-  // saveSubjectTable = (e) => {
-  //   e.preventDefault();
-  //   this.setState({ editing: !this.state.editing });
-  //   this.props.saveSubjectTable();
-  // }
-
   render() {
-    // const addNewSubjectJSX = (
-    // <div className="row">
-    //   <div className="col-md-4">
-    //     <select className="add-subject"
-    //       name="teacherId"
-    //       onChange={ this.handleChange }
-    //       value={ this.state.teacherId }
-    //       default=""
-    //     >
-    //       <option disabled defaultValue value="">Select Teacher</option>
-    //       {
-    //         this.props.teachers.sort((a, b) => (a.teacher.lastName.toLowerCase() > b.teacher.lastName.toLowerCase() ? 1 : -1))
-    //           .map(t => (
-    //             <option
-    //               key={ t.teacher._id }
-    //               value={ t.teacher._id }
-    //             >{ `${t.teacher.lastName}, ${t.teacher.firstName}` }
-    //             </option>
-    //           ))
-    //       }
-    //     </select>
-    //   </div>
-    //   <div className="col-md-4">
-    //     <input className="add-subject"
-    //       type="text"
-    //       placeholder="Subject Name"
-    //       name="subjectName"
-    //       value={ this.state.subjectName }
-    //       onChange={ this.handleChange }
-    //     />
-    //   </div>
-    //   <div className="col-md-4">
-    //     <div className="add-subject">
-    //       <button type="button" className="add-subject-btn add-subject" onClick={ this.handleCreateSubject }>Add New Subject</button>
-    //     </div>
-    //   </div>
-    // </div>
-    // );
-
-    const subjectsJSX = this.props.synopsisReport.PointTrackers__r.records.map((subject) => {
+    const sorted = this.props.synopsisReport.PointTrackers__r.records.sort((a, b) => a.Class__r.Period__c - b.Class__r.Period__c);
+    const subjectsJSX = sorted.map((subject, i) => {
       return (
         <SubjectColumn
-          key={ `${subject.Class__r.Name}-${subject.Class__r.Teacher__r.Name}` }
+          key={ `${subject.Class__r.Name}-${i}` }
           subject={ subject }
           handleSubjectChange={ this.props.handleSubjectChange }
-          // deleteSubject={ this.props.deleteSubject }
           isElementaryStudent={ this.props.synopsisReport.Student__r.Student_Grade__c < 6 }
-          // editing={ this.state.editing }
         /> 
       );
     });
@@ -100,37 +40,20 @@ export default class PointTrackerTable extends React.Component {
       <div className="row">
         <div className="col-md-12">
           <span className="edit-subjects">Point Sheet</span>
-          {/* {!this.state.editing
-            ? <button className="edit-subjects edit-subjects-btn"
-              onClick={this.toggleEditing}>
-              Edit Subjects
-            </button>
-            : null } */}
           <div>
-          {/* { this.state.editing ? addNewSubjectJSX : null } */}
           </div>
           <div className={this.props.synopsisReport.Student__r.Student_Grade__c < 6 
             ? 'point-table elementary-table' 
             : 'point-table middleschool-table'}>
+              {this.props.synopsisReport.Student__r.Student_Grade__c < 6 ? null : <div className="grid-label">Period</div>}
               <div className="grid-label">Teacher</div>
               <div className="grid-label">Subject</div>
               <div className="grid-label">Excused</div>
               <div className="grid-label">Stamps</div>
               <div className="grid-label">X&apos;s</div>
               {this.props.synopsisReport.Student__r.Student_Grade__c < 6 ? null : <div className="grid-label">Grade</div>}
-              {/* <div className="grid-cell grid-cell-delete"></div> */}
             { subjectsJSX }
           </div>
-          {/* <div className="row">
-            { this.state.editing  
-              ? <button 
-                type="submit" 
-                className="save-subjects add-subject-btn add-subject"
-                onClick={this.saveSubjectTable}>
-                Save Subjects
-                </button>
-              : null }
-          </div> */}
         </div>
       </div>
     );
@@ -139,11 +62,6 @@ export default class PointTrackerTable extends React.Component {
 
 PointTrackerTable.propTypes = {
   synopsisReport: PropTypes.object,
-  // teachers: PropTypes.array,
   handleSubjectChange: PropTypes.func,
-  // createSubject: PropTypes.func,
-  // deleteSubject: PropTypes.func,
-  // isElementaryStudent: PropTypes.bool,
   myRole: PropTypes.string,
-  // saveSubjectTable: PropTypes.func,
 };
