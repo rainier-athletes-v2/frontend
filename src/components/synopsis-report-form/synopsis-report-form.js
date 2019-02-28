@@ -528,7 +528,7 @@ class SynopsisReportForm extends React.Component {
               <option key="4" value="Absent">Absent</option>
               <option key="5" value="Other">Other</option>
             </select>
-            { this.state.synopsisReport && !(pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) || pl.none(this.state.synopsisReport.Point_Sheet_Status__c))
+            { this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
               ? <div className="survey-question-container">
                   <label className={`title ${this.state.pointSheetStatusNotesOK 
                     ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</label>
@@ -656,12 +656,23 @@ class SynopsisReportForm extends React.Component {
       </React.Fragment>
     );
 
+    const showMentorGrantedPlayingTimeExplanation = () => {
+      if (this.state.synopsisReport) {
+        // point sheet status is selected (truthy) and is not Turned In
+        const psStatus = !!this.state.synopsisReport.Point_Sheet_Status__c && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c);
+        // mentor override status is anything truthy
+        const mStatus = !!this.state.synopsisReport.Mentor_Granted_Playing_Time__c;
+        // Initially (new SR) both status fields should be falsy (null or blank) and we shouldn't show mentor comments
+        // if psStatus is true then we should show mentor comments, OR if mStatus is true
+        return psStatus || mStatus;
+      }
+      return false;
+    };
+
     const mentorGrantedPlayingTimeCommentsJSX = (
       <div className="synopsis">
         {
-          this.state.synopsisReport
-            && (!pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
-            || this.state.synopsisReport.Earned_Playing_Time__c !== this.state.synopsisReport.Mentor_Granted_Playing_Time__c)
+          showMentorGrantedPlayingTimeExplanation()
             ? <div key="mentorGrantedPlayingTimeComments">
                 <label className={`title ${this.state.commentsMade ? '' : 'required'}`} 
                   htmlFor="Mentor_Granted_Playing_Time_Explanation__c">Mentor Granted Playing Time Explanation: </label>
