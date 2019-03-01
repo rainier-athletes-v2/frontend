@@ -99,10 +99,6 @@ class MentorContent extends React.Component {
               alt="link to synopsis report archive"
               target="blank"
               rel="noopener noreferrer">Synopsis Report Archive</a>
-            <a className="btn-link-1" href={ student.studentData ? student.studentData.googleDocsUrl : null } 
-              alt="link to google docs archive"
-              target="blank"
-              rel="noopener noreferrer">Student Documents</a>
             <a className="btn-link-1" href={ student.studentData ? student.studentData.googleCalendarUrl : null }
               alt="link to student calendar"
               target="blank"
