@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PointTrackerTable from '../point-tracker-table/point-tracker-table';
 import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
+import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
@@ -457,7 +458,7 @@ class SynopsisReportForm extends React.Component {
       <div className="mentor-met-container" key='mentorMadeCheckin'>
         <label className={this.state.metWithMentee ? 'title' : 'title required'} 
           htmlFor="Weekly_Check_In_Status__c">Weekly Check-in Status: </label>
-          <TooltipItem id="tooltip-weeklyCheckin" text="Report the success of your weekly check in."/>
+          <TooltipItem id="tooltip-weeklyCheckin" text={ttText.weeklyCheckin}/>
           <select
             value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c
               ? this.state.synopsisReport.Weekly_Check_In_Status__c
@@ -478,7 +479,7 @@ class SynopsisReportForm extends React.Component {
       <fieldset>
         <div className="mentor-met-container">
         <label className="title">One Team Face-to-Face Meet-Ups</label>
-        <TooltipItem id="tooltip-oneTeamMeetups" text="Indicate which, if any, One Team activities you participated in this week."/>
+        <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/>
         {oneTeam.map((keyName, i) => (
           <div className="survey-question-container" key={ i }>
             <input
@@ -513,7 +514,7 @@ class SynopsisReportForm extends React.Component {
       <fieldset>
         <div className="mentor-met-container">
           <label className={this.state.pointSheetStatusOK ? 'title' : 'title required'} htmlFor="Point_Sheet_Status__c">Point Sheet Status: </label>
-          <TooltipItem id="tooltip-pointSheetStatus" text="Did student turn in Point Sheet? Select the appropriate status from the list."/>
+          <TooltipItem id="tooltip-pointSheetStatus" text={ttText.pointSheetStatus}/>
             <select
               name="Point_Sheet_Status__c" 
               value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c
@@ -533,7 +534,7 @@ class SynopsisReportForm extends React.Component {
                   <label className={`title ${this.state.pointSheetStatusNotesOK 
                     ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</label>
                     <TooltipItem id="tooltip-pointSheetStatusNotes" 
-                      text="Explain any Point Sheet status other than Turned In."/>
+                      text={ttText.pointSheetStatusNotes}/>
                     <textarea
                       name="Point_Sheet_Status_Notes__c"
                       placeholder={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c) 
@@ -564,15 +565,15 @@ class SynopsisReportForm extends React.Component {
                 <th>RA Core Pillar</th>
                 <th>
                   Face-To-Face
-                  <TooltipItem id={'tooltip-corepillar'} text={'In person communication.'}/>
+                  <TooltipItem id={'tooltip-corepillar'} text={ttText.ctpInPerson}/>
                 </th>
                 <th>
                   Digital
-                  <TooltipItem id={'tooltip-corepillar'} text={'Communication through basecamp, text msg, email, etc.'}/>
+                  <TooltipItem id={'tooltip-corepillar'} text={ttText.ctpDigital}/>
                 </th>
                 <th>
                   Phone Call
-                  <TooltipItem id={'tooltip-corepillar'} text={'Digital communication through voice or video.'}/>
+                  <TooltipItem id={'tooltip-corepillar'} text={ttText.ctpPhoneCall}/>
                 </th>
                 <th>Other</th>
               </tr>
@@ -635,7 +636,7 @@ class SynopsisReportForm extends React.Component {
             <label className={this.state.playingTimeGranted ? 'title' : 'title required'} 
               htmlFor="Mentor_Granted_Playing_Time__c">
               Mentor Granted Playing Time: </label>
-              <TooltipItem id="tooltip-mentorGrantedPlayingTime" text="You may override earned playing time. This selection is required if no Point Sheet has been turned in."/>
+              <TooltipItem id="tooltip-mentorGrantedPlayingTime" text={ttText.mentorGrantedPlayingTime}/>
             <select
               name="Mentor_Granted_Playing_Time__c"
               onChange={ this.handleSimpleFieldChange }
@@ -676,7 +677,7 @@ class SynopsisReportForm extends React.Component {
             ? <div key="mentorGrantedPlayingTimeComments">
                 <label className={`title ${this.state.commentsMade ? '' : 'required'}`} 
                   htmlFor="Mentor_Granted_Playing_Time_Explanation__c">Mentor Granted Playing Time Explanation: </label>
-                  <TooltipItem id="tooltip-mentorExplanation" text="If you selected a playing time other that what the student earned, please explain your choice here."/>
+                  <TooltipItem id="tooltip-mentorExplanation" text={ttText.mentorExplanation}/>
                 <textarea
                   name="Mentor_Granted_Playing_Time_Explanation__c"
                   onChange={ this.handleTextAreaChange }
