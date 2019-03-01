@@ -161,7 +161,10 @@ class SynopsisReportForm extends React.Component {
 
     this.setState((prevState) => {
       const newState = { ...prevState };
-      const [subjectName, categoryName] = name.split('-');
+      const lastDash = name.lastIndexOf('-');
+      const subjectName = name.slice(0, lastDash);
+      const categoryName = name.slice(lastDash + 1);
+
       const newSubjects = newState.synopsisReport.PointTrackers__r.records
         .map((subject) => {
           if (subject.Class__r.Name === subjectName) {
