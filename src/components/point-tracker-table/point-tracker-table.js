@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TooltipItem from '../tooltip/tooltip';
+import * as ttText from '../../lib/tooltip-text';
 import SubjectColumn from '../subject-column/subject-column';
 import * as pl from '../../lib/pick-list-tests';
 
@@ -22,7 +24,7 @@ export default function PointTrackerTable(props) {
   return (
     <div className="row">
       <div className="col-md-12">
-        <span className="edit-subjects">Point Sheet</span>
+        <span className="edit-subjects">Point Sheet</span><TooltipItem id="tooltip-mentorExplanation" text={ttText.pointSheet}/>
         <div>
         </div>
         <div className={props.synopsisReport.Student__r.Student_Grade__c < 6 

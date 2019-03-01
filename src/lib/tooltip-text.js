@@ -1,7 +1,8 @@
 export const weeklyCheckin = 'Did you meet with your student?';
 export const oneTeamMeetups = 'In addition to your regular weekly check in, please indicate which, if any, One Team activities you participated in this week.';
 export const pointSheetStatus = 'Select point sheet status. Select Incomplete if point sheet is less than 25% filled in.';
-export const pointSheetStatusNotes = 'Explain point sheet status selection if other than Turned In.'
+export const pointSheetStatusNotes = 'Explain point sheet status selection if other than Turned In.';
+export const pointSheet = 'Point sheet entries are required if point sheet was turned in (status Turned In or Incomplete).';
 export const mentorGrantedPlayingTime = 'You may override earned playing time. This selection is required if no Point Sheet has been turned in.';
 export const mentorExplanation = 'Explain your grant of playing time.';
 // ctp => Communication Touch Points
