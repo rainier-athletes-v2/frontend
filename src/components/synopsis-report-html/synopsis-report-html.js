@@ -48,7 +48,7 @@ export default function SynopsisReportHtml(props) {
           if (subject.Class__r.Name.toLowerCase() !== 'tutorial') {
             return (
             <tr key={ subject.Class__r.Name }>
-              {isMiddleSchool ? <td>{subject.Class__r.Teacher__r.LastName}</td> : ''}
+              {isMiddleSchool && subject.Class__r.Teacher__r ? <td>{subject.Class__r.Teacher__r.LastName}</td> : ''}
               <td key={ `${subject.Class__r.LastName}${row}1` }>{ subject.Class__r.Name }</td>
               {isMiddleSchool ? <td>{ subject.Grade__c }</td> : ''}
               <td key={ `${subject.Class__r.Name}${row}2` }>{ !playingTimeOnly ? subject.Excused_Days__c : 'N/A' } </td>
