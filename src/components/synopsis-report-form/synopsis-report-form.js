@@ -798,7 +798,7 @@ class SynopsisReportForm extends React.Component {
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
                 { submitPlayingTimeOnlyButtonJSX }
-                { this.state.synopsisReport && pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
+                { this.state.synopsisReport
                   ? <PointTrackerTable
                     handleSubjectChange={ this.handleSubjectChange }
                     synopsisReport={ this.state.synopsisReport }
