@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PointTrackerTable from '../point-tracker-table/point-tracker-table';
 import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import TooltipItem from '../tooltip/tooltip';
+import DropDown from '../drop-down/drop-down';
+import TextArea from '../text-area/text-area';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
@@ -231,8 +233,9 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
     const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
       || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
-    const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
-    const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
+    const mentorSupportRequestOK = pl.playingTimeOnly(sr.Synopsis_Report_Status__c) || !!sr.Mentor_Support_Request__c;
+    const mentorSupportRequestNotesOK = pl.playingTimeOnly(sr.Synopsis_Report_Status__c)
+      || !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
 
     this.setState({
@@ -268,12 +271,20 @@ class SynopsisReportForm extends React.Component {
     return goodSubjectStamps && goodSubjectGrades;
   }
 
+  commNotesAreValid = () => this.state.communications.every(pillar => !pillar.other || (pillar.other && !!pillar.notes));
+
+  oneTeamNotesAreValid = () => (this.state.synopsisReport
+    && (!this.state.synopsisReport.Other_Meetup__c || !!this.state.synopsisReport.One_Team_Notes__c));
+
   handleFullReportSubmit = (event) => {
     event.preventDefault();
     const { synopsisReport, communications } = this.state;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
-    if (validMentorInput && (pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? this.validPointTrackerScores(synopsisReport) : true)) {      
+    if (validMentorInput 
+      && (pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? this.validPointTrackerScores(synopsisReport) : true)
+      && this.commNotesAreValid()
+      && this.oneTeamNotesAreValid()) {      
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
@@ -457,25 +468,24 @@ class SynopsisReportForm extends React.Component {
     );
 
     const mentorMadeScheduledCheckinJSX = (
-      <React.Fragment>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.metWithMentee ? 'title' : 'title required'} 
-          htmlFor="Weekly_Check_In_Status__c">Weekly Check-in Status: </label>
-          <TooltipItem id="tooltip-weeklyCheckin" text={ttText.weeklyCheckin}/>
-          <select
-            value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c
-              ? this.state.synopsisReport.Weekly_Check_In_Status__c
-              : ''}
-            required
-            name="Weekly_Check_In_Status__c"
-            onChange={ this.handleSimpleFieldChange}>
-            <option key="0" value="">--Select Check In Status--</option>
-            <option key="1" value="Met">Met</option>
-            <option key="2" value="Mentor missed check in">Mentor missed check in</option>
-            <option key="3" value="Student missed check in">Student missed check in</option>
-          </select>
+        <DropDown
+          compClass={this.state.metWithMentee ? 'title' : 'title required'}
+          compName="Weekly_Check_In_Status__c"
+          label="Weekly Check-in Status:"
+          value={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c
+            ? this.state.synopsisReport.Weekly_Check_In_Status__c
+            : ''}
+          onChange={ this.handleSimpleFieldChange}
+          options={
+            [
+              { value: '', label: '--Select Check In Status--' },
+              { value: 'Met', label: 'Met' },
+              { value: 'Mentor missed check in', label: 'Mentor missed check in' },
+              { value: 'Student missed check in', label: 'Student missed check in' },
+            ]
+          }/>
       </div>
-      </React.Fragment>
     );
 
     const oneTeamJSX = (
@@ -495,19 +505,17 @@ class SynopsisReportForm extends React.Component {
         ))
         }
           <div className="survey-question-container">
-            <span className="title" htmlFor="One_Team_Notes__c">One Team Notes</span>
-                <textarea
-                  name="One_Team_Notes__c"
-                  onChange={ this.handleTextAreaChange }
-                  value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
-                    ? this.state.synopsisReport.One_Team_Notes__c
-                    : '' }
-                  placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
-                  required={this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c}
-                  rows="2"
-                  cols="80"
-                  wrap="hard"
-                />
+            <TextArea
+              compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
+              compName="One_Team_Notes__c"
+              label="One Team Notes:"
+              value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
+                ? this.state.synopsisReport.One_Team_Notes__c
+                : '' }
+              onChange={ this.handleTextAreaChange }
+              placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+              required={ this.state.synopsisReport && !!this.state.synopsisReport.Other_Meetup__c }
+            />
           </div>
         </div>
     </fieldset>
@@ -516,42 +524,41 @@ class SynopsisReportForm extends React.Component {
     const pointSheetStatusJSX = (
       <fieldset>
         <div className="mentor-met-container">
-          <label className={this.state.pointSheetStatusOK ? 'title' : 'title required'} htmlFor="Point_Sheet_Status__c">Point Sheet Status: </label>
-          <TooltipItem id="tooltip-pointSheetStatus" text={ttText.pointSheetStatus}/>
-            <select
-              name="Point_Sheet_Status__c" 
-              value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c
-                ? this.state.synopsisReport.Point_Sheet_Status__c
-                : ''}
-              required
-              onChange={ this.handleSimpleFieldChange}>
-              <option key="0" value="">--Select Point Sheet Status--</option>
-              <option key="1" value="Turned In">Turned In</option>
-              <option key="2" value="Lost">Lost</option>
-              <option key="3" value="Incomplete">Incomplete</option>
-              <option key="4" value="Absent">Absent</option>
-              <option key="5" value="Other">Other</option>
-            </select>
+          <DropDown
+            compClass={this.state.pointSheetStatusOK ? 'title' : 'title required'}
+            compName="Point_Sheet_Status__c"
+            label="Point Sheet Status:"
+            value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c
+              ? this.state.synopsisReport.Point_Sheet_Status__c
+              : ''}
+            onChange={ this.handleSimpleFieldChange}
+            options={
+              [
+                { value: '', label: '--Select Point Sheet Status--' },
+                { value: 'Turned In', label: 'Turned In' },
+                { value: 'Lost', label: 'Lost' },
+                { value: 'Incomplete', label: 'Incomplete' },
+                { value: 'Absent', label: 'Absent' },
+                { value: 'Other', label: 'Other' },
+              ]
+            }/>
             { this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
               ? <div className="survey-question-container">
-                  <label className={`title ${this.state.pointSheetStatusNotesOK 
-                    ? '' : 'required'}`} htmlFor="Point_Sheet_Status_Notes__c">Point Sheet Status Notes</label>
-                    <TooltipItem id="tooltip-pointSheetStatusNotes" 
-                      text={ttText.pointSheetStatusNotes}/>
-                    <textarea
-                      name="Point_Sheet_Status_Notes__c"
-                      placeholder={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c) 
-                        ? 'Please explain selected status...' 
-                        : ''}
-                      onChange={ this.handleTextAreaChange }
-                      value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
-                        ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
-                        : '' }
-                      required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
-                      rows="2"
-                      cols="80"
-                      wrap="hard"
-                    />
+                  <TextArea
+                    compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
+                    compName="Point_Sheet_Status_Notes__c"
+                    label="Point Sheet Status Notes"
+                    placeholder={this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) 
+                      ? 'Please explain selected status...' 
+                      : ''}
+                    value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
+                      ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
+                      : '' }
+                    required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
+                    onChange={ this.handleTextAreaChange }
+                    rows={ 2 }
+                    cols={ 80 }
+                  />
                 </div>
               : '' }
         </div>
@@ -594,7 +601,7 @@ class SynopsisReportForm extends React.Component {
                   </tr>
                   {com.other
                     ? <tr key={`${com.role}${i}5`}>
-                      <td>Notes:</td>
+                      <td className={ this.state.communications[i].other && !this.state.communications[i].notes ? 'required' : '' }>Notes:</td>
                       <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
                     </tr>
                     : null}
@@ -636,25 +643,25 @@ class SynopsisReportForm extends React.Component {
             </div>
             : null }
           <div className="col-md-6">
-            <label className={this.state.playingTimeGranted ? 'title' : 'title required'} 
-              htmlFor="Mentor_Granted_Playing_Time__c">
-              Mentor Granted Playing Time: </label>
-              <TooltipItem id="tooltip-mentorGrantedPlayingTime" text={ttText.mentorGrantedPlayingTime}/>
-            <select
-              name="Mentor_Granted_Playing_Time__c"
-              onChange={ this.handleSimpleFieldChange }
+            <DropDown
+              compClass={this.state.playingTimeGranted ? 'title' : 'title required'}
+              compName="Mentor_Granted_Playing_Time__c"
+              label="Mentor Granted Playing Time:"
               value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time__c
                 ? this.state.synopsisReport.Mentor_Granted_Playing_Time__c
                 : '' }
-              >
-              <option value="" defaultValue>Select playing time override:</option>
-              <option value="Entire Game">Entire Game</option>
-              <option value="All but Start">All but Start</option>
-              <option value="Three Quarters">Three Quarters</option>
-              <option value="Two Quarters">Two Quarters</option>
-              <option value="One Quarter">One Quarter</option>
-              <option value="None of Game">None of Game</option>
-            </select>
+              onChange={ this.handleSimpleFieldChange}
+              options={
+                [
+                  { value: '', label: '--Select Playing Time Override--' },
+                  { value: 'Entire Game', label: 'Entire Game' },
+                  { value: 'All but Start', label: 'All but Start' },
+                  { value: 'Three Quarters', label: 'Three Quarters' },
+                  { value: 'Two Quarterrs', label: 'Two Quarterrs' },
+                  { value: 'One Quarter', label: 'One Quarter' },
+                  { value: 'None of Game', label: 'None of Game' },
+                ]
+              }/>
           </div>
         </div>
       </React.Fragment>
@@ -678,18 +685,16 @@ class SynopsisReportForm extends React.Component {
         {
           showMentorGrantedPlayingTimeExplanation()
             ? <div key="mentorGrantedPlayingTimeComments">
-                <label className={`title ${this.state.commentsMade ? '' : 'required'}`} 
-                  htmlFor="Mentor_Granted_Playing_Time_Explanation__c">Mentor Granted Playing Time Explanation: </label>
-                  <TooltipItem id="tooltip-mentorExplanation" text={ttText.mentorExplanation}/>
-                <textarea
-                  name="Mentor_Granted_Playing_Time_Explanation__c"
-                  onChange={ this.handleTextAreaChange }
+                <TextArea
+                  compClass={`title ${this.state.commentsMade ? '' : 'required'}`}
+                  compName="Mentor_Granted_Playing_Time_Explanation__c"
+                  label="Mentor Granted Playing Time Explanation:"
                   value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
                     ? this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
                     : '' }
-                  rows="2"
-                  cols="80"
-                  wrap="hard"
+                  onChange={ this.handleTextAreaChange }
+                  rows={ 2 }
+                  cols={ 80 }
                 />
               </div>
             : null
@@ -719,17 +724,16 @@ class SynopsisReportForm extends React.Component {
         {
           synopsisComments.map((comment, i) => (
             <div key={ i }>
-              <label className="title" htmlFor={ names[comment].prop }>{ names[comment].text }</label>
-              <textarea
-                name={ names[comment].prop }
-                onChange={ this.handleTextAreaChange }
+              <TextArea
+                compClass="title"
+                compName={ names[comment].prop }
+                label={ names[comment].text }
                 value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop]
                   ? this.state.synopsisReport[names[comment].prop]
                   : '' }
-                rows="6"
-                cols="80"
-                wrap="hard"
-              />
+                onChange={ this.handleTextAreaChange }
+                rows={ 6 }
+                cols={ 80 } />
             </div>
           ))
         }
@@ -757,20 +761,14 @@ class SynopsisReportForm extends React.Component {
         </div>
         <div className="support-request-notes">
         { this.state.synopsisReport && !!this.state.synopsisReport.Mentor_Support_Request__c && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
-          ? <React.Fragment>
-              <label 
-                className={this.state.mentorSupportRequestNotesOK ? 'title' : 'title required'}
-                htmlFor="Mentor_Support_Request_Notes__c">
-                Please explain: </label>
-              <textarea
-                name="Mentor_Support_Request_Notes__c"
-                onChange={this.handleTextAreaChange}
-                value={this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c}
-                rows="2"
-                cols="80"
-                wrap="hard"
-              />
-          </React.Fragment>
+          ? <TextArea
+              compClass={ this.state.mentorSupportRequestNotesOK ? 'title' : 'title required' }
+              compName="Mentor_Support_Request_Notes__c"
+              label="Please explain:"
+              value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c }
+              onChange={ this.handleTextAreaChange }
+              rows={ 2 }
+              cols={ 80 } />
           : null
         }
         </div>
