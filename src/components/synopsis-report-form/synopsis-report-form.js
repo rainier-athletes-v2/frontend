@@ -319,7 +319,7 @@ class SynopsisReportForm extends React.Component {
     const numberOfPeriods = subjects.length;
     const totalClassTokens = numberOfPeriods * 2;
     const totalTutorialTokens = isElementarySchool ? 0 : 4;
-    const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods;
+    const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods * 2;
     const totalTokensPossible = totalClassTokens + totalGradeTokens + totalTutorialTokens;
 
     const totalEarnedTokens = subjects.map((subject) => {
