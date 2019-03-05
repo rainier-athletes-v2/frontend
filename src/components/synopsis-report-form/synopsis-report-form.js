@@ -176,14 +176,17 @@ class SynopsisReportForm extends React.Component {
               if (newSubject.Grade__c === 'N') newSubject.Grade__c = 'N/A';
               if (subjectName.toLowerCase() === 'tutorial') newSubject.Grade__c = 'N/A';
             } else if (categoryName === 'Excused_Days__c') {
-              newSubject.Excused_Days__c = Math.min(Math.max(parseInt(event.target.value, 10), 0), 5);
+              const classDays = subjectName.toLowerCase() === 'tutorial' ? 4 : 5; // no tutorial on Wednesdays
+              newSubject.Excused_Days__c = Math.min(Math.max(parseInt(event.target.value, 10), 0), classDays);
             } else {
               const currentValue = parseInt(event.target.value, 10);
               // test currentValue for NaN which doesn't equal itself.
               if (currentValue !== currentValue) { // eslint-disable-line
                 newSubject[categoryName] = '';
               } else {
-                const maxStampsPossible = 20 - (newSubject.Excused_Days__c * 4);
+                const maxStampsPossible = subjectName.toLowerCase() === 'tutorial'
+                  ? 8 - (newSubject.Excused_Days__c * 2)
+                  : 20 - (newSubject.Excused_Days__c * 4);
                 const maxStampsAdjustment = categoryName === 'Stamps__c'
                   ? newSubject.Half_Stamps__c
                   : newSubject.Stamps__c;
@@ -261,7 +264,10 @@ class SynopsisReportForm extends React.Component {
 
     const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
       subject.Stamps__c >= 0 && subject.Half_Stamps__c >= 0 && subject.Excused_Days__c >= 0 
-      && subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4 
+      && (
+        (subject.Class__r.Name.toLowerCase() === 'tutorial' && subject.Stamps__c + subject.Half_Stamps__c <= 8 - subject.Excused_Days__c * 2)
+        || (subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4)
+      )
     ));
     const isElementaryStudent = sr.Student__r && sr.Student__r.Student_Grade__c < 6;
     const goodSubjectGrades = isElementaryStudent
@@ -319,7 +325,7 @@ class SynopsisReportForm extends React.Component {
     const numberOfPeriods = subjects.length;
     const totalClassTokens = numberOfPeriods * 2;
     const totalTutorialTokens = isElementarySchool ? 0 : 4;
-    const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods;
+    const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods * 2;
     const totalTokensPossible = totalClassTokens + totalGradeTokens + totalTutorialTokens;
 
     const totalEarnedTokens = subjects.map((subject) => {
