@@ -5,7 +5,7 @@ import * as ttText from '../../lib/tooltip-text';
 import SubjectColumn from '../subject-column/subject-column';
 import * as pl from '../../lib/pick-list-tests';
 
-import './point-tracker-table.scss';
+import './_point-tracker-table.scss';
 
 export default function PointTrackerTable(props) {
   const sorted = props.synopsisReport.PointTrackers__r.records.sort((a, b) => a.Class__r.Period__c - b.Class__r.Period__c);

@@ -13,8 +13,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 import thunk from './lib/middleware/redux-thunk';
-// import reporter from './lib/middleware/redux-reporter';
-// import session from './lib/middleware/redux-session';
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 const root = document.createElement('div');

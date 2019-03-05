@@ -12,7 +12,7 @@ import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
 
-import './synopsis-report-form.scss';
+import './_synopsis-report-form.scss';
 
 const oneTeam = [
   'wednesdayCheckin',
@@ -226,7 +226,6 @@ class SynopsisReportForm extends React.Component {
   validMentorInput = (sr) => {
     const playingTimeGranted = !!sr.Mentor_Granted_Playing_Time__c || (pl.turnedIn(sr.Point_Sheet_Status__c) && this.validPointTrackerScores(sr));
     const commentsRequired = (pl.playingTimeOnly(sr.Synopsis_Report_Status__c) && !pl.turnedIn(sr.Point_Sheet_Status__c))
-      // || !pl.turnedIn(sr.Point_Sheet_Status__c)
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
