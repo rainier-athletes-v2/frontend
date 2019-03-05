@@ -25,9 +25,10 @@ export default function SubjectColumn(props) {
           const excusedDays = props.subject && props.subject.Excused_Days__c;
           const stamps = props.subject && props.subject.Stamps__c;
           const halfStamps = props.subject && props.subject.Half_Stamps__c;
+          const maxStamps = props.subject.Class__r.Name.toLowerCase() !== 'tutorial' ? 20 - excusedDays * 4 : 8 - excusedDays * 2;
           const validScores = !props.doValidation 
             || (props.subject[markType] !== null && props.subject[markType] !== '' && excusedDays >= 0 
-              ? (stamps + halfStamps) <= (20 - excusedDays * 4) 
+              ? (stamps + halfStamps) <= maxStamps 
               : false);
           return (
             <div className="grid-cell" key={ i }><input
