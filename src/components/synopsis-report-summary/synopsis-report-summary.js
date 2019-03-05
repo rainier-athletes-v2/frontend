@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as pl from '../../lib/pick-list-tests';
-import './synopsis-report-summary.scss';
+import './_synopsis-report-summary.scss';
 
 const mapStateToProps = state => ({
   synopsisLink: state.synopsisReportLink,
@@ -133,4 +133,3 @@ SynopsisReportSummary.propTypes = {
 };
 
 export default connect(mapStateToProps)(SynopsisReportSummary);
-// export default SynopsisReportSummary;

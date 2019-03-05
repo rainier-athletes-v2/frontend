@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './iframe.scss';
+import './_iframe.scss';
 
 export default class Iframe extends React.Component {
   render() {

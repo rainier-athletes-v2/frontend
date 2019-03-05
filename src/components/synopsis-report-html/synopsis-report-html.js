@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as pl from '../../lib/pick-list-tests';
-import './synopsis-report-html.scss';
+import './_synopsis-report-html.scss';
 
 export default function SynopsisReportHtml(props) {
   const { student, synopsisReport } = props;
@@ -9,8 +9,6 @@ export default function SynopsisReportHtml(props) {
   const studentsSchoolName = pointTrackers[0] && pointTrackers[0].Class__r.School__r.Name;
   const gradeLevel = synopsisReport.Student__r.Student_Grade__c;
   const isMiddleSchool = gradeLevel > 5 && gradeLevel < 9;
-  // const isElementarySchool = gradeLevel < 6;
-  // const isHighSchool = gradeLevel > 8;
   const playingTimeOverride = synopsisReport.Mentor_Granted_Playing_Time__c !== ''
     && synopsisReport.Mentor_Granted_Playing_Time__c !== synopsisReport.Earned_Playing_Time__c;
   const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);

@@ -7,16 +7,14 @@ import AuthRedirect from '../auth-redirect/auth-redirect';
 import Mentor from '../mentor/mentor';
 import Navbar from '../navbar/navbar';
 import Dashboard from '../dashboard/dashboard';
-// import AdminTable from '../admin-table/admin-table';
 import Auth from '../auth/auth';
 
 import * as routes from '../../lib/routes';
 
-import './app.scss';
+import './_app.scss';
 
 library.add(faPhone, faAt, faUser, faKey, faBirthdayCake, faSchool, faSpinner, faCopy, faInfoCircle);
 
-// const AdminUser = Auth(['admin']);
 const MentorUser = Auth(['mentor', 'admin']);
 
 const Footer = () => (
@@ -34,9 +32,7 @@ export default class App extends React.Component {
             <Navbar />
             <Dashboard />
             <Route exact path="*" component={AuthRedirect} />
-            {/* <Route exact path={routes.ADMIN_ROUTE} component={ AdminUser(AdminTable) } /> */}
             <Route exact path={routes.MENTOR_ROUTE} component={ MentorUser(Mentor) } />
-            {/* <Mentor /> */}
           </div>
         </BrowserRouter>
         <Footer />
