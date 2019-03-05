@@ -8,7 +8,7 @@ import * as routes from '../../lib/routes';
 // import googleBtn from '../../assets/google-btn.png';
 import rainierBtn from '../../assets/rainier-logo-horizontal.png';
 
-import './navbar.scss';
+import './_navbar.scss';
 
 import * as profileActions from '../../actions/profile';
 

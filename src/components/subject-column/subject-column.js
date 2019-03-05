@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './subject-column.scss';
+import './_subject-column.scss';
 
 export default function SubjectColumn(props) {
   const gradeClassName = (subject) => {
