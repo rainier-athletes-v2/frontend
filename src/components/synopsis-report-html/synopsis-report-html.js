@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as pl from '../../lib/pick-list-tests';
+import * as pt from '../../lib/playing-time-utils';
 import './_synopsis-report-html.scss';
 
 export default function SynopsisReportHtml(props) {
@@ -11,18 +12,11 @@ export default function SynopsisReportHtml(props) {
   const isMiddleSchool = gradeLevel > 5 && gradeLevel < 9;
   const playingTimeOverride = synopsisReport.Mentor_Granted_Playing_Time__c !== ''
     && synopsisReport.Mentor_Granted_Playing_Time__c !== synopsisReport.Earned_Playing_Time__c;
-  const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
+  const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c) || !pl.turnedIn(synopsisReport.Point_Sheet_Status__c);
 
   const pointPercentage = (subject) => {
-    const excusedDays = subject.Excused_Days__c || 0;
-    const stamps = subject.Stamps__c || 0;
-    const halfStamps = subject.Half_Stamps__c || 0;
-    
-    const maxPointsPossible = subject.Class__r.Name.toLowerCase() !== 'tutorial'
-      ? (40 - excusedDays * 8)
-      : 8 - excusedDays * 2;
-    const pointsEarned = 2 * stamps + halfStamps;
-    const percentage = pointsEarned / maxPointsPossible;
+    const pointsEarned = (2 * subject.Stamps__c) + subject.Half__Stamps__c;
+    const percentage = pointsEarned / pt.maxPointsPossible(subject);
     return Math.round((percentage * 100));
   };
 
