@@ -11,6 +11,7 @@ import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
+import * as pt from '../../lib/playing-time-utils';
 
 import './_synopsis-report-form.scss';
 
@@ -62,18 +63,21 @@ class SynopsisReportForm extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
       this.setState({
-        ...this.state,
         synopsisSaved: true,
         waitingOnSaves: false,
         synopsisLink: this.props.synopsisReportLink,
-        // synopsisReport: this.props.synopsisReport,
       });
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.setState({ 
-        ...this.state, 
-        synopsisReport: this.props.synopsisReport,
+        synopsisReport: { ...this.props.synopsisReport },
         communications: this.initCommunicationsState(this.props.synopsisReport),
+      });
+    }
+    const earnedPlayingTime = pt.calcPlayingTime(this.state.synopsisReport);
+    if (this.state.synopsisReport && earnedPlayingTime !== this.state.synopsisReport.Earned_Playing_Time__c) {
+      this.setState({
+        synopsisReport: { ...this.state.synopsisReport, Earned_Playing_Time__c: earnedPlayingTime },
       });
     }
   }
@@ -184,13 +188,13 @@ class SynopsisReportForm extends React.Component {
               if (currentValue !== currentValue) { // eslint-disable-line
                 newSubject[categoryName] = '';
               } else {
-                const maxStampsPossible = subjectName.toLowerCase() === 'tutorial'
-                  ? 8 - (newSubject.Excused_Days__c * 2)
-                  : 20 - (newSubject.Excused_Days__c * 4);
+                // const maxStampsPossible = subjectName.toLowerCase() === 'tutorial'
+                //   ? 8 - (newSubject.Excused_Days__c * 2)
+                //   : 20 - (newSubject.Excused_Days__c * 4);
                 const maxStampsAdjustment = categoryName === 'Stamps__c'
                   ? newSubject.Half_Stamps__c
                   : newSubject.Stamps__c;
-                const maxValidStamps = maxStampsPossible - maxStampsAdjustment;
+                const maxValidStamps = pt.maxStampsPossible(subject) - maxStampsAdjustment;
                 newSubject[categoryName] = Math.floor(Math.min(Math.max(currentValue, 0), maxValidStamps));
               }
             }
@@ -227,7 +231,7 @@ class SynopsisReportForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const playingTimeGranted = !!sr.Mentor_Granted_Playing_Time__c || (pl.turnedIn(sr.Point_Sheet_Status__c) && this.validPointTrackerScores(sr));
+    const playingTimeGranted = this.state.synopsisReport.Mentor_Granted_Playing_Time__c || (pl.turnedIn(sr.Point_Sheet_Status__c) && pt.validPointTrackerScores(sr));
     const commentsRequired = (pl.playingTimeOnly(sr.Synopsis_Report_Status__c) && !pl.turnedIn(sr.Point_Sheet_Status__c))
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
@@ -259,23 +263,6 @@ class SynopsisReportForm extends React.Component {
       && mentorSupportRequestNotesOK;
   }
 
-  validPointTrackerScores = (sr) => {
-    if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return false;
-
-    const goodSubjectStamps = sr.PointTrackers__r.records.every(subject => (
-      subject.Stamps__c >= 0 && subject.Half_Stamps__c >= 0 && subject.Excused_Days__c >= 0 
-      && (
-        (subject.Class__r.Name.toLowerCase() === 'tutorial' && subject.Stamps__c + subject.Half_Stamps__c <= 8 - subject.Excused_Days__c * 2)
-        || (subject.Stamps__c + subject.Half_Stamps__c <= 20 - subject.Excused_Days__c * 4)
-      )
-    ));
-    const isElementaryStudent = sr.Student__r && sr.Student__r.Student_Grade__c < 6;
-    const goodSubjectGrades = isElementaryStudent
-      || sr.PointTrackers__r.records.every(subject => !!subject.Grade__c);
-
-    return goodSubjectStamps && goodSubjectGrades;
-  }
-
   commNotesAreValid = () => this.state.communications.every(pillar => !pillar.other || (pillar.other && !!pillar.notes));
 
   oneTeamNotesAreValid = () => (this.state.synopsisReport
@@ -287,7 +274,7 @@ class SynopsisReportForm extends React.Component {
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
     if (validMentorInput 
-      && (pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? this.validPointTrackerScores(synopsisReport) : true)
+      && pt.validPointTrackerScores(synopsisReport)
       && this.commNotesAreValid()
       && this.oneTeamNotesAreValid()) {      
       this.setState({ ...this.state, waitingOnSaves: true });
@@ -311,68 +298,6 @@ class SynopsisReportForm extends React.Component {
     } else {
       alert('Please provide required information before submitting playing time.'); // eslint-disable-line
     }
-  }
-
-  calcPlayingTime = () => {
-    if (!this.state.synopsisReport) return null;
-
-    const subjects = this.state.synopsisReport.PointTrackers__r.records;
-    const student = this.state.synopsisReport.Student__r;
-    const sr = this.state.synopsisReport;
-
-    const isElementarySchool = student.Student_Grade__c < 6;
-
-    const numberOfPeriods = subjects.length;
-    const totalClassTokens = numberOfPeriods * 2;
-    const totalTutorialTokens = isElementarySchool ? 0 : 4;
-    const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods * 2;
-    const totalTokensPossible = totalClassTokens + totalGradeTokens + totalTutorialTokens;
-
-    const totalEarnedTokens = subjects.map((subject) => {
-      const grade = subject.Grade__c;
-      const subjectName = subject.Class__r.Name;
-      // halfStamps are "X"s from the scoring sheet
-      const excusedDays = subject.Excused_Days__c;
-      const stamps = subject.Stamps__c;
-      const halfStamps = subject.Half_Stamps__c;
-
-      let pointsPossible = 40 - (excusedDays * 8);
-      if (subjectName.toLowerCase() === 'tutorial') pointsPossible = 8 - (excusedDays * 2);
-      if (isElementarySchool && subjectName.toLowerCase() === 'tutorial') pointsPossible = 0;
-
-      const totalClassPointsEarned = (2 * stamps) + halfStamps;
-      const classPointPercentage = totalClassPointsEarned / pointsPossible;
-
-      let classTokensEarned = 0;
-      if (classPointPercentage >= 0.50) classTokensEarned = 1;
-      if (classPointPercentage >= 0.75) classTokensEarned = 2;
-
-      let gradeTokensEarned = 0;
-      if (!isElementarySchool && ['A', 'B', 'N/A'].includes(grade)) gradeTokensEarned = 2;
-      if (!isElementarySchool && grade === 'C') gradeTokensEarned = 1;
-
-      const subjectTokensEarned = classTokensEarned + gradeTokensEarned;
-
-      return subjectTokensEarned;
-    });
-
-    const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
-    const tokenPercentage = totalTokensEarned / totalTokensPossible;
-
-    let earnedPlayingTime = 'None of Game';
-    if (tokenPercentage >= 0.4375) earnedPlayingTime = 'One Quarter';
-    if (tokenPercentage >= 0.5625) earnedPlayingTime = 'Two Quarters';
-    if (tokenPercentage >= 0.6875) earnedPlayingTime = 'Three Quarters';
-    if (tokenPercentage >= 0.8125) earnedPlayingTime = 'All but Start';
-    if (tokenPercentage >= 0.875) earnedPlayingTime = 'Entire Game';
-    if (earnedPlayingTime !== sr.Earned_Playing_Time__c) {
-      this.setState({
-        ...this.state,
-        synopsisReport: { ...this.state.synopsisReport, Earned_Playing_Time__c: earnedPlayingTime },
-      });
-    }
-
-    return earnedPlayingTime;
   }
 
   handleCommPillarChange = (event) => {
@@ -644,7 +569,7 @@ class SynopsisReportForm extends React.Component {
           { this.state.synopsisReport && pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
             ? <div className="col-md-6">
                 <span className="title">Game Eligibility Earned</span>
-                <span className="name">{ this.calcPlayingTime() } </span>
+                <span className="name">{ this.state.synopsisReport.Earned_Playing_Time__c } </span>
             </div>
             : null }
           <div className="col-md-6">
