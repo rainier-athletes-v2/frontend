@@ -16,7 +16,7 @@ export default function PointTrackerTable(props) {
         subject={ subject }
         handleSubjectChange={ props.handleSubjectChange }
         isElementaryStudent={ props.synopsisReport.Student__r.Student_Grade__c < 6 }
-        doValidation={pl.turnedIn(props.synopsisReport.Point_Sheet_Status__c)}
+        skipValidation={!pl.turnedIn(props.synopsisReport.Point_Sheet_Status__c)}
       /> 
     );
   });
