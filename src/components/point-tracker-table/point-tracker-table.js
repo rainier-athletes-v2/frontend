@@ -41,9 +41,7 @@ export default function PointTrackerTable(props) {
   return (
     <div className="row">
       <div className="col-md-12">
-        <span className="edit-subjects">Point Sheet</span><TooltipItem id="tooltip-mentorExplanation" text={ttText.pointSheet}/>
-        <div>
-        </div>
+        <span className="title">Point Sheet<TooltipItem id="tooltip-mentorExplanation" text={ttText.pointSheet}/></span>
         <div className={props.synopsisReport.Student__r.Student_Grade__c < 6 
           ? 'point-table elementary-table' 
           : 'point-table middleschool-table'}>
@@ -54,7 +52,7 @@ export default function PointTrackerTable(props) {
             <div className="grid-label">Stamps</div>
             <div className="grid-label">X&apos;s</div>
             {props.synopsisReport.Student__r.Student_Grade__c < 6 ? null 
-              : <div className="grid-label">Grade<TooltipItem id="tooltip-mentorExplanation" text={ttText.pointSheetGrade}/></div>}
+              : <div className="grid-label">Grade<TooltipItem id="tooltip-pointSheetGrade" text={ttText.pointSheetGrade}/></div>}
           { subjectsJSX }
         </div>
           { gpaJSX }
