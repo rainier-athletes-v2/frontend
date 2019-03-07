@@ -51,7 +51,7 @@ class SynopsisReportSummary extends React.Component {
             <p>Point Sheet not turned in.</p>
             </React.Fragment> }
         { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
-          && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
+          && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <span className="title">
             Game Eligibility Earned
