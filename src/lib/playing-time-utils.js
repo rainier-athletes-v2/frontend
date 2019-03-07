@@ -12,13 +12,25 @@ const PT = {
   entireGame: { label: 'Entire Game', pct: 0.875 },
 };
 
-const TUTORIAL_MAX_STAMPS = 8;
-const TUTORIAL_MAX_TOKENS = 4;
-const TUTORIAL_POSSIBLE_STAMPS_PER_DAY = 2;
-const SUBJECT_MAX_STAMPS = 20;
-const SUBJECT_POSSIBLE_TOKENS_PER_PERIOD = 2;
-const SUBJECT_POSSIBLE_STAMPS_PER_DAY = 4;
+// Stamps refer to entries on student's point sheet. Points are stamps translated such that
+// a full stamp = 2 tokens, a half stamp (X) = 1 token.
+// Tokens are points adjusted based on percentage break points and are used to calculate playing time earned.
+// Tutorial meets four times/week with 1 stamp possible per day, max 2 points per day or 8 points per week.
+// Other subjects meet 5 times/week with 4 stamps possible per day, 8 points per day, 40 points per week
+const TUTORIAL_MAX_STAMPS_PER_DAY = 1;
+const TUTORIAL_MAX_POINTS_PER_DAY = 2;
+const TUTORIAL_MAX_STAMPS_PER_WEEK = 4;
+const TUTORIAL_MAX_POINTS_PER_WEEK = 2 * TUTORIAL_MAX_STAMPS_PER_WEEK;
+const TUTORIAL_MAX_TOKENS_PER_WEEK = 4;
+const SUBJECT_MAX_STAMPS_PER_DAY = 4;
+const SUBJECT_MAX_POINTS_PER_DAY = 2 * SUBJECT_MAX_STAMPS_PER_DAY;
+const SUBJECT_MAX_STAMPS_PER_WEEK = 5 * SUBJECT_MAX_STAMPS_PER_DAY;
+const SUBJECT_MAX_POINTS_PER_WEEK = 2 * SUBJECT_MAX_STAMPS_PER_WEEK;
+// no SUBJECT_MAX_TOKENS_PER_WEEK here because it depends on # of subjects
+const CLASS_TOKENS_PER_SUBJECT = 2;
+const GRADE_TOKENS_PER_SUBJECT = 2;
 
+// breakpoints for translating numeric grades into grade tokens
 const TWO_TOKEN_GRADE = 80; // grade at or above earns 2 tokens
 const ONE_TOKEN_GRADE = 70; // grade at or above earns 1 token
 
@@ -30,10 +42,10 @@ const calcPlayingTime = (sr) => {
 
   const isElementarySchool = student.Student_Grade__c < 6;
 
-  const numberOfPeriods = subjects.length;
-  const totalClassTokens = numberOfPeriods * SUBJECT_POSSIBLE_TOKENS_PER_PERIOD;
-  const totalTutorialTokens = isElementarySchool ? 0 : TUTORIAL_MAX_TOKENS;
-  const totalGradeTokens = isElementarySchool ? 0 : numberOfPeriods * SUBJECT_POSSIBLE_TOKENS_PER_PERIOD;
+  const numberOfSubjects = subjects.length;
+  const totalClassTokens = numberOfSubjects * CLASS_TOKENS_PER_SUBJECT;
+  const totalTutorialTokens = isElementarySchool ? 0 : TUTORIAL_MAX_TOKENS_PER_WEEK;
+  const totalGradeTokens = isElementarySchool ? 0 : numberOfSubjects * GRADE_TOKENS_PER_SUBJECT;
   const totalTokensPossible = totalClassTokens + totalGradeTokens + totalTutorialTokens;
 
   const totalEarnedTokens = subjects.map((subject) => {
@@ -44,8 +56,8 @@ const calcPlayingTime = (sr) => {
     const stamps = subject.Stamps__c;
     const halfStamps = subject.Half_Stamps__c;
 
-    let pointsPossible = (SUBJECT_MAX_STAMPS * 2) - (excusedDays * (SUBJECT_POSSIBLE_STAMPS_PER_DAY * 2));
-    if (subjectName.toLowerCase() === 'tutorial') pointsPossible = TUTORIAL_MAX_STAMPS - (excusedDays * TUTORIAL_POSSIBLE_STAMPS_PER_DAY);
+    let pointsPossible = (SUBJECT_MAX_POINTS_PER_WEEK) - (excusedDays * SUBJECT_MAX_POINTS_PER_DAY);
+    if (subjectName.toLowerCase() === 'tutorial') pointsPossible = TUTORIAL_MAX_POINTS_PER_WEEK - (excusedDays * TUTORIAL_MAX_POINTS_PER_DAY);
     if (isElementarySchool && subjectName.toLowerCase() === 'tutorial') pointsPossible = 0;
 
     const totalClassPointsEarned = (2 * stamps) + halfStamps;
@@ -86,8 +98,14 @@ const numeric = subject => (
 
 const maxStampsPossible = subject => (
   subject.Class__r.Name.toLowerCase() === 'tutorial'
-    ? TUTORIAL_MAX_STAMPS - (subject.Excused_Days__c * TUTORIAL_POSSIBLE_STAMPS_PER_DAY)
-    : SUBJECT_MAX_STAMPS - (subject.Excused_Days__c * SUBJECT_POSSIBLE_STAMPS_PER_DAY)
+    ? TUTORIAL_MAX_STAMPS_PER_WEEK - (subject.Excused_Days__c * TUTORIAL_MAX_STAMPS_PER_DAY)
+    : SUBJECT_MAX_STAMPS_PER_WEEK - (subject.Excused_Days__c * SUBJECT_MAX_STAMPS_PER_DAY)
+);
+
+const maxPointsPossible = subject => (
+  subject.Class__r.Name.toLowerCase() === 'tutorial'
+    ? TUTORIAL_MAX_POINTS_PER_WEEK - (subject.Excused_Days__c * TUTORIAL_MAX_POINTS_PER_DAY)
+    : SUBJECT_MAX_POINTS_PER_WEEK - (subject.Excused_Days__c * SUBJECT_MAX_POINTS_PER_DAY)
 );
 
 const validScores = (subject) => {
@@ -117,6 +135,7 @@ const validPointTrackerScores = (sr) => {
 export {
   calcPlayingTime,
   maxStampsPossible,
+  maxPointsPossible,
   validScores,
   validateGrade,
   validGrade,
