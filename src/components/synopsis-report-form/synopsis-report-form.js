@@ -161,8 +161,6 @@ class SynopsisReportForm extends React.Component {
   handleSubjectChange = (event) => {
     event.persist();
 
-    const validGrades = ['A', 'B', 'C', 'D', 'F', '', 'N', 'N/A'];
-
     const { name } = event.target;
 
     this.setState((prevState) => {
@@ -173,12 +171,18 @@ class SynopsisReportForm extends React.Component {
 
       const newSubjects = newState.synopsisReport.PointTrackers__r.records
         .map((subject) => {
+          // debugger;
           if (subject.Class__r.Name === subjectName) {
             const newSubject = { ...subject };
             if (categoryName === 'grade') {
-              newSubject.Grade__c = validGrades.includes(event.target.value.toUpperCase()) ? event.target.value.toUpperCase() : '';
-              if (newSubject.Grade__c === 'N') newSubject.Grade__c = 'N/A';
-              if (subjectName.toLowerCase() === 'tutorial') newSubject.Grade__c = 'N/A';
+              let grade = event.target.value;
+              if (grade.toUpperCase() === 'N') grade = 'N/A';
+              if (subjectName.toLowerCase() === 'tutorial') grade = 'N/A';
+              if (grade !== 'N/A') {
+                newSubject.Grade__c = pt.validateGrade(grade) ? parseInt(grade, 10) : '';
+              } else {
+                newSubject.Grade__c = 'N/A';
+              }
             } else if (categoryName === 'Excused_Days__c') {
               const classDays = subjectName.toLowerCase() === 'tutorial' ? 4 : 5; // no tutorial on Wednesdays
               newSubject.Excused_Days__c = Math.min(Math.max(parseInt(event.target.value, 10), 0), classDays);
@@ -188,9 +192,6 @@ class SynopsisReportForm extends React.Component {
               if (currentValue !== currentValue) { // eslint-disable-line
                 newSubject[categoryName] = '';
               } else {
-                // const maxStampsPossible = subjectName.toLowerCase() === 'tutorial'
-                //   ? 8 - (newSubject.Excused_Days__c * 2)
-                //   : 20 - (newSubject.Excused_Days__c * 4);
                 const maxStampsAdjustment = categoryName === 'Stamps__c'
                   ? newSubject.Half_Stamps__c
                   : newSubject.Stamps__c;
