@@ -96,7 +96,7 @@ const validScores = (subject) => {
   return numeric(subject) && inRange;
 };
 
-const validateGrade = grade => grade === 'N/A' || (Number.isInteger(parseInt(grade, 10)) && parseInt(grade, 10) >= 0);
+const validateGrade = grade => grade === 'N/A' || (Number.isInteger(parseInt(grade, 10)) && parseInt(grade, 10) >= 0 && parseInt(grade, 10) <= 999);
 
 const validGrade = subject => validateGrade(subject.Grade__c);
 
