@@ -10,3 +10,5 @@ export const Mentor_Granted_Playing_Time_Explanation__c = 'Explain your grant of
 export const ctpInPerson = 'In person communication.';
 export const ctpDigital = 'Digital communication through Basecamp, text message, email, etc.';
 export const ctpPhoneCall = 'Voice communicaiton via phone call, voice message or video chat.';
+// point tracker table
+export const pointSheetGrade = 'Grades are whole numbers (0 to 100+) or "N/A" which is valued as 100 for purposes of GPA calculation.'

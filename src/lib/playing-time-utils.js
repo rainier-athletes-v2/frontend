@@ -19,6 +19,9 @@ const SUBJECT_MAX_STAMPS = 20;
 const SUBJECT_POSSIBLE_TOKENS_PER_PERIOD = 2;
 const SUBJECT_POSSIBLE_STAMPS_PER_DAY = 4;
 
+const TWO_TOKEN_GRADE = 80; // grade at or above earns 2 tokens
+const ONE_TOKEN_GRADE = 70; // grade at or above earns 1 token
+
 const calcPlayingTime = (sr) => {
   if (!sr) return null;
 
@@ -53,8 +56,8 @@ const calcPlayingTime = (sr) => {
     if (classPointPercentage >= 0.75) classTokensEarned = 2;
 
     let gradeTokensEarned = 0;
-    if (!isElementarySchool && ['A', 'B', 'N/A'].includes(grade)) gradeTokensEarned = 2;
-    if (!isElementarySchool && grade === 'C') gradeTokensEarned = 1;
+    if (!isElementarySchool && parseInt(grade, 10) >= ONE_TOKEN_GRADE) gradeTokensEarned = 1;
+    if (!isElementarySchool && (parseInt(grade, 10) >= TWO_TOKEN_GRADE || grade === 'N/A')) gradeTokensEarned = 2;
 
     const subjectTokensEarned = classTokensEarned + gradeTokensEarned;
 
@@ -93,6 +96,10 @@ const validScores = (subject) => {
   return numeric(subject) && inRange;
 };
 
+const validateGrade = grade => grade === 'N/A' || (Number.isInteger(parseInt(grade, 10)) && parseInt(grade, 10) >= 0);
+
+const validGrade = subject => validateGrade(subject.Grade__c);
+
 const validPointTrackerScores = (sr) => {
   if (!pl.turnedIn(sr.Point_Sheet_Status__c)) return true;
 
@@ -102,7 +109,7 @@ const validPointTrackerScores = (sr) => {
 
   const isElementaryStudent = sr.Student__r && sr.Student__r.Student_Grade__c < 6;
   const goodSubjectGrades = isElementaryStudent
-    || sr.PointTrackers__r.records.every(subject => !!subject.Grade__c);
+    || sr.PointTrackers__r.records.every(subject => validGrade(subject));
 
   return goodSubjectStamps && goodSubjectGrades;
 };
@@ -111,5 +118,7 @@ export {
   calcPlayingTime,
   maxStampsPossible,
   validScores,
+  validateGrade,
+  validGrade,
   validPointTrackerScores,
 };

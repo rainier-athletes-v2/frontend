@@ -95,56 +95,11 @@
   padding-bottom: 5em;
 }
 
-.add-subject {
-  height: 3em;
-  width: 95%;
-  margin-bottom: 1em;
-}
-
-.edit-subjects {
-  position: relative;
-  display: inline !important;
-  padding-bottom: 20px;
-  margin-top: 14px;
-  text-transform: uppercase;
-  color: #A9A9A9;
-  font-weight: 600;
-}
-
-.edit-subjects-btn {
-  text-transform: none;
-  text-decoration: underline;
-  color: $color-brand-blue;
-  margin-left: 10px;
-  height: 1em;
-}
-
-.add-subject-btn {
-  background-color: $color-white;
-  color: $color-brand-blue;
-  border: 1px solid #59AACE;
-  padding: 8px;
-  border-radius: 4px;
-  transition: 350ms all;
-
-  &:hover {
-    background: $color-brand-blue;
-    border: 1px solid #59AACE;
-    color: $color-white;
-  }
-
-  &::placeholder {
-    color: $color-black;
-  }
-}
-
-.save-subjects {
-  display: block;
-  width: 25%;
-  margin-top: 2.2em;
-}
-
 .modal-footer {
   padding: 1em 0 !important;
   justify-content: flex-start !important;
+}
+
+.gpa-display-container {
+  display: block;
 }
