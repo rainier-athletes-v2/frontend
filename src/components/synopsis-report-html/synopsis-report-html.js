@@ -15,7 +15,7 @@ export default function SynopsisReportHtml(props) {
   const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c) || !pl.turnedIn(synopsisReport.Point_Sheet_Status__c);
 
   const pointPercentage = (subject) => {
-    const pointsEarned = (2 * subject.Stamps__c) + subject.Half__Stamps__c;
+    const pointsEarned = (2 * subject.Stamps__c) + subject.Half_Stamps__c;
     const percentage = pointsEarned / pt.maxPointsPossible(subject);
     return Math.round((percentage * 100));
   };
@@ -111,10 +111,10 @@ export default function SynopsisReportHtml(props) {
       <div className="left">
         { !synopsisReport.playingTimeOnly 
           && pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
-          && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
+          && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <h3>Game Eligibility Earned</h3>
-            <p>{synopsisReport.Earned_Playing_Time_c}</p>
+            <p>{synopsisReport.Earned_Playing_Time__c}</p>
           </React.Fragment>
           : <React.Fragment>
             <h3>Mentor Granted Playing Time</h3>
