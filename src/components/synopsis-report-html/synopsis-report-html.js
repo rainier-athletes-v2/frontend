@@ -111,7 +111,7 @@ export default function SynopsisReportHtml(props) {
       <div className="left">
         { !synopsisReport.playingTimeOnly 
           && pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
-          && (synopsisReport.Mentor_Granted_Playing_Time__c === '' || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
+          && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <h3>Game Eligibility Earned</h3>
             <p>{synopsisReport.Earned_Playing_Time__c}</p>

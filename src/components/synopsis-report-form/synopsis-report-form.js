@@ -757,7 +757,6 @@ class SynopsisReportForm extends React.Component {
       )
       : null; 
 
-    debugger;
     return (
       <div className="modal-backdrop">
         { this.state.synopsisSaved 
