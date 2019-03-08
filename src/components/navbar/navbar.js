@@ -105,6 +105,7 @@ class Navbar extends React.Component {
 
   render() {
     const { loggedIn } = this.props;
+    console.log('API_URL', API_URL);
     return (
       <header className="header">
         <nav className="navbar navbar-expand-lg navbar-dark">
