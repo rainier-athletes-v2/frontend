@@ -18,5 +18,5 @@ export default combineReducers({
   synopsisReportLink,
   role,
   token,
-  refresh,
+  // refresh,
 });

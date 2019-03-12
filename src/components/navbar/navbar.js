@@ -46,10 +46,10 @@ class Navbar extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
-      this.props.useRefreshToken(cookieFetch('RaRefresh'));
-      return null;
-    }
+    // if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
+    //   this.props.useRefreshToken(cookieFetch('RaRefresh'));
+    //   return null;
+    // }
     this.props.fetchMyProfile()
       .catch(console.error);  // eslint-disable-line
   }
