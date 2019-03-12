@@ -43,10 +43,12 @@ const calcPlayingTime = (sr) => {
   const isElementarySchool = student.Student_Grade__c < 6;
 
   const numberOfSubjects = subjects.length;
-  const totalClassTokens = numberOfSubjects * CLASS_TOKENS_PER_SUBJECT;
+  const totalClassTokens = numberOfSubjects * CLASS_TOKENS_PER_SUBJECT - (isElementarySchool ? 0 : CLASS_TOKENS_PER_SUBJECT);
   const totalTutorialTokens = isElementarySchool ? 0 : TUTORIAL_MAX_TOKENS_PER_WEEK;
-  const totalGradeTokens = isElementarySchool ? 0 : numberOfSubjects * GRADE_TOKENS_PER_SUBJECT;
-  const totalTokensPossible = totalClassTokens + totalGradeTokens + totalTutorialTokens;
+  const totalNAGradeTokens = subjects.reduce((a, c) => a + (c.Grade__c === 'N/A' ? 2 : 0), 0) - 2; // - 1 for the actual tutorial
+  const totalGradeTokens = isElementarySchool ? 0 : numberOfSubjects * GRADE_TOKENS_PER_SUBJECT - (isElementarySchool ? 0 : CLASS_TOKENS_PER_SUBJECT);
+  const totalTokensPossible = totalClassTokens + totalGradeTokens - totalNAGradeTokens + totalTutorialTokens;
+  // console.log(totalClassTokens, totalGradeTokens, -1 * totalNAGradeTokens, totalTutorialTokens, totalTokensPossible);
 
   const totalEarnedTokens = subjects.map((subject) => {
     const grade = subject.Grade__c;
@@ -56,25 +58,41 @@ const calcPlayingTime = (sr) => {
     const stamps = subject.Stamps__c;
     const halfStamps = subject.Half_Stamps__c;
 
-    let pointsPossible = (SUBJECT_MAX_POINTS_PER_WEEK) - (excusedDays * SUBJECT_MAX_POINTS_PER_DAY);
-    if (subjectName.toLowerCase() === 'tutorial') pointsPossible = TUTORIAL_MAX_POINTS_PER_WEEK - (excusedDays * TUTORIAL_MAX_POINTS_PER_DAY);
-    if (isElementarySchool && subjectName.toLowerCase() === 'tutorial') pointsPossible = 0;
-
-    const totalClassPointsEarned = (2 * stamps) + halfStamps;
-    const classPointPercentage = totalClassPointsEarned / pointsPossible;
-
+    let pointsPossible = 0;
+    let totalClassPointsEarned = 0;
     let classTokensEarned = 0;
-    if (classPointPercentage >= 0.50) classTokensEarned = 1;
-    if (classPointPercentage >= 0.75) classTokensEarned = 2;
-
     let gradeTokensEarned = 0;
-    if (!isElementarySchool && parseInt(grade, 10) >= ONE_TOKEN_GRADE) gradeTokensEarned = 1;
-    if (!isElementarySchool && (parseInt(grade, 10) >= TWO_TOKEN_GRADE || grade === 'N/A')) gradeTokensEarned = 2;
+    let tutorialTokensEarned = 0;
+    if (subjectName.toLowerCase() === 'tutorial') {
+      tutorialTokensEarned = stamps;
+    } else {
+      pointsPossible = (SUBJECT_MAX_POINTS_PER_WEEK) - (excusedDays * SUBJECT_MAX_POINTS_PER_DAY);
+      totalClassPointsEarned = (2 * stamps) + halfStamps;
+      const classPointPercentage = totalClassPointsEarned / pointsPossible;
+      if (classPointPercentage >= 0.50) classTokensEarned = 1;
+      if (classPointPercentage >= 0.75) classTokensEarned = 2;
+      if (!isElementarySchool && parseInt(grade, 10) >= ONE_TOKEN_GRADE) gradeTokensEarned = 1;
+      if (!isElementarySchool && (parseInt(grade, 10) >= TWO_TOKEN_GRADE)) gradeTokensEarned = 2;
+    }
 
-    const subjectTokensEarned = classTokensEarned + gradeTokensEarned;
-
+    const subjectTokensEarned = classTokensEarned + gradeTokensEarned + tutorialTokensEarned;
+    // console.log('subject', subject.Class__r.Name, 'classTokensEarned', classTokensEarned, 'gradeTokensEarned', gradeTokensEarned, 'tutorialTokens', tutorialTokensEarned);
     return subjectTokensEarned;
   });
+
+  const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
+  const tokenPercentage = totalTokensEarned / totalTokensPossible;
+  // console.log(`earned/possible: ${totalTokensEarned}/${totalTokensPossible}, %:${tokenPercentage}`);
+  let earnedPlayingTime = PT.none.label;
+  if (tokenPercentage >= PT.oneQ.pct) earnedPlayingTime = PT.oneQ.label;
+  if (tokenPercentage >= PT.twoQ.pct) earnedPlayingTime = PT.twoQ.label;
+  if (tokenPercentage >= PT.threeQ.pct) earnedPlayingTime = PT.threeQ.label;
+  if (tokenPercentage >= PT.allButStart.pct) earnedPlayingTime = PT.allButStart.label;
+  if (tokenPercentage >= PT.entireGame.pct) earnedPlayingTime = PT.entireGame.label;
+
+  return earnedPlayingTime;
+};
+
 
   const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
   const tokenPercentage = totalTokensEarned / totalTokensPossible;
