@@ -14,18 +14,19 @@ const PT = {
 
 // Stamps refer to entries on student's point sheet. Points are stamps translated such that
 // a full stamp = 2 tokens, a half stamp (X) = 1 token.
+// Tutorial stamps are all worth 1 token and 1 point.
 // Tokens are points adjusted based on percentage break points and are used to calculate playing time earned.
 // Tutorial meets four times/week with 1 stamp possible per day, max 2 points per day or 8 points per week.
 // Other subjects meet 5 times/week with 4 stamps possible per day, 8 points per day, 40 points per week
 const TUTORIAL_MAX_STAMPS_PER_DAY = 1;
-const TUTORIAL_MAX_POINTS_PER_DAY = 2;
+const TUTORIAL_MAX_POINTS_PER_DAY = 1;
 const TUTORIAL_MAX_STAMPS_PER_WEEK = 4;
-const TUTORIAL_MAX_POINTS_PER_WEEK = 2 * TUTORIAL_MAX_STAMPS_PER_WEEK;
+const TUTORIAL_MAX_POINTS_PER_WEEK = 4;
 const TUTORIAL_MAX_TOKENS_PER_WEEK = 4;
 const SUBJECT_MAX_STAMPS_PER_DAY = 4;
-const SUBJECT_MAX_POINTS_PER_DAY = 2 * SUBJECT_MAX_STAMPS_PER_DAY;
-const SUBJECT_MAX_STAMPS_PER_WEEK = 5 * SUBJECT_MAX_STAMPS_PER_DAY;
-const SUBJECT_MAX_POINTS_PER_WEEK = 2 * SUBJECT_MAX_STAMPS_PER_WEEK;
+const SUBJECT_MAX_POINTS_PER_DAY = 8;
+const SUBJECT_MAX_STAMPS_PER_WEEK = 20; // 5 * SUBJECT_MAX_STAMPS_PER_DAY; // 5 * 4 = 20
+const SUBJECT_MAX_POINTS_PER_WEEK = 40; // 2 * SUBJECT_MAX_STAMPS_PER_WEEK; // 2 * 20 = 40
 // no SUBJECT_MAX_TOKENS_PER_WEEK here because it depends on # of subjects
 const CLASS_TOKENS_PER_SUBJECT = 2;
 const GRADE_TOKENS_PER_SUBJECT = 2;
@@ -83,19 +84,6 @@ const calcPlayingTime = (sr) => {
   const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
   const tokenPercentage = totalTokensEarned / totalTokensPossible;
   // console.log(`earned/possible: ${totalTokensEarned}/${totalTokensPossible}, %:${tokenPercentage}`);
-  let earnedPlayingTime = PT.none.label;
-  if (tokenPercentage >= PT.oneQ.pct) earnedPlayingTime = PT.oneQ.label;
-  if (tokenPercentage >= PT.twoQ.pct) earnedPlayingTime = PT.twoQ.label;
-  if (tokenPercentage >= PT.threeQ.pct) earnedPlayingTime = PT.threeQ.label;
-  if (tokenPercentage >= PT.allButStart.pct) earnedPlayingTime = PT.allButStart.label;
-  if (tokenPercentage >= PT.entireGame.pct) earnedPlayingTime = PT.entireGame.label;
-
-  return earnedPlayingTime;
-};
-
-
-  const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
-  const tokenPercentage = totalTokensEarned / totalTokensPossible;
   let earnedPlayingTime = PT.none.label;
   if (tokenPercentage >= PT.oneQ.pct) earnedPlayingTime = PT.oneQ.label;
   if (tokenPercentage >= PT.twoQ.pct) earnedPlayingTime = PT.twoQ.label;
