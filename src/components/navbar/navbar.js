@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import { cookieFetch } from '../../lib/utils';
 import * as authActions from '../../actions/auth';
+import * as refreshActions from '../../actions/refresh';
 import * as routes from '../../lib/routes';
 // import googleBtn from '../../assets/google-btn.png';
 import rainierBtn from '../../assets/rainier-logo-horizontal.png';
@@ -19,10 +21,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   doLogout: () => dispatch(authActions.logout()),
-  // fetchProfiles: profile => dispatch(profileActions.fetchProfileReq(profile)),
   fetchMyProfile: profile => dispatch(profileActions.fetchMyProfileReq(profile)),
-  // fetchStudents: studentIds => dispatch(profileActions.fetchStudentsReq(studentIds)),
-  // fetchTeachers: studentIds => dispatch(profileActions.fetchTeachersReq(studentIds)),
+  useRefreshToken: token => dispatch(refreshActions.useRefreshToken(token)),
 });
 
 class Navbar extends React.Component {
@@ -37,16 +37,19 @@ class Navbar extends React.Component {
   setSFOAuthUrl = () => {
     const baseUrl = SF_OAUTH_AUTHORIZE_URL; // change test to login to move to production instance
     const redirect = `redirect_uri=${API_URL}/oauth/sf`;
-    const scope = 'id'; // %20refresh_token%20offline_access';
-    // const scope = 'api%20id%20profile%20email%20address%20phone%20refresh_token%20offline_access';
+    const scope = 'id'; 
     const clientId = `client_id=${SF_OAUTH_ID.trim()}`;
-    const prompt = 'prompt=consent%20login'; // '%20login' may be added
+    const prompt = 'prompt=consent%20login'; 
     const responseType = 'response_type=code'; 
     const oAuthUrl = `${baseUrl}?${redirect}&${scope}&${clientId}&${prompt}&${responseType}`;
     return oAuthUrl;
   }
 
   componentDidMount() {
+    if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
+      this.props.useRefreshToken(cookieFetch('RaRefresh'));
+      return null;
+    }
     this.props.fetchMyProfile()
       .catch(console.error);  // eslint-disable-line
   }
@@ -62,12 +65,15 @@ class Navbar extends React.Component {
 
   determineRole = () => {
     if (this.props.myProfile) {
-      return this.renderMentor(); //this.props.myProfile.role === 'mentor' ? this.renderMentor() : this.renderAdmin();
+      return this.renderMentor();
     }
     return null;
   }
 
   renderJSX = (loggedIn) => {
+    const refreshToken = cookieFetch('RaRefresh');
+    console.log('navbar renderJSX: loggedIn', loggedIn, 'RaRefresh', refreshToken);
+
     const JSXNotLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo" src={ rainierBtn } /></Link>
@@ -105,7 +111,7 @@ class Navbar extends React.Component {
 
   render() {
     const { loggedIn } = this.props;
-    console.log('API_URL', API_URL);
+    console.log('navbar loggedIn', loggedIn, 'RaRefresh', cookieFetch('RaRefresh'));
     return (
       <header className="header">
         <nav className="navbar navbar-expand-lg navbar-dark">
@@ -121,6 +127,7 @@ Navbar.propTypes = {
   doLogout: PropTypes.func,
   fetchMyProfile: PropTypes.func,
   fetchProfiles: PropTypes.func,
+  useRefreshToken: PropTypes.func,
   myProfile: PropTypes.object,
   fetchProfile: PropTypes.func,
   fetchStudents: PropTypes.func,

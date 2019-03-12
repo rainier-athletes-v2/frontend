@@ -1,4 +1,5 @@
 // export const LOGIN_ROUTE = '/login';
+export const OAUTH_ROUTE = '/oauth/sf';
 export const PROFILE_ROUTE = '/profiles';
 export const ROOT_ROUTE = '/';
 // export const ADMIN_ROUTE = '/admin';
