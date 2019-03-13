@@ -32,8 +32,12 @@ export const removeToken = () => ({
 // };
 
 export const logout = () => (store) => {
+  // localStorage.removeItem('REFRESH');
   cookieDelete('RaToken');
   cookieDelete('RaUser');
-  // cookieDelete('RaRefresh');
+  cookieDelete('RaRefresh');
+  store.dispatch({
+    type: 'REFRESH_TOKEN_REMOVE',
+  });
   return store.dispatch(removeToken());
 };

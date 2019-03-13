@@ -71,9 +71,6 @@ class Navbar extends React.Component {
   }
 
   renderJSX = (loggedIn) => {
-    const refreshToken = cookieFetch('RaRefresh');
-    console.log('navbar renderJSX: loggedIn', loggedIn, 'RaRefresh', refreshToken);
-
     const JSXNotLoggedIn = (
       <React.Fragment>
         <Link to={routes.ROOT_ROUTE}><img className="rainier-logo" src={ rainierBtn } /></Link>
@@ -111,7 +108,7 @@ class Navbar extends React.Component {
 
   render() {
     const { loggedIn } = this.props;
-    console.log('navbar loggedIn', loggedIn, 'RaRefresh', cookieFetch('RaRefresh'));
+
     return (
       <header className="header">
         <nav className="navbar navbar-expand-lg navbar-dark">
