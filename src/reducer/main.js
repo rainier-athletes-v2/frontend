@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import token from './token';
+import refresh from './refresh';
 import role from './role';
 import myProfile from './myProfile';
 import synopsisReport from './synopsis-report'; // a single student's report
@@ -17,4 +18,5 @@ export default combineReducers({
   synopsisReportLink,
   role,
   token,
+  refresh,
 });
