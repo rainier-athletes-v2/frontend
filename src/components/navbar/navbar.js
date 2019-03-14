@@ -100,7 +100,7 @@ class Navbar extends React.Component {
             </li>
             <li className="nav-item">
               <a className="nav-link"
-                href="https://launchpad.37signals.com/authorization/new?type=web_server&client_id=2335de40a6341edd9388d4d46300548f48c95dfc&redirect_uri=https://localhost:3000/api/v2/oauth/bc">Basecamp Login</a>
+                href="https://launchpad.37signals.com/authorization/new?type=web_server&client_id=2335de40a6341edd9388d4d46300548f48c95dfc&redirect_uri=https://api2.rainierathletes.org/api/v2/oauth/bc">Basecamp Login</a>
             </li>
           </ul>
         </div>
