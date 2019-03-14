@@ -23,6 +23,7 @@ webpackConfig.plugins = [
     API_URL: JSON.stringify(process.env.API_URL),
     SF_OAUTH_ID: JSON.stringify(process.env.SF_OAUTH_ID),
     SF_OAUTH_AUTHORIZE_URL: JSON.stringify(process.env.SF_OAUTH_AUTHORIZE_URL),
+    SF_SESSION_TIMEOUT_MINUTES: JSON.stringify(process.env.SF_SESSION_TIMEOUT_MINUTES),
   }),
   new ProvidePlugin({
     jQuery: 'jquery',
