@@ -26,8 +26,9 @@ const cookieFetch = (key) => {
 };
 
 const cookieDelete = (key) => {
-  const firstDot = process.env.CLIENT_URL.indexOf('.');
-  const domain = firstDot > 0 ? process.env.CLIENT_URL.slice(firstDot) : null;
+  debugger;
+  const firstDot = document.location.host.indexOf('.');
+  const domain = firstDot > 0 ? document.location.host.slice(firstDot) : null;
   if (domain) {
     document.cookie = `${key}=; expires=0; domain=${domain}`;
   } else {
