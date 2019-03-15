@@ -19,7 +19,7 @@ const translateGradeNulltoNA = (subjects) => {
 };
 
 export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
-  const { token } = store.getState();
+  const token = store.getState().salesforceToken;
 
   return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}/${srId}`)
     .set('Authorization', `Bearer ${token}`)
@@ -39,7 +39,7 @@ const translateGradeNAtoNull = (subjects) => {
 };
 
 export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
-  const { token } = store.getState();
+  const token = store.getState().salesforceToken;
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
   sr.PointTrackers__r.records = translateGradeNAtoNull(sr.PointTrackers__r.records);
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)

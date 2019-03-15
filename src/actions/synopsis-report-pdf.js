@@ -91,7 +91,7 @@ const synopsisReportToHTML = (student, synopsisReport) => {
 };
 
 export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
-  const { token } = store.getState();
+  const token = store.getState().salesforceToken;
   
   const data = {
     name: synopsisReport.Student__r.Name,

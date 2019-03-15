@@ -7,7 +7,7 @@ export const setSynopsisReports = srList => ({
 });
 
 export const fetchRecentSynopsisReports = (studentId) => (store) => { // eslint-disable-line
-  const { token } = store.getState();
+  const token = store.getState().salesforceToken;
 
   return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORTS_ROUTE}/${studentId}`)
     .set('Authorization', `Bearer ${token}`)

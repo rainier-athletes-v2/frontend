@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { cookieFetch } from '../../lib/utils';
 import * as authActions from '../../actions/auth';
 import * as refreshActions from '../../actions/refresh';
 import * as routes from '../../lib/routes';
@@ -15,7 +14,7 @@ import './_navbar.scss';
 import * as profileActions from '../../actions/profile';
 
 const mapStateToProps = state => ({
-  loggedIn: !!state.token,
+  loggedIn: !!state.salesforceToken,
   myProfile: state.myProfile,
 });
 
@@ -55,10 +54,6 @@ class Navbar extends React.Component {
   }
 
   componentDidMount() {
-    // if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
-    //   this.props.useRefreshToken(cookieFetch('RaRefresh'));
-    //   return null;
-    // }
     this.props.fetchMyProfile()
       .catch(console.error);  // eslint-disable-line
   }
