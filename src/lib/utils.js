@@ -26,7 +26,13 @@ const cookieFetch = (key) => {
 };
 
 const cookieDelete = (key) => {
-  document.cookie = `${key}=; expires=0`;
+  const firstDot = process.env.CLIENT_URL.indexOf('.');
+  const domain = firstDot > 0 ? process.env.CLIENT_URL.slice(firstDot) : null;
+  if (domain) {
+    document.cookie = `${key}=; expires=0; domain=${domain}`;
+  } else {
+    document.cookie = `${key}=; expires=0`;
+  }
 };
 
 const convertDateToValue = (inputDate) => {
