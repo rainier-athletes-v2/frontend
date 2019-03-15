@@ -26,7 +26,13 @@ const cookieFetch = (key) => {
 };
 
 const cookieDelete = (key) => {
-  document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  const firstDot = document.location.host.indexOf('.');
+  const domain = firstDot > 0 ? document.location.host.slice(firstDot) : null;
+  if (domain) {
+    document.cookie = `${key}=; expires=0; domain=${domain}`;
+  } else {
+    document.cookie = `${key}=; expires=0`;
+  }
 };
 
 const convertDateToValue = (inputDate) => {

@@ -3,12 +3,12 @@
 import { cookieDelete } from '../lib/utils';
 
 export const setToken = token => ({
-  type: 'TOKEN_SET',
+  type: 'TOKEN_SET_SF',
   payload: token,
 });
 
 export const removeToken = () => ({
-  type: 'TOKEN_REMOVE',
+  type: 'TOKEN_REMOVE_SF',
 });
 
 // export const userSignup = user => (store) => {
@@ -33,11 +33,16 @@ export const removeToken = () => ({
 
 export const logout = () => (store) => {
   // localStorage.removeItem('REFRESH');
-  cookieDelete('RaToken');
+  cookieDelete('RaSfToken');
   cookieDelete('RaUser');
-  cookieDelete('RaRefresh');
+  cookieDelete('RaSfRefresh');
+  cookieDelete('RaBcToken');
+  cookieDelete('RaBcRefresh');
   store.dispatch({
-    type: 'REFRESH_TOKEN_REMOVE',
+    type: 'REFRESH_TOKEN_REMOVE_SF',
+  });
+  store.dispatch({
+    type: 'REFRESH_TOKEN_REMOVE_BC',
   });
   return store.dispatch(removeToken());
 };
