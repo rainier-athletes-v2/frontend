@@ -45,6 +45,15 @@ class Navbar extends React.Component {
     return oAuthUrl;
   }
 
+  setBCOAuthUrl = () => {
+    const baseUrl = BC_OAUTH_AUTHORIZE_URL;
+    const type = 'type=web_server';
+    const clientId = `client_id=${BC_OAUTH_ID.trim()}`;
+    const redirect = `redirect_uri=${API_URL}/oauth/bc`;
+    const oAuthUrl = `${baseUrl}?${type}&${clientId}&${redirect}`;
+    return oAuthUrl;
+  }
+
   componentDidMount() {
     // if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
     //   this.props.useRefreshToken(cookieFetch('RaRefresh'));
@@ -100,7 +109,7 @@ class Navbar extends React.Component {
             </li>
             <li className="nav-item">
               <a className="nav-link"
-                href="https://launchpad.37signals.com/authorization/new?type=web_server&client_id=2335de40a6341edd9388d4d46300548f48c95dfc&redirect_uri=https://api2.rainierathletes.org/api/v2/oauth/bc">Basecamp Login</a>
+                href={ this.setBCOAuthUrl() }>Basecamp Login</a>
             </li>
           </ul>
         </div>
