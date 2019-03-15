@@ -48,7 +48,7 @@ class Navbar extends React.Component {
   setBCOAuthUrl = () => {
     const baseUrl = BC_OAUTH_AUTHORIZE_URL;
     const type = 'type=web_server';
-    const clientId = `client_id=${BC_OAUTH_ID.trim()}`;
+    const clientId = `client_id=${BC_OAUTH_ID.trim()}`; // wtf?!
     const redirect = `redirect_uri=${API_URL}/oauth/bc`;
     const oAuthUrl = `${baseUrl}?${type}&${clientId}&${redirect}`;
     return oAuthUrl;
