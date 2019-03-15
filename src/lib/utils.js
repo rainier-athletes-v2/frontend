@@ -26,7 +26,6 @@ const cookieFetch = (key) => {
 };
 
 const cookieDelete = (key) => {
-  debugger;
   const firstDot = document.location.host.indexOf('.');
   const domain = firstDot > 0 ? document.location.host.slice(firstDot) : null;
   if (domain) {
