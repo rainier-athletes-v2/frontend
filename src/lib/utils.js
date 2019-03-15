@@ -26,7 +26,7 @@ const cookieFetch = (key) => {
 };
 
 const cookieDelete = (key) => {
-  document.cookie = `${key}=DELETED; expires=0`;
+  document.cookie = `${key}=; expires=0`;
 };
 
 const convertDateToValue = (inputDate) => {
