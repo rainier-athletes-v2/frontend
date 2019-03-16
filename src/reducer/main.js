@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import token from './token';
-import refresh from './refresh';
+import salesforceToken from './sf-token';
+import basecampToken from './bc-token';
+import salesforceRefresh from './sf-refresh';
+import basecampRefresh from './bc-refresh';
 import role from './role';
 import myProfile from './myProfile';
 import synopsisReport from './synopsis-report'; // a single student's report
@@ -17,6 +19,8 @@ export default combineReducers({
   synopsisReport,
   synopsisReportLink,
   role,
-  token,
-  refresh,
+  salesforceToken,
+  basecampToken,
+  salesforceRefresh,
+  basecampRefresh,
 });

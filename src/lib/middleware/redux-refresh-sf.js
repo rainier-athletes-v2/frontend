@@ -4,10 +4,10 @@ import * as routes from '../routes';
 import { fetchMyProfileReq } from '../../actions/profile';
 
 export default store => next => (action) => {
-  const refreshToken = store.getState().refresh;
+  const refreshToken = store.getState().salesforceRefresh;
   switch (action.type) {
-    case 'ON_INIT':
-      console.log('ON_INIT processing');
+    case 'ON_INIT_SF':
+      console.log('ON_INIT_SF processing');
       // if refresh token present use it to try and authenticate
       if (refreshToken) {
         return superagent.post(`${API_URL}${routes.OAUTH_ROUTE}`)
@@ -19,10 +19,10 @@ export default store => next => (action) => {
             // timeout is set in salesforce (they don't send us the expires_in
             // parameter unfortunately). We have SF_SESSION_TIMEOUT_MINUTES in
             // our .env file which should match what's in salesforce.
-            console.log('setting timeout for ON_INIT in', (SF_SESSION_TIMEOUT_MINUTES - 1), 'minutes');
-            setTimeout(() => store.dispatch({ type: 'ON_INIT' }), (SF_SESSION_TIMEOUT_MINUTES - 1) * 60 * 1000);
+            console.log('setting timeout for ON_INIT_SF in', (SF_SESSION_TIMEOUT_MINUTES - 1), 'minutes');
+            setTimeout(() => store.dispatch({ type: 'ON_INIT_SF' }), (SF_SESSION_TIMEOUT_MINUTES - 1) * 60 * 1000);
             store.dispatch({
-              type: 'TOKEN_SET',
+              type: 'TOKEN_SET_SF',
               payload: response.body.raToken,
             });
             if (!store.getState().myProfile) store.dispatch(fetchMyProfileReq());

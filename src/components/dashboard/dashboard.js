@@ -7,7 +7,7 @@ import './_dashboard.scss';
 
 const mapStateToProps = state => ({
   myProfile: state.myProfile,
-  loggedIn: !!state.token,
+  loggedIn: !!state.salesforceToken,
 });
 
 class Dashboard extends React.Component {

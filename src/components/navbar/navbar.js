@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { cookieFetch } from '../../lib/utils';
 import * as authActions from '../../actions/auth';
 import * as refreshActions from '../../actions/refresh';
 import * as routes from '../../lib/routes';
@@ -15,7 +14,7 @@ import './_navbar.scss';
 import * as profileActions from '../../actions/profile';
 
 const mapStateToProps = state => ({
-  loggedIn: !!state.token,
+  loggedIn: !!state.salesforceToken,
   myProfile: state.myProfile,
 });
 
@@ -45,11 +44,16 @@ class Navbar extends React.Component {
     return oAuthUrl;
   }
 
+  setBCOAuthUrl = () => {
+    const baseUrl = BC_OAUTH_AUTHORIZE_URL;
+    const type = 'type=web_server';
+    const clientId = `client_id=${BC_OAUTH_ID.trim()}`; // wtf?!
+    const redirect = `redirect_uri=${API_URL}/oauth/bc`;
+    const oAuthUrl = `${baseUrl}?${type}&${clientId}&${redirect}`;
+    return oAuthUrl;
+  }
+
   componentDidMount() {
-    // if (!this.props.loggedIn && cookieFetch('RaRefresh')) {
-    //   this.props.useRefreshToken(cookieFetch('RaRefresh'));
-    //   return null;
-    // }
     this.props.fetchMyProfile()
       .catch(console.error);  // eslint-disable-line
   }
@@ -97,6 +101,10 @@ class Navbar extends React.Component {
             <li className="nav-item"><a className="nav-link" onClick={ this.props.doLogout }>Logout</a></li>
             <li className="nav-item">
               <a className="nav-link help" href="https://docs.google.com/presentation/d/e/2PACX-1vTRSMVBEvObOl1sCKPmXMChP8A4eZScVmrRrzS6mDw0Imi5LkbFd1sSgqDS-QEPcBD-gvBFwmanrPIC/pub"alt="Help Documentation" target="_blank" rel="noopener noreferrer">Help</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link"
+                href={ this.setBCOAuthUrl() }>Basecamp Login</a>
             </li>
           </ul>
         </div>
