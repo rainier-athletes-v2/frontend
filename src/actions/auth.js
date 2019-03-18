@@ -10,6 +10,15 @@ export const removeToken = () => ({
   type: 'TOKEN_REMOVE_SF',
 });
 
+export const setBcToken = token => ({
+  type: 'TOKEN_SET_BC',
+  payload: token,
+});
+
+export const removeBcToken = () => ({
+  type: 'TOKEN_REMOVE_BC',
+});
+
 export const logout = () => (store) => {
   cookieDelete('RaSfToken');
   cookieDelete('RaUser');
@@ -22,5 +31,6 @@ export const logout = () => (store) => {
   store.dispatch({
     type: 'REFRESH_TOKEN_REMOVE_BC',
   });
-  return store.dispatch(removeToken());
+  store.dispatch(removeToken());
+  return store.dispatch(removeBcToken());
 };

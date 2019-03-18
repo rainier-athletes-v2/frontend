@@ -8,7 +8,7 @@ export default store => next => (action) => {
     case 'ON_INIT_BC':
       // if refresh token present use it to try and authenticate
       if (refreshToken) {
-        return superagent.post(`${API_URL}${routes.OAUTH_ROUTE}`)
+        return superagent.post(`${API_URL}${routes.OAUTH_ROUTE_BC}`)
           .set('Authorization', 'UNUSED')
           .set('Content-Type', 'application/json')
           .send({ refresh_token: refreshToken })
@@ -21,7 +21,7 @@ export default store => next => (action) => {
             // setTimeout(() => store.dispatch({ type: 'ON_INIT_BC' }), (SF_SESSION_TIMEOUT_MINUTES - 1) * 60 * 1000);
             next({
               type: 'TOKEN_SET_BC',
-              payload: response.body.raToken,
+              payload: response.body.raBcToken,
             });
           })
           .catch(console.err);
