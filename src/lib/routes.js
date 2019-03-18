@@ -11,6 +11,7 @@ export const DASHBOARD_ROUTE = '/dashboard';
 export const SYNOPSIS_REPORTS_ROUTE = '/synopsisreports'; // list of recent SR's retrieved by student Id
 export const SYNOPSIS_REPORT_ROUTE = '/synopsisreport'; // specific SR retrieved by Id
 export const SYNOPSIS_PDF_ROUTE = '/synopsispdf';
+export const SYNOPSIS_SUMMARY_ROUTE = '/synopsissummary';
 // export const ATTACH_ROUTE = '/attach';
 // export const DETACH_ROUTE = '/detach';
 // export const EXTRACT_CSV_ROUTE = '/extract';

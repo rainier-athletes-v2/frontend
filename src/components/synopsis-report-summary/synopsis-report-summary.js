@@ -1,19 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as pl from '../../lib/pick-list-tests';
+import * as srActions from '../../actions/synopsis-report-summary';
+
 import './_synopsis-report-summary.scss';
 
 const mapStateToProps = state => ({
   synopsisLink: state.synopsisReportLink,
+  basecampToken: state.basecampToken,
+  srSummaryStatus: state.srSummaryStatus,
+});
+
+const mapDispatchToProps = dispatch => ({
+  postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
+  clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
 });
 
 class SynopsisReportSummary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.state.summarySaved = false;
+    this.state.waitingForSave = false;
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (this.props.srSummaryStatus !== prevProps.srSummaryStatus) {
+      this.setState({
+        ...this.state,
+        summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
+        waitingForSave: this.props.srSummaryStatus, // set waiting false if status is null (cleared)
+      });
+    }
   }
 
   handleCopy = () => {
@@ -23,12 +44,26 @@ class SynopsisReportSummary extends React.Component {
     document.execCommand('copy');
   }
 
+  handlePostSrSummary = () => {
+    this.setState({ summarySaved: false });
+    this.props.clearSrSummaryStatus();
+
+    const srSummary = {
+      subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
+      content: document.getElementById('body').innerHTML,
+      basecampToken: this.props.basecampToken,
+      studentEmail: this.props.synopsisReport.Student__r.npe01__HomeEmail__c,
+    };
+    console.log('handlePostSrSummary:', srSummary);
+    return this.props.postSrSummary(srSummary);
+  }
+
   render() {
-    const tooltip = (
-      <Tooltip id="tooltip">
-        Don&#39;t forget to paste into Basecamp!
-      </Tooltip>
-    );
+    // const tooltip = (
+    //   <Tooltip id="tooltip">
+    //     Don&#39;t forget to paste into Basecamp!
+    //   </Tooltip>
+    // );
     
     if (!this.props.synopsisReport) return null;
 
@@ -113,11 +148,10 @@ class SynopsisReportSummary extends React.Component {
             </div>
 
             <div className="modal-footer">
-              <OverlayTrigger placement="top" trigger="click" rootClose overlay={tooltip}>
-                <button type="submit" className="btn btn-primary" onClick={this.handleCopy}>
-                  <FontAwesomeIcon icon="copy" className="fa-1x copy"/>
-                </button>
-              </OverlayTrigger>
+              {this.state.waitingForSave 
+                ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
+                : <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
+              }
             </div>
           </div>
         </div>
@@ -129,7 +163,11 @@ class SynopsisReportSummary extends React.Component {
 SynopsisReportSummary.propTypes = {
   synopsisReport: PropTypes.object,
   synopsisLink: PropTypes.string,
+  basecampToken: PropTypes.string,
   onClose: PropTypes.func,
+  postSrSummary: PropTypes.func,
+  clearSrSummaryStatus: PropTypes.func,
+  srSummaryStatus: PropTypes.number,
 };
 
-export default connect(mapStateToProps)(SynopsisReportSummary);
+export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummary);
