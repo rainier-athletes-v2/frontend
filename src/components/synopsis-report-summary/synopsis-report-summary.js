@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as pl from '../../lib/pick-list-tests';
 import * as srActions from '../../actions/synopsis-report-summary';
+import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_synopsis-report-summary.scss';
 
@@ -12,17 +13,20 @@ const mapStateToProps = state => ({
   synopsisLink: state.synopsisReportLink,
   basecampToken: state.basecampToken,
   srSummaryStatus: state.srSummaryStatus,
+  messageBoardUrl: state.messageBoardUrl,
 });
 
 const mapDispatchToProps = dispatch => ({
   postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
   clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
+  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
 });
 
 class SynopsisReportSummary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.state.mbUrlRetrieved = !!props.messageBoardUrl;
     this.state.summarySaved = false;
     this.state.waitingForSave = false;
   }
@@ -32,8 +36,14 @@ class SynopsisReportSummary extends React.Component {
       this.setState({
         ...this.state,
         summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
-        waitingForSave: this.props.srSummaryStatus, // set waiting false if status is null (cleared)
+        waitingForSave: !this.props.srSummaryStatus, // set waiting false if status is null (cleared)
+        mbUrlRetrieved: !!this.props.messageBoardUrl,
       });
+      if (this.props.srSummaryStatus === 201) {
+        this.props.clearSynopsisReportLink(); // force close of summary modal
+      } else {
+        alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
+      }
     }
   }
 
@@ -45,16 +55,16 @@ class SynopsisReportSummary extends React.Component {
   }
 
   handlePostSrSummary = () => {
-    this.setState({ summarySaved: false });
     this.props.clearSrSummaryStatus();
+    this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
 
     const srSummary = {
       subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
       content: document.getElementById('body').innerHTML,
       basecampToken: this.props.basecampToken,
-      studentEmail: this.props.synopsisReport.Student__r.npe01__HomeEmail__c,
+      messageBoardUrl: this.props.messageBoardUrl,
     };
-    console.log('handlePostSrSummary:', srSummary);
+
     return this.props.postSrSummary(srSummary);
   }
 
@@ -164,9 +174,11 @@ SynopsisReportSummary.propTypes = {
   synopsisReport: PropTypes.object,
   synopsisLink: PropTypes.string,
   basecampToken: PropTypes.string,
+  messageBoardUrl: PropTypes.string,
   onClose: PropTypes.func,
   postSrSummary: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,
+  clearSynopsisReportLink: PropTypes.func,
   srSummaryStatus: PropTypes.number,
 };
 

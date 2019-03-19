@@ -10,6 +10,7 @@ import TextArea from '../text-area/text-area';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
+import * as srSummaryActions from '../../actions/synopsis-report-summary';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
 
@@ -48,6 +49,8 @@ const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
   createSynopsisReportPdf: (student, sr) => dispatch(srPdfActions.createSynopsisReportPdf(student, sr)),
   setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
+  getMsgBoardUrl: studentEmail => dispatch(srSummaryActions.getMsgBoardUrl(studentEmail)),
+  clearMsgBoardUrl: () => dispatch(srSummaryActions.clearMsgBoardUrl()),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -58,6 +61,8 @@ class SynopsisReportForm extends React.Component {
     this.state.synopsisReport = this.props.synopsisReport;
     this.state.communications = this.initCommunicationsState(this.props.synopsisReport);
     this.state.synopsisSaved = false;
+
+    this.props.clearMsgBoardUrl();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -73,6 +78,7 @@ class SynopsisReportForm extends React.Component {
         synopsisReport: { ...this.props.synopsisReport },
         communications: this.initCommunicationsState(this.props.synopsisReport),
       });
+      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
     }
     const earnedPlayingTime = pt.calcPlayingTime(this.state.synopsisReport);
     if (this.state.synopsisReport && earnedPlayingTime !== this.state.synopsisReport.Earned_Playing_Time__c) {
@@ -777,6 +783,8 @@ SynopsisReportForm.propTypes = {
   saveSynopsisReport: PropTypes.func,
   createSynopsisReportPdf: PropTypes.func,
   setSynopsisReportLink: PropTypes.func,
+  clearMsgBoardUrl: PropTypes.func,
+  getMsgBoardUrl: PropTypes.func,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,
