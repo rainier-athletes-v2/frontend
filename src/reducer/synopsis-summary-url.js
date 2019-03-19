@@ -1,0 +1,10 @@
+export default (state = null, { type, payload }) => {
+  switch (type) {
+    case 'SET_MSG_BOARD_URL':
+      return payload;
+    case 'CLEAR_MSG_BOARD_URL':
+      return null;
+    default:
+      return state;
+  }
+};

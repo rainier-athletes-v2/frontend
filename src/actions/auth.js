@@ -1,5 +1,4 @@
-// import superagent from 'superagent';
-// import * as routes from '../lib/routes';
+
 import { cookieDelete } from '../lib/utils';
 
 export const setToken = token => ({
@@ -11,28 +10,16 @@ export const removeToken = () => ({
   type: 'TOKEN_REMOVE_SF',
 });
 
-// export const userSignup = user => (store) => {
-//   return superagent.post(`${API_URL}${routes.SIGNUP_ROUTE}`)
-//     .send(user)
-//     .withCredentials()
-//     .then((response) => {
-//       debugger;
-//       return store.dispatch(setToken(response.body.token));
-//     });
-// };
+export const setBcToken = token => ({
+  type: 'TOKEN_SET_BC',
+  payload: token,
+});
 
-// export const userLogin = user => (store) => {
-//   return superagent.get(`${API_URL}${routes.LOGIN_ROUTE}`)
-//     .auth(user.username, user.password)
-//     .withCredentials()
-//     .then((response) => {
-//       debugger;
-//       return store.dispatch(setToken(response.body.token));
-//     });
-// };
+export const removeBcToken = () => ({
+  type: 'TOKEN_REMOVE_BC',
+});
 
 export const logout = () => (store) => {
-  // localStorage.removeItem('REFRESH');
   cookieDelete('RaSfToken');
   cookieDelete('RaUser');
   cookieDelete('RaSfRefresh');
@@ -44,5 +31,6 @@ export const logout = () => (store) => {
   store.dispatch({
     type: 'REFRESH_TOKEN_REMOVE_BC',
   });
-  return store.dispatch(removeToken());
+  store.dispatch(removeToken());
+  return store.dispatch(removeBcToken());
 };

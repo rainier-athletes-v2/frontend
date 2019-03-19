@@ -104,9 +104,11 @@ class Mentor extends React.Component {
   }
 
   handleSaveButtonClick = (e) => {
-    e.preventDefault();
-    if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
-    this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
+    if (e) {
+      e.preventDefault();
+      if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
+      this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
+    }
     this.setState({ modal: !this.state.modal });
   }
 
