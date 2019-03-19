@@ -13,6 +13,7 @@ import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as srSummaryActions from '../../actions/synopsis-report-summary';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
+import * as errorActions from '../../actions/error';
 
 import './_synopsis-report-form.scss';
 
@@ -51,6 +52,7 @@ const mapDispatchToProps = dispatch => ({
   setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
   getMsgBoardUrl: studentEmail => dispatch(srSummaryActions.getMsgBoardUrl(studentEmail)),
   clearMsgBoardUrl: () => dispatch(srSummaryActions.clearMsgBoardUrl()),
+  clearError: () => dispatch(errorActions.clearError()),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -74,6 +76,7 @@ class SynopsisReportForm extends React.Component {
       });
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
+      this.props.clearError();
       this.setState({ 
         synopsisReport: { ...this.props.synopsisReport },
         communications: this.initCommunicationsState(this.props.synopsisReport),
@@ -687,7 +690,7 @@ class SynopsisReportForm extends React.Component {
             <select
               name="Mentor_Support_Request__c"
               onChange={ this.handleSimpleFieldChange }
-              value={ this.state.synopsisReport && (this.state.synopsisReport.Mentor_Support_Request__c || '') }>
+              value={ this.state.synopsisReport ? this.state.synopsisReport.Mentor_Support_Request__c : '' }>
               <option value="">Pick One...</option>
               <option value="No">No</option>
               <option value="Student Follow Up">Student Follow Up</option>
@@ -784,6 +787,7 @@ SynopsisReportForm.propTypes = {
   createSynopsisReportPdf: PropTypes.func,
   setSynopsisReportLink: PropTypes.func,
   clearMsgBoardUrl: PropTypes.func,
+  clearError: PropTypes.func,
   getMsgBoardUrl: PropTypes.func,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,

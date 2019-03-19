@@ -1,5 +1,6 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
+import { setError } from './error';
 
 export const setSrSummaryStatus = status => ({
   type: 'SET_SR_SUMMARY_STATUS',
@@ -35,6 +36,10 @@ export const getMsgBoardUrl = studentEmail => (store) => { // eslint-disable-lin
       console.log('getMsgBoardUrl returned', res.body.messageBoardUrl, 'status', res.status);
       const { messageBoardUrl } = res.body;
       return store.dispatch(setMsgBoardUrl(messageBoardUrl));
+    })
+    .catch((err) => {
+      console.error('getMsgBoardUrl returned status', err.status);
+      return store.dispatch(setError(`getMsgBoardUrl returned status ${err.status}`));
     });
 };
 

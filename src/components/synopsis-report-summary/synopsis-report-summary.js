@@ -14,6 +14,7 @@ const mapStateToProps = state => ({
   basecampToken: state.basecampToken,
   srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
+  error: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -162,9 +163,12 @@ class SynopsisReportSummary extends React.Component {
               {/* eslint-disable-next-line no-nested-ternary */}
               {this.state.waitingForSave 
                 ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
+                // eslint-disable-next-line no-nested-ternary
                 : playingTimeOnly 
                   ? <h3><button onClick={ this.props.onClose } className="btn btn-secondary" id="pt-only" type="submit">Click to Dismiss</button></h3> 
-                  : <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
+                  : this.props.messageBoardUrl
+                    ? <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
+                    : <h5>Unable to post to Basecamp. Missing message board link. Be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
               }
             </div>
           </div>
@@ -179,6 +183,7 @@ SynopsisReportSummary.propTypes = {
   synopsisLink: PropTypes.string,
   basecampToken: PropTypes.string,
   messageBoardUrl: PropTypes.string,
+  error: PropTypes.string,
   onClose: PropTypes.func,
   postSrSummary: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,
