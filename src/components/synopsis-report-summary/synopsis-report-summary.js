@@ -19,7 +19,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
   clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
-  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
+  setSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
 });
 
 class SynopsisReportSummary extends React.Component {
@@ -33,14 +33,15 @@ class SynopsisReportSummary extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.srSummaryStatus !== prevProps.srSummaryStatus) {
+      console.log('srSummaryStatus changed from', prevProps.srSummaryStatus, 'to', this.props.srSummaryStatus);
       this.setState({
         ...this.state,
         summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
         waitingForSave: !this.props.srSummaryStatus, // set waiting false if status is null (cleared)
         mbUrlRetrieved: !!this.props.messageBoardUrl,
       });
-      if (this.props.srSummaryStatus === 201) {
-        this.props.clearSynopsisReportLink(); // force close of summary modal
+      if (this.props.srSummaryStatus < 300) { // expect 201 on success
+        this.props.onClose(); // force close of modal
       } else {
         alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
       }
@@ -82,8 +83,8 @@ class SynopsisReportSummary extends React.Component {
 
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
-        <p>Thank you for submitting your mentee&#39;s playing time.</p>
-        <p>Please remember to complete their full report by Sunday Evening</p>
+        <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
+        <p className="centered">Please remember to complete their full report by Sunday Evening</p>
       </React.Fragment>
     );
 
@@ -158,9 +159,12 @@ class SynopsisReportSummary extends React.Component {
             </div>
 
             <div className="modal-footer">
+              {/* eslint-disable-next-line no-nested-ternary */}
               {this.state.waitingForSave 
                 ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                : <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
+                : playingTimeOnly 
+                  ? <h3><button onClick={ this.props.onClose } className="btn btn-secondary" id="pt-only" type="submit">Click to Dismiss</button></h3> 
+                  : <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
               }
             </div>
           </div>
@@ -178,7 +182,7 @@ SynopsisReportSummary.propTypes = {
   onClose: PropTypes.func,
   postSrSummary: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,
-  clearSynopsisReportLink: PropTypes.func,
+  setSynopsisReportLink: PropTypes.func,
   srSummaryStatus: PropTypes.number,
 };
 
