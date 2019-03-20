@@ -14,7 +14,7 @@ class MentorContent extends React.Component {
 
     // const currentSchool = haveData ? student.studentData.schoolName : '';
     const currentSchoolName = haveData ? student.studentData.schoolName.trim() : '';
-    const schoolNameText = `${currentSchoolName}${haveData ? `, Grade ${student.studentData.grade}` : ''}`;
+    const schoolNameText = `${currentSchoolName}${haveData ? `, Grade ${student.studentData.grade}` : ''}${haveData && student.studentData.teacher ? `, Teacher: ${student.studentData.teacher}` : ''}`;
 
     const currentSportsJSX = haveData ? (student.studentData.teams && student.studentData.teams.filter(t => t.currentlyPlaying).map((t, i) => (
       <div className="team-info" key={`sport-${i}`}>
