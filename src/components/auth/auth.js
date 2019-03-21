@@ -10,10 +10,7 @@ const mapStateToProps = state => ({
 const Auth = roles => (Component) => {
   class HaveAuth extends React.Component {
     render() {
-      // const { role } = this.props;
-      // const roleBase64 = Buffer.from(role, 'base64');
-      const roleAsciiAdmin = 'admin'; // roleBase64.toString('ascii').slice(0, -1);
-      // const roleAsciiMentor = roleBase64.toString('ascii').slice(0);
+      const roleAsciiAdmin = 'admin'; 
       const roleAsciiMentor = 'mentor';
       if (roles.includes(roleAsciiAdmin) || roles.includes(roleAsciiMentor)) {
         return <Component { ...this.props } />;

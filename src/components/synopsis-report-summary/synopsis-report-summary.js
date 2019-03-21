@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as pl from '../../lib/pick-list-tests';
 import * as srActions from '../../actions/synopsis-report-summary';
@@ -71,12 +70,6 @@ class SynopsisReportSummary extends React.Component {
   }
 
   render() {
-    // const tooltip = (
-    //   <Tooltip id="tooltip">
-    //     Don&#39;t forget to paste into Basecamp!
-    //   </Tooltip>
-    // );
-    
     if (!this.props.synopsisReport) return null;
 
     const { synopsisReport } = this.props;
