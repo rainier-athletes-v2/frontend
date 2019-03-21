@@ -1,35 +1,45 @@
 
 import { cookieDelete } from '../lib/utils';
+import * as t from '../lib/types';
 
 export const setToken = token => ({
-  type: 'TOKEN_SET_SF',
+  type: t.TOKEN_SET_SF,
   payload: token,
 });
 
 export const removeToken = () => ({
-  type: 'TOKEN_REMOVE_SF',
+  type: t.TOKEN_REMOVE_SF,
 });
 
 export const setBcToken = token => ({
-  type: 'TOKEN_SET_BC',
+  type: t.TOKEN_SET_BC,
   payload: token,
 });
 
 export const removeBcToken = () => ({
-  type: 'TOKEN_REMOVE_BC',
+  type: t.TOKEN_REMOVE_BC,
+});
+
+export const setRole = role => ({
+  type: t.ROLE_SET,
+  payload: role,
+});
+
+export const removeRole = () => ({
+  type: t.ROLE_REMOVE,
 });
 
 export const logout = () => (store) => {
-  cookieDelete('RaSfToken');
-  cookieDelete('RaUser');
-  cookieDelete('RaSfRefresh');
-  cookieDelete('RaBcToken');
-  cookieDelete('RaBcRefresh');
+  cookieDelete(t.SF_ACCESS);
+  cookieDelete(t.SF_REFRESH);
+  cookieDelete(t.BC_ACCESS);
+  cookieDelete(t.BC_REFRESH);
+  cookieDelete(t.RA_USER);
   store.dispatch({
-    type: 'REFRESH_TOKEN_REMOVE_SF',
+    type: t.REFRESH_TOKEN_REMOVE_SF,
   });
   store.dispatch({
-    type: 'REFRESH_TOKEN_REMOVE_BC',
+    type: t.REFRESH_TOKEN_REMOVE_BC,
   });
   store.dispatch(removeToken());
   return store.dispatch(removeBcToken());

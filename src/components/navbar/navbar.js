@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import * as authActions from '../../actions/auth';
-import * as refreshActions from '../../actions/refresh';
 import * as routes from '../../lib/routes';
-// import googleBtn from '../../assets/google-btn.png';
 import rainierBtn from '../../assets/rainier-logo-horizontal.png';
 
 import './_navbar.scss';
@@ -21,7 +19,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   doLogout: () => dispatch(authActions.logout()),
   fetchMyProfile: profile => dispatch(profileActions.fetchMyProfileReq(profile)),
-  useRefreshToken: token => dispatch(refreshActions.useRefreshToken(token)),
 });
 
 class Navbar extends React.Component {
@@ -132,7 +129,6 @@ Navbar.propTypes = {
   doLogout: PropTypes.func,
   fetchMyProfile: PropTypes.func,
   fetchProfiles: PropTypes.func,
-  useRefreshToken: PropTypes.func,
   myProfile: PropTypes.object,
   fetchProfile: PropTypes.func,
   fetchStudents: PropTypes.func,
