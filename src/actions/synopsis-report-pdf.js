@@ -3,14 +3,15 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import SynopsisReportHtml from '../components/synopsis-report-html/synopsis-report-html';
 import * as routes from '../lib/routes';
+import { SYNOPSIS_REPORT_LINK_CLEAR, SYNOPSIS_REPORT_LINK_SET } from '../lib/types';
 
 export const setSynopsisReportLink = link => ({
-  type: 'SYNOPSIS_REPORT_LINK_SET',
+  type: SYNOPSIS_REPORT_LINK_SET,
   payload: link,
 });
 
 export const clearSynopsisReportLink = () => ({
-  type: 'SYNOPSIS_REPORT_LINK_CLEAR',
+  type: SYNOPSIS_REPORT_LINK_CLEAR,
 });
 
 const synopsisReportToHTML = (student, synopsisReport) => {

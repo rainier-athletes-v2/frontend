@@ -1,13 +1,14 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
+import { SYNOPSIS_REPORT_SET, SYNOPSIS_REPORT_CLEAR } from '../lib/types';
 
 export const setSynopsisReport = sr => ({
-  type: 'SYNOPSIS_REPORT_SET',
+  type: SYNOPSIS_REPORT_SET,
   payload: sr,
 });
 
 export const clearSynopsisReport = () => ({
-  type: 'SYNOPSIS_REPORT_CLEAR',
+  type: SYNOPSIS_REPORT_CLEAR,
   payload: null,
 });
 
