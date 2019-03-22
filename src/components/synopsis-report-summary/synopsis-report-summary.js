@@ -55,13 +55,35 @@ class SynopsisReportSummary extends React.Component {
     document.execCommand('copy');
   }
 
+  fullReportResponseRTF = synopsisReport => (`
+    ${pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? '' : '<p>Point Sheet not turned in.</p><br>'}
+    ${pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
+      && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
+    ? `<strong>Game Eligibility Earned: </strong>${synopsisReport.Earned_Playing_Time__c}<br>`
+    : `<strong>Mentor Granted Playing Time: </strong>${synopsisReport.Mentor_Granted_Playing_Time__c}
+        <br><br>
+        <strong>Mentor Comments</strong><br>
+        <p>${synopsisReport.Mentor_Granted_Playing_Time_Explanation__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p>`}
+    ${synopsisReport.Student_Action_Items__c
+      ? `<br><strong>Student Action Items</strong><br>
+          <p>${synopsisReport.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p>`
+      : ''}
+    ${synopsisReport.Sports_Update__c 
+        ? `<br><strong>Sports Update</strong><br>
+          <p>${synopsisReport.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p>`
+        : ''}
+    <br>
+    <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
+    <a href=${this.props.synopsisLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a>
+  `);
+
   handlePostSrSummary = () => {
     this.props.clearSrSummaryStatus();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
-
+    const content = this.fullReportResponseRTF(this.props.synopsisReport);
     const srSummary = {
       subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
-      content: document.getElementById('body').innerHTML,
+      content,
       basecampToken: this.props.basecampToken,
       messageBoardUrl: this.props.messageBoardUrl,
     };
@@ -85,7 +107,6 @@ class SynopsisReportSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
-        {/* <br /> */}
         { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
           : <React.Fragment>
             <p>Point Sheet not turned in.</p>
