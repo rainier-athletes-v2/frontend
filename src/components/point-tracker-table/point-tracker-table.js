@@ -8,16 +8,16 @@ import * as pl from '../../lib/pick-list-tests';
 import './_point-tracker-table.scss';
 
 export default function PointTrackerTable(props) {
-  const calcGPA = (subjects) => {
-    const sumOfGrades = subjects.reduce((acc, curr) => {
-      const c = Number.isInteger(parseInt(curr.Grade__c, 10)) ? parseInt(curr.Grade__c, 10) : 100;
-      return acc + c;
-    }, 0);
-    const avgGrade = sumOfGrades / props.synopsisReport.PointTrackers__r.records.length;
-    const avgAsPct = avgGrade / 100;
-    const gpa = 4 * avgAsPct;
-    return gpa.toFixed(2);
-  };
+  // const calcGPA = (subjects) => {
+  //   const sumOfGrades = subjects.reduce((acc, curr) => {
+  //     const c = Number.isInteger(parseInt(curr.Grade__c, 10)) ? parseInt(curr.Grade__c, 10) : 100;
+  //     return acc + c;
+  //   }, 0);
+  //   const avgGrade = sumOfGrades / props.synopsisReport.PointTrackers__r.records.length;
+  //   const avgAsPct = avgGrade / 100;
+  //   const gpa = 4 * avgAsPct;
+  //   return gpa.toFixed(2);
+  // };
 
   const sortedSubjects = props.synopsisReport.PointTrackers__r.records.sort((a, b) => a.Class__r.Period__c - b.Class__r.Period__c);
   const subjectsJSX = sortedSubjects.map((subject, i) => {
@@ -32,11 +32,11 @@ export default function PointTrackerTable(props) {
     );
   });
 
-  const gpaJSX = (
-    <div className="gpa-display-container">
-      <h5>GPA: { calcGPA(props.synopsisReport.PointTrackers__r.records) }</h5>
-    </div>
-  );
+  // const gpaJSX = (
+  //   <div className="gpa-display-container">
+  //     <h5>GPA: { calcGPA(props.synopsisReport.PointTrackers__r.records) }</h5>
+  //   </div>
+  // );
 
   return (
     <div className="row">
@@ -55,7 +55,7 @@ export default function PointTrackerTable(props) {
               : <div className="grid-label">Grade<TooltipItem id="tooltip-pointSheetGrade" text={ttText.pointSheetGrade}/></div>}
           { subjectsJSX }
         </div>
-          { gpaJSX }
+          {/* { gpaJSX } */}
       </div>
     </div>
   );
