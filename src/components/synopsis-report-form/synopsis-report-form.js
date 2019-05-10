@@ -83,7 +83,7 @@ class SynopsisReportForm extends React.Component {
       });
       this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
     }
-    const earnedPlayingTime = pt.calcPlayingTime(this.state.synopsisReport);
+    const earnedPlayingTime = this.props.synopsisReport && this.props.synopsisReport.summer_SR ? '' : pt.calcPlayingTime(this.state.synopsisReport);
     if (this.state.synopsisReport && earnedPlayingTime !== this.state.synopsisReport.Earned_Playing_Time__c) {
       this.setState({
         synopsisReport: { ...this.state.synopsisReport, Earned_Playing_Time__c: earnedPlayingTime },
@@ -290,7 +290,9 @@ class SynopsisReportForm extends React.Component {
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
+      if (!synopsisReport.summer_SR) {
+        this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
+      }
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -739,13 +741,13 @@ class SynopsisReportForm extends React.Component {
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
                 { submitPlayingTimeOnlyButtonJSX }
-                { this.state.synopsisReport
+                { this.state.synopsisReport && !this.state.synopsisReport.summer_SR
                   ? <PointTrackerTable
                     handleSubjectChange={ this.handleSubjectChange }
                     synopsisReport={ this.state.synopsisReport }
                     myRole={this.props.myRole}
                   />
-                  : null }
+                  : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
@@ -768,7 +770,7 @@ class SynopsisReportForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved 
+        { this.state.synopsisSaved && !this.state.synopsisReport.summer_SR
           ? <SynopsisReportSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 

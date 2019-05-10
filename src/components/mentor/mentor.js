@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
+import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
@@ -141,7 +142,7 @@ class Mentor extends React.Component {
           <Sidebar content={ this.fetchStudents() } role={ null }/>
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
             {
-              this.state.modal ? <SynopsisReportForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
+              this.state.modal ? <SynopsisReportSummerForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
                 cancelClick={this.handleCancelButton}/> : null
             }
           </ MentorContent>
