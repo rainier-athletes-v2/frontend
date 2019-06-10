@@ -69,6 +69,7 @@ class SynopsisReportForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
+      debugger;
       this.setState({
         synopsisSaved: true,
         waitingOnSaves: false,
@@ -717,7 +718,7 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    const synopsisReportForm = this.props.synopsisReport
+    const synopsisReportFormJSX = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
         <div className="modal-dialog">
@@ -768,13 +769,15 @@ class SynopsisReportForm extends React.Component {
       )
       : null; 
 
+    console.log('Regular form rendering');
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved && !this.state.synopsisReport.summer_SR
+        {/* { this.state.synopsisSaved && !this.state.synopsisReport.summer_SR
           ? <SynopsisReportSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 
-          : synopsisReportForm }
+          : synopsisReportFormJSX } */}
+          {synopsisReportFormJSX}
       </div>
     );
   }

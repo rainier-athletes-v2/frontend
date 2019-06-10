@@ -27,12 +27,16 @@ const mapDispatchToProps = dispatch => ({
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
+const MODAL_REGULAR = 1;
+const MODAL_SUMMER = 2;
+const MODAL_OFF = 0;
+
 class Mentor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       content: {},
-      modal: false,
+      modal: MODAL_OFF,
       subPT: false,
       selected: -1,
     };
@@ -47,6 +51,17 @@ class Mentor extends React.Component {
 
   componentDidMount = () => {
     this.props.fetchMyStudents();
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (this.props.synopsisReport !== prevProps.synopsisReport) {
+      console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
+      if (this.props.synopsisReport.summer_SR) {
+        return this.setState({ modal: MODAL_SUMMER });
+      }
+      return this.setState({ model: MODAL_REGULAR });
+    }
+    return undefined;
   }
 
   handleSidebarClick(e) {
@@ -107,22 +122,24 @@ class Mentor extends React.Component {
   handleSaveButtonClick = (e) => {
     if (e) {
       e.preventDefault();
-      if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
+      if (e.target.value) {
+        this.props.fetchSynopsisReport(e.target.value);
+      }
       this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
     }
-    this.setState({ modal: !this.state.modal });
+    this.setState({ modal: MODAL_OFF });
   }
 
   handleEditSRClick = (e) => {
     e.preventDefault();
     this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-    this.setState({ modal: !this.state.modal });
+    this.setState({ modal: this.props.synopsisReport && this.props.synopsisReport.summer_SR ? MODAL_SUMMER : MODAL_REGULAR });
   }
 
   handleCancelButton = (e) => {
     e.preventDefault();
-    this.setState({ modal: !this.state.modal });
+    this.setState({ modal: MODAL_OFF });
   }
 
   handleSubPT = () => {
@@ -135,6 +152,17 @@ class Mentor extends React.Component {
   }
 
   render() {
+    const selectSrFormJSX = this.state.modal === MODAL_REGULAR
+      ? <SynopsisReportForm 
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/> 
+      : <SynopsisReportSummerForm 
+        content={ this.state.content } 
+        saveClick={ this.handleSaveButtonClick } 
+        cancelClick={this.handleCancelButton}/>;
+
+    console.log('mentor.js this.state.modal:', this.state.modal);
     return (
       <React.Fragment>
         <div className="container-fluid">
@@ -142,8 +170,9 @@ class Mentor extends React.Component {
           <Sidebar content={ this.fetchStudents() } role={ null }/>
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
             {
-              this.state.modal ? <SynopsisReportSummerForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
-                cancelClick={this.handleCancelButton}/> : null
+              this.state.modal !== MODAL_OFF 
+                ? selectSrFormJSX
+                : null
             }
           </ MentorContent>
           </div>

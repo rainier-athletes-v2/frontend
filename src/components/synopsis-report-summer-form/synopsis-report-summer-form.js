@@ -10,6 +10,7 @@ import TextArea from '../text-area/text-area';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srSummaryActions from '../../actions/synopsis-report-summary';
+import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
@@ -18,11 +19,13 @@ import './_synopsis-report-summer-form.scss';
 
 const mapStateToProps = state => ({
   synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
-  myRole: state.myProfile.role,
+  synopsisReportLink: state.synopsisReport && state.synopsisReportLink,
+  myRole: state.myProfile && state.myProfile.role,
 });
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
+  setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
   getMsgBoardUrl: studentEmail => dispatch(srSummaryActions.getMsgBoardUrl(studentEmail)),
   clearMsgBoardUrl: () => dispatch(srSummaryActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
@@ -40,6 +43,14 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    console.log('cdUpdate link:', this.props.synopsisReportLink);
+    if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
+      this.setState({
+        synopsisSaved: true,
+        waitingOnSaves: false,
+        synopsisLink: this.props.synopsisReportLink,
+      });
+    }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.props.clearError();
       this.setState({ 
@@ -53,13 +64,13 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState((prevState) => {
       const newState = { ...prevState };
       newState.synopsisSaved = false;
+      this.props.setSynopsisReportLink('');
       newState.metWithMentee = true;
       newState.studentConnectionNotesOK = true;
       newState.weeklyQuestionOK = true;
       newState.lastCampNotesOK = true;
       newState.nextCampNotesOK = true;
       newState.familyConnectionStatusOK = true;
-      newState.familyConnectionNotesOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       return newState;
@@ -107,13 +118,13 @@ class SynopsisReportSummerForm extends React.Component {
       && ((sr.Summer_weekly_connection_status__c.indexOf('Yes, ') !== -1
       && !!sr.Summer_question_of_the_week_response__c) 
       || sr.Summer_weekly_connection_status__c.indexOf('No, ') !== -1);
-    const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c;
-    const nextCampNotesOK = !!sr.Summer_next_camp_notes__c;
+    const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c || !!sr.Summer_attended_last_camp__c;
+    const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || !!sr.Summer_attend_next_camp__c;
     const familyConnectionMade = !!sr.Summer_family_connection_made__c;
     const familyConnectionStatusOK = (familyConnectionMade && !!sr.Summer_family_connection_status__c) || !familyConnectionMade;
-    const familyConnectionNotesOK = sr.Summer_family_connection_status__c
-      && ((sr.Summer_family_connection_status__c.indexOf('Other') !== -1 && !!sr.Summer_family_connection_other_notes__c)
-      || !!sr.Summer_family_connection_status__c);
+    // const familyConnectionNotesOK = sr.Summer_family_connection_status__c
+    //   && ((sr.Summer_family_connection_status__c.indexOf('Other') !== -1 && !!sr.Summer_family_connection_other_notes__c)
+    //   || !!sr.Summer_family_connection_status__c);
     const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
@@ -125,7 +136,7 @@ class SynopsisReportSummerForm extends React.Component {
       lastCampNotesOK,
       nextCampNotesOK,
       familyConnectionStatusOK,
-      familyConnectionNotesOK,
+      // familyConnectionNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
     });
@@ -136,7 +147,7 @@ class SynopsisReportSummerForm extends React.Component {
       && lastCampNotesOK
       && nextCampNotesOK
       && familyConnectionStatusOK
-      && familyConnectionNotesOK
+      // && familyConnectionNotesOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
   }
@@ -251,11 +262,11 @@ class SynopsisReportSummerForm extends React.Component {
             compClass={this.state.lastCampNotesOK ? 'title' : 'title required'}
             compName="Summer_attended_last_camp_notes__c"
             label="Notes for last summer camp experience:"
-            placeholder={''}
+            placeholder={ this.state.synopsisReport && !this.state.synopsisReport.Summer_attended_last_camp__c ? 'Why didn\'t they attend?...' : ''}
             value={ this.state.synopsisReport && this.state.synopsisReport.Summer_attended_last_camp_notes__c
               ? this.state.synopsisReport.Summer_attended_last_camp_notes__c
               : '' }
-            required={ true }
+            // required={ true }
             onChange={ this.handleTextAreaChange }
             rows={ 2 }
             cols={ 80 }
@@ -279,7 +290,7 @@ class SynopsisReportSummerForm extends React.Component {
           compClass={this.state.nextCampNotesOK ? 'title' : 'title required'}
           compName="Summer_next_camp_notes__c"
           label="Notes for next summer camp plans:"
-          placeholder={''}
+          placeholder={ this.state.synopsisReport && !this.state.synopsisReport.Summer_attend_next_camp__c ? 'Why won\'t they attend?...' : ''}
           value={ this.state.synopsisReport && this.state.synopsisReport.Summer_next_camp_notes__c
             ? this.state.synopsisReport.Summer_next_camp_notes__c
             : '' }
@@ -382,7 +393,7 @@ class SynopsisReportSummerForm extends React.Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">SYNOPSIS REPORT</h5>
+              <h5 className="modal-title">SUMMER SYNOPSIS REPORT</h5>
               <button type="button" 
                 className="close" 
                 onClick={ this.props.cancelClick }
@@ -416,6 +427,7 @@ class SynopsisReportSummerForm extends React.Component {
       )
       : null; 
 
+    console.log('Summer form rendering');
     return (
       <div className="modal-backdrop">
         { this.state.synopsisSaved && !this.state.synopsisReport.summer_SR
