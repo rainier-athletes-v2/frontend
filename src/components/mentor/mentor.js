@@ -55,11 +55,11 @@ class Mentor extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
-      console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
-      if (this.props.synopsisReport.summer_SR) {
-        return this.setState({ modal: MODAL_SUMMER });
-      }
-      return this.setState({ model: MODAL_REGULAR });
+      // console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
+      // if (this.props.synopsisReport.summer_SR) {
+      //   return this.setState({ modal: MODAL_SUMMER });
+      // }
+      // return this.setState({ model: MODAL_REGULAR });
     }
     return undefined;
   }
@@ -122,9 +122,10 @@ class Mentor extends React.Component {
   handleSaveButtonClick = (e) => {
     if (e) {
       e.preventDefault();
-      if (e.target.value) {
-        this.props.fetchSynopsisReport(e.target.value);
-      }
+      // if (e.target.value) {
+      //   this.props.fetchSynopsisReport(e.target.value);
+      // }
+      this.props.clearSynopsisReport();
       this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
     }
     this.setState({ modal: MODAL_OFF });
@@ -140,6 +141,7 @@ class Mentor extends React.Component {
   handleCancelButton = (e) => {
     e.preventDefault();
     this.setState({ modal: MODAL_OFF });
+    this.props.clearSynopsisReport();
   }
 
   handleSubPT = () => {
@@ -151,17 +153,25 @@ class Mentor extends React.Component {
     });
   }
 
-  render() {
-    const selectSrFormJSX = this.state.modal === MODAL_REGULAR
-      ? <SynopsisReportForm 
+  selectSrForm = () => {
+    console.log('selectSrForm modal is', this.state.modal);
+    switch (this.state.modal) {
+      case MODAL_SUMMER:
+        return <SynopsisReportSummerForm
           content={ this.state.content } 
           saveClick={ this.handleSaveButtonClick } 
-          cancelClick={this.handleCancelButton}/> 
-      : <SynopsisReportSummerForm 
-        content={ this.state.content } 
-        saveClick={ this.handleSaveButtonClick } 
-        cancelClick={this.handleCancelButton}/>;
+          cancelClick={this.handleCancelButton}/>;
+      case MODAL_REGULAR:
+        return <SynopsisReportForm
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/>; 
+      default:
+        return null;
+    }
+  }
 
+  render() {
     console.log('mentor.js this.state.modal:', this.state.modal);
     return (
       <React.Fragment>
@@ -169,11 +179,7 @@ class Mentor extends React.Component {
           <div className="row">
           <Sidebar content={ this.fetchStudents() } role={ null }/>
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
-            {
-              this.state.modal !== MODAL_OFF 
-                ? selectSrFormJSX
-                : null
-            }
+            { this.selectSrForm() }
           </ MentorContent>
           </div>
         </div>
