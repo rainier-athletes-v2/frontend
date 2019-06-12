@@ -135,7 +135,19 @@ class Mentor extends React.Component {
     e.preventDefault();
     this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-    this.setState({ modal: this.props.synopsisReport && this.props.synopsisReport.summer_SR ? MODAL_SUMMER : MODAL_REGULAR });
+    // this.setState({ modal: this.props.synopsisReport && this.props.synopsisReport.summer_SR ? MODAL_SUMMER : MODAL_REGULAR });
+  }
+
+  handleEditSummerSRClick = (e) => {
+    console.log('handleEditSummerSRClick');
+    this.setState({ modal: MODAL_SUMMER });
+    this.handleEditSRClick(e);
+  }
+
+  handleEditRegularSRClick = (e) => {
+    console.log('handleEditRegularSRClick');
+    this.setState({ modal: MODAL_REGULAR });
+    this.handleEditSRClick(e);
   }
 
   handleCancelButton = (e) => {
@@ -155,6 +167,7 @@ class Mentor extends React.Component {
 
   selectSrForm = () => {
     console.log('selectSrForm modal is', this.state.modal);
+    // debugger;
     switch (this.state.modal) {
       case MODAL_SUMMER:
         return <SynopsisReportSummerForm
@@ -178,7 +191,9 @@ class Mentor extends React.Component {
         <div className="container-fluid">
           <div className="row">
           <Sidebar content={ this.fetchStudents() } role={ null }/>
-          <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
+          <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
+            editRegularSrClick={this.handleEditRegularSRClick} 
+            editSummerSrClick={this.handleEditSummerSRClick}>
             { this.selectSrForm() }
           </ MentorContent>
           </div>
