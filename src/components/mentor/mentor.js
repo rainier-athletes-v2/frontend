@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
+import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
@@ -26,12 +27,16 @@ const mapDispatchToProps = dispatch => ({
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
+const MODAL_REGULAR = 1;
+const MODAL_SUMMER = 2;
+const MODAL_OFF = 0;
+
 class Mentor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       content: {},
-      modal: false,
+      modal: MODAL_OFF,
       subPT: false,
       selected: -1,
     };
@@ -47,6 +52,17 @@ class Mentor extends React.Component {
   componentDidMount = () => {
     this.props.fetchMyStudents();
   }
+
+  // componentDidUpdate = (prevProps) => {
+  //   if (this.props.synopsisReport !== prevProps.synopsisReport) {
+  //     // console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
+  //     // if (this.props.synopsisReport.summer_SR) {
+  //     //   return this.setState({ modal: MODAL_SUMMER });
+  //     // }
+  //     // return this.setState({ model: MODAL_REGULAR });
+  //   }
+  //   return undefined;
+  // }
 
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
@@ -106,22 +122,32 @@ class Mentor extends React.Component {
   handleSaveButtonClick = (e) => {
     if (e) {
       e.preventDefault();
-      if (e.target.value) this.props.fetchSynopsisReport(e.target.value);
+      this.props.clearSynopsisReport();
       this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
     }
-    this.setState({ modal: !this.state.modal });
+    this.setState({ modal: MODAL_OFF });
   }
 
   handleEditSRClick = (e) => {
     e.preventDefault();
     this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-    this.setState({ modal: !this.state.modal });
+  }
+
+  handleEditSummerSRClick = (e) => {
+    this.setState({ modal: MODAL_SUMMER });
+    this.handleEditSRClick(e);
+  }
+
+  handleEditRegularSRClick = (e) => {
+    this.setState({ modal: MODAL_REGULAR });
+    this.handleEditSRClick(e);
   }
 
   handleCancelButton = (e) => {
     e.preventDefault();
-    this.setState({ modal: !this.state.modal });
+    this.setState({ modal: MODAL_OFF });
+    this.props.clearSynopsisReport();
   }
 
   handleSubPT = () => {
@@ -133,17 +159,33 @@ class Mentor extends React.Component {
     });
   }
 
+  selectSrForm = () => {
+    switch (this.state.modal) {
+      case MODAL_SUMMER:
+        return <SynopsisReportSummerForm
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/>;
+      case MODAL_REGULAR:
+        return <SynopsisReportForm
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/>; 
+      default:
+        return null;
+    }
+  }
+
   render() {
     return (
       <React.Fragment>
         <div className="container-fluid">
           <div className="row">
           <Sidebar content={ this.fetchStudents() } role={ null }/>
-          <MentorContent content={ this.state.content } subPT={ this.state.subPT } editSrClick={this.handleEditSRClick} >
-            {
-              this.state.modal ? <SynopsisReportForm content={ this.state.content } saveClick={ this.handleSaveButtonClick } 
-                cancelClick={this.handleCancelButton}/> : null
-            }
+          <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
+            editRegularSrClick={this.handleEditRegularSRClick} 
+            editSummerSrClick={this.handleEditSummerSRClick}>
+            { this.selectSrForm() }
           </ MentorContent>
           </div>
         </div>

@@ -34,7 +34,10 @@ function SynopsisReportsList(props) {
                       <td>{sr.title}</td>
                       <td>{sr.synopsisReportStatus}</td>
                       <td>{sr.pointSheetStatus}</td>
-                      <td><button className="btn-link-1" onClick={props.onClick} value={sr.id} name="SynopsisReportsTable">EDIT</button></td>
+                      <td><button className="btn-link-1" 
+                        onClick={sr.pointSheetStatus.toLowerCase() === 'summer' ? props.onSummerClick : props.onClick} 
+                        value={sr.id} 
+                        name="SynopsisReportsTable">EDIT</button></td>
                     </tr>;
                 })
                 : null
@@ -48,6 +51,7 @@ function SynopsisReportsList(props) {
 
 SynopsisReportsList.propTypes = {
   onClick: PropTypes.func,
+  onSummerClick: PropTypes.func,
   srData: PropTypes.array,
 };
 

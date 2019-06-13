@@ -17,7 +17,7 @@ export const fetchRecentSynopsisReports = (studentId) => (store) => { // eslint-
       const recentSynopsisReports = res.body.records.map(item => ({
         id: item.Id,
         srName: item.Name,
-        pointSheetStatus: item.Point_Sheet_Status__c,
+        pointSheetStatus: item.PointTrackers__r === null ? 'Summer' : item.Point_Sheet_Status__c,
         synopsisReportStatus: item.Synopsis_Report_Status__c,
         startDate: item.Start_Date__c,
         title: item.Week__c,

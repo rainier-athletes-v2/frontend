@@ -1,6 +1,7 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
 import { SYNOPSIS_REPORT_SET, SYNOPSIS_REPORT_CLEAR } from '../lib/types';
+import * as errorActions from './error';
 
 export const setSynopsisReport = sr => ({
   type: SYNOPSIS_REPORT_SET,
@@ -27,7 +28,12 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
     .send('Content-Type', 'application/json')
     .then((res) => {
       const sr = res.body;
-      sr.records[0].PointTrackers__r.records = translateGradeNulltoNA(sr.records[0].PointTrackers__r.records);
+      if (sr.records[0].PointTrackers__r) {
+        sr.records[0].PointTrackers__r.records = translateGradeNulltoNA(sr.records[0].PointTrackers__r.records);
+        sr.records[0].summer_SR = false;
+      } else {
+        sr.records[0].summer_SR = true;
+      }
       return store.dispatch(setSynopsisReport(sr));
     });
 };
@@ -41,10 +47,14 @@ const translateGradeNAtoNull = (subjects) => {
 
 export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
+  if (!orgSr.summer_SR) {
+    orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
+  }
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
-  sr.PointTrackers__r.records = translateGradeNAtoNull(sr.PointTrackers__r.records);
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
-    .then();
+    .then((result) => {
+      return store.dispatch(errorActions.setError(result.status));
+    });
 };
