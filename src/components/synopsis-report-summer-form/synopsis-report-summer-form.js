@@ -21,6 +21,7 @@ const mapStateToProps = state => ({
   synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
   synopsisReportLink: state.synopsisReport && state.synopsisReportLink,
   myRole: state.myProfile && state.myProfile.role,
+  saveStatus: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -43,13 +44,13 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    console.log('cdUpdate link:', this.props.synopsisReportLink);
-    if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
+    console.log('cdUpdate saveStatus:', this.props.saveStatus);
+    if (this.props.saveStatus !== prevProps.saveStatus) {
       this.setState({
         synopsisSaved: true,
         waitingOnSaves: false,
-        synopsisLink: this.props.synopsisReportLink,
       });
+      this.props.clearError();
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.props.clearError();
@@ -460,6 +461,7 @@ SynopsisReportSummerForm.propTypes = {
   cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
+  saveStatus: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);

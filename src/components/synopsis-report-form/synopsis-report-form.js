@@ -290,9 +290,7 @@ class SynopsisReportForm extends React.Component {
       this.setState({ ...this.state, waitingOnSaves: true });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      if (!synopsisReport.summer_SR) {
-        this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
-      }
+      this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }

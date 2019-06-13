@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
 import { SYNOPSIS_REPORT_SET, SYNOPSIS_REPORT_CLEAR } from '../lib/types';
-import * as srPdfActions from './synopsis-report-pdf';
+import * as errorActions from './error';
 
 export const setSynopsisReport = sr => ({
   type: SYNOPSIS_REPORT_SET,
@@ -55,7 +55,6 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
     .then((result) => {
-      console.log('post save, result status:', result.status);
-      return store.dispatch(srPdfActions.setSynopsisReportLink('saved'));
+      return store.dispatch(errorActions.setError(result.status));
     });
 };
