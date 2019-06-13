@@ -2,17 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import PointTrackerTable from '../point-tracker-table/point-tracker-table';
-import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
-import TooltipItem from '../tooltip/tooltip';
+// import PointTrackerTable from '../point-tracker-table/point-tracker-table';
+import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
+// import TooltipItem from '../tooltip/tooltip';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-import * as ttText from '../../lib/tooltip-text';
+// import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srSummaryActions from '../../actions/synopsis-report-summary';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
-import * as pt from '../../lib/playing-time-utils';
+// import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
 
 import './_synopsis-report-summer-form.scss';
@@ -158,7 +158,7 @@ class SynopsisReportSummerForm extends React.Component {
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
     if (validMentorInput) {      
-      this.setState({ ...this.state, waitingOnSaves: true });
+      this.setState({ ...this.state, waitingOnSaves: true, synopsisSaved: false });
       this.props.saveSynopsisReport({ ...synopsisReport });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
@@ -183,6 +183,7 @@ class SynopsisReportSummerForm extends React.Component {
       && this.state.synopsisReport.Summer_weekly_connection_status__c
       && this.state.synopsisReport.Summer_weekly_connection_status__c.indexOf('No, for reasons') !== -1;
 
+    // question 1 & 2
     const weeklyConnectionStatusJSX = (
       <div className="mentor-met-container" key='mentorMadeCheckin'>
         <DropDown
@@ -225,6 +226,7 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    // question 3
     const questionOfTheWeekResponseJSX = (
       <div className="survey-question-container">
       { this.state.synopsisReport && this.state.synopsisReport.Summer_weekly_connection_made__c
@@ -245,6 +247,7 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    // question 4
     const attendedLastSummerCampJSX = (
       <div className="survey-question-container">
         <div>
@@ -274,6 +277,7 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    // question 5
     const nextSummerCampPlansJSX = (
       <div className="survey-question-container">
         <div>
@@ -302,6 +306,7 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    // question 6
     const familyConnectionJSX = (
       <div className="survey-question-container">
         <label htmlFor="family-connection" className="title">Check if you met with students family this week:</label>
@@ -430,8 +435,8 @@ class SynopsisReportSummerForm extends React.Component {
     console.log('Summer form rendering');
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved && !this.state.synopsisReport.summer_SR
-          ? <SynopsisReportSummary 
+        { this.state.synopsisSaved
+          ? <SynopsisReportSummerSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 
           : synopsisReportForm }
