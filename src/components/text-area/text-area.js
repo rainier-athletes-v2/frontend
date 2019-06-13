@@ -13,7 +13,8 @@ export default function TextArea(props) {
       </label>
       { ttText[props.compName]
         ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
-        : null }
+        : null
+      }
       <textarea
         name={ props.compName }
         required={ props.required }

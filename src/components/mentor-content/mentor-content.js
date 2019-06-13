@@ -119,7 +119,7 @@ export default function MentorContent(props) {
     <div role="main" className="col-md-8 panel content-panel" style={ { overflow: 'scroll' } }>
       <div className="sidebar-sticky">
         <span className="content-heading">{`Student Profile: ${student.firstName ? student.firstName : ''} ${student.lastName ? student.lastName : ''}`}</span>
-        <SynopsisReportsList onClick={ props.editSrClick }/>
+        <SynopsisReportsList onClick={ props.editRegularSrClick } onSummerClick={ props.editSummerSrClick }/>
         { student.studentData ? studentProfile : null }
       </div>
     </div>
@@ -135,5 +135,6 @@ MentorContent.propTypes = {
   title: PropTypes.string,
   btnClick: PropTypes.func,
   children: PropTypes.node,
-  editSrClick: PropTypes.func,
+  editRegularSrClick: PropTypes.func,
+  editSummerSrClick: PropTypes.func,
 };

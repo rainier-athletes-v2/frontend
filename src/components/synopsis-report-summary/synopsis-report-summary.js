@@ -33,7 +33,6 @@ class SynopsisReportSummary extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.srSummaryStatus !== prevProps.srSummaryStatus) {
-      console.log('srSummaryStatus changed from', prevProps.srSummaryStatus, 'to', this.props.srSummaryStatus);
       this.setState({
         ...this.state,
         summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
@@ -109,28 +108,29 @@ class SynopsisReportSummary extends React.Component {
         <h4>{synopsisReport.Week__c}</h4>
         { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
           : <React.Fragment>
-            <p>Point Sheet not turned in.</p>
+            <p>Point Sheet not turned in.</p><br />
             </React.Fragment> }
         { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
           && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
-            <span className="title">
+            <p><strong>
             Game Eligibility Earned
-            </span>
-            <span> {synopsisReport.Earned_Playing_Time__c}</span>
+            </strong></p>
+            <br />
+            <p>{synopsisReport.Earned_Playing_Time__c}</p> 
           </React.Fragment>
           : <React.Fragment>
-            <span className="title">Mentor Granted Playing Time</span>
-            <span>{synopsisReport.Mentor_Granted_Playing_Time__c}</span>
+            <p><strong>Mentor Granted Playing Time</strong></p>
+            <p>{synopsisReport.Mentor_Granted_Playing_Time__c}</p>
             <br />
-            <span className="title">Mentor Comments</span>
+            <p><strong>Mentor Comments</strong></p>
             <p>{synopsisReport.Mentor_Granted_Playing_Time_Explanation__c}</p>
             <br /> 
             </React.Fragment> }
             {synopsisReport.Student_Action_Items__c
               ? <React.Fragment>
                 <br />
-                <span className="title">Student Action Items</span>
+                <p><strong>Student Action Items</strong></p>
                 <p>{synopsisReport.Student_Action_Items__c}</p>
                 </React.Fragment>
               : null
@@ -138,14 +138,14 @@ class SynopsisReportSummary extends React.Component {
             {synopsisReport.Sports_Update__c 
               ? <React.Fragment>
                 <br />
-                <span className="title">Sports Update</span>
+                <p><strong>Sports Update</strong></p>
                 <p>{synopsisReport.Sports_Update__c}</p>
                 </React.Fragment>
               : null
             }
             <br />
-            Link To Full Synopsis Report (RA Points, Grades, Mentor Comments, etc): 
-            <a href={this.props.synopsisLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a>
+            <p>Link To Full Synopsis Report (RA Points, Grades, Mentor Comments, etc): 
+            <a href={this.props.synopsisLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a></p>
           </React.Fragment>
     );
 

@@ -10,8 +10,10 @@ export default function DropDown(props) {
         htmlFor={props.compName}>
         {props.label}
       </label>
-      <TooltipItem id={props.compName}
-        text={ttText[props.compName]}/>
+      { ttText[props.compName] 
+        ? <TooltipItem id={props.compName} text={ttText[props.compName]}/>
+        : null
+      }
       <select value={props.value}
         required
         name={props.compName}
