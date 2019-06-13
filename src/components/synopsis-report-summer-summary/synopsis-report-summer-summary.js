@@ -2,14 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import * as pl from '../../lib/pick-list-tests';
 import * as srActions from '../../actions/synopsis-report-summary';
-// import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_synopsis-report-summer-summary.scss';
 
 const mapStateToProps = state => ({
-  // synopsisLink: state.synopsisReportLink,
   basecampToken: state.basecampToken,
   srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
@@ -19,7 +16,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
   clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
-  // setSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
 });
 
 class SynopsisReportSummerSummary extends React.Component {
@@ -33,7 +29,6 @@ class SynopsisReportSummerSummary extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.srSummaryStatus !== prevProps.srSummaryStatus) {
-      console.log('srSummaryStatus changed from', prevProps.srSummaryStatus, 'to', this.props.srSummaryStatus);
       this.setState({
         ...this.state,
         summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
@@ -48,13 +43,6 @@ class SynopsisReportSummerSummary extends React.Component {
     }
   }
 
-  // handleCopy = () => {
-  //   const range = document.getSelection().getRangeAt(0);
-  //   range.selectNode(document.getElementById('body'));
-  //   window.getSelection().addRange(range);
-  //   document.execCommand('copy');
-  // }
-
   handlePostSrSummary = () => {
     this.props.clearSrSummaryStatus();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
@@ -65,7 +53,6 @@ class SynopsisReportSummerSummary extends React.Component {
       basecampToken: this.props.basecampToken,
       messageBoardUrl: this.props.messageBoardUrl,
     };
-
     return this.props.postSrSummary(srSummary);
   }
 
@@ -77,18 +64,19 @@ class SynopsisReportSummerSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
-        <span className="title">Weekly Connection Status</span>
+        <p><strong>Weekly Connection Status</strong></p>
         { synopsisReport.Summer_weekly_connection_status__c }
         <br />
         <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p>
         <br />
-        <span className="title">Question of The Week Response</span>
+        <p><strong>Question of The Week Response</strong></p>
         <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
         <br />
-        <span className="title">Last Summer Camp Attendance</span>
-        <p>Student { synopsisReport.Summer_attended_last_camp__c ? 'did' : 'did not' } attend the last summer camp.</p>
+        <p><strong>Last Summer Camp Attendance</strong></p>
+        <p>Student { synopsisReport.Summer_attended_last_camp__c ? 'attended' : 'did not attend' } the last summer camp.</p>
         <p>{ synopsisReport.Summer_attended_last_camp_notes__c }</p>
-        <span className="title">Plans for Next Summer Camp Attendance</span>
+        <br />
+        <p><strong>Plans for Next Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attend_next_camp__c ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
         <p>{ synopsisReport.Summer_next_camp_notes__c }</p>
       </React.Fragment>

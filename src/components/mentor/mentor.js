@@ -53,16 +53,16 @@ class Mentor extends React.Component {
     this.props.fetchMyStudents();
   }
 
-  componentDidUpdate = (prevProps) => {
-    if (this.props.synopsisReport !== prevProps.synopsisReport) {
-      // console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
-      // if (this.props.synopsisReport.summer_SR) {
-      //   return this.setState({ modal: MODAL_SUMMER });
-      // }
-      // return this.setState({ model: MODAL_REGULAR });
-    }
-    return undefined;
-  }
+  // componentDidUpdate = (prevProps) => {
+  //   if (this.props.synopsisReport !== prevProps.synopsisReport) {
+  //     // console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
+  //     // if (this.props.synopsisReport.summer_SR) {
+  //     //   return this.setState({ modal: MODAL_SUMMER });
+  //     // }
+  //     // return this.setState({ model: MODAL_REGULAR });
+  //   }
+  //   return undefined;
+  // }
 
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
@@ -122,9 +122,6 @@ class Mentor extends React.Component {
   handleSaveButtonClick = (e) => {
     if (e) {
       e.preventDefault();
-      // if (e.target.value) {
-      //   this.props.fetchSynopsisReport(e.target.value);
-      // }
       this.props.clearSynopsisReport();
       this.props.fetchRecentSynopsisReports(this.state.content.id); // refresh student's recent SR list
     }
@@ -135,17 +132,14 @@ class Mentor extends React.Component {
     e.preventDefault();
     this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-    // this.setState({ modal: this.props.synopsisReport && this.props.synopsisReport.summer_SR ? MODAL_SUMMER : MODAL_REGULAR });
   }
 
   handleEditSummerSRClick = (e) => {
-    console.log('handleEditSummerSRClick');
     this.setState({ modal: MODAL_SUMMER });
     this.handleEditSRClick(e);
   }
 
   handleEditRegularSRClick = (e) => {
-    console.log('handleEditRegularSRClick');
     this.setState({ modal: MODAL_REGULAR });
     this.handleEditSRClick(e);
   }
@@ -166,8 +160,6 @@ class Mentor extends React.Component {
   }
 
   selectSrForm = () => {
-    console.log('selectSrForm modal is', this.state.modal);
-    // debugger;
     switch (this.state.modal) {
       case MODAL_SUMMER:
         return <SynopsisReportSummerForm
@@ -185,7 +177,6 @@ class Mentor extends React.Component {
   }
 
   render() {
-    console.log('mentor.js this.state.modal:', this.state.modal);
     return (
       <React.Fragment>
         <div className="container-fluid">

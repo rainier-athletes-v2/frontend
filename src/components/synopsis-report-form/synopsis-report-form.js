@@ -74,6 +74,7 @@ class SynopsisReportForm extends React.Component {
         waitingOnSaves: false,
         synopsisLink: this.props.synopsisReportLink,
       });
+      this.props.clearError();
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.props.clearError();
@@ -766,8 +767,6 @@ class SynopsisReportForm extends React.Component {
       )
       : null; 
 
-    console.log('Regular form rendering');
-    //  && !this.state.synopsisReport.summer_SR
     return (
       <div className="modal-backdrop">
         { this.state.synopsisSaved
@@ -775,7 +774,6 @@ class SynopsisReportForm extends React.Component {
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 
           : synopsisReportFormJSX }
-          {/* {synopsisReportFormJSX} */}
       </div>
     );
   }

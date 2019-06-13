@@ -2,17 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import PointTrackerTable from '../point-tracker-table/point-tracker-table';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
-// import TooltipItem from '../tooltip/tooltip';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-// import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srSummaryActions from '../../actions/synopsis-report-summary';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 import * as pl from '../../lib/pick-list-tests';
-// import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
 
 import './_synopsis-report-summer-form.scss';
@@ -44,7 +40,6 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    console.log('cdUpdate saveStatus:', this.props.saveStatus);
     if (this.props.saveStatus !== prevProps.saveStatus) {
       this.setState({
         synopsisSaved: true,
@@ -123,9 +118,6 @@ class SynopsisReportSummerForm extends React.Component {
     const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || !!sr.Summer_attend_next_camp__c;
     const familyConnectionMade = !!sr.Summer_family_connection_made__c;
     const familyConnectionStatusOK = (familyConnectionMade && !!sr.Summer_family_connection_status__c) || !familyConnectionMade;
-    // const familyConnectionNotesOK = sr.Summer_family_connection_status__c
-    //   && ((sr.Summer_family_connection_status__c.indexOf('Other') !== -1 && !!sr.Summer_family_connection_other_notes__c)
-    //   || !!sr.Summer_family_connection_status__c);
     const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
@@ -137,7 +129,6 @@ class SynopsisReportSummerForm extends React.Component {
       lastCampNotesOK,
       nextCampNotesOK,
       familyConnectionStatusOK,
-      // familyConnectionNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
     });
@@ -148,7 +139,6 @@ class SynopsisReportSummerForm extends React.Component {
       && lastCampNotesOK
       && nextCampNotesOK
       && familyConnectionStatusOK
-      // && familyConnectionNotesOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
   }
@@ -433,7 +423,6 @@ class SynopsisReportSummerForm extends React.Component {
       )
       : null; 
 
-    console.log('Summer form rendering');
     return (
       <div className="modal-backdrop">
         { this.state.synopsisSaved
@@ -461,7 +450,7 @@ SynopsisReportSummerForm.propTypes = {
   cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
-  saveStatus: PropTypes.string,
+  saveStatus: PropTypes.number,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);
