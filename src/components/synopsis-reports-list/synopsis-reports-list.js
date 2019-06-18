@@ -35,7 +35,7 @@ function SynopsisReportsList(props) {
                       <td>{sr.synopsisReportStatus}</td>
                       <td>{sr.pointSheetStatus}</td>
                       <td><button className="btn-link-1" 
-                        onClick={sr.pointSheetStatus.toLowerCase() === 'summer' ? props.onSummerClick : props.onClick} 
+                        onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'summer' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
                         name="SynopsisReportsTable">EDIT</button></td>
                     </tr>;

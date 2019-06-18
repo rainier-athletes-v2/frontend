@@ -33,7 +33,7 @@ export default function SubjectColumn(props) {
               required
               onChange={ props.handleSubjectChange }
               className={validScores ? 'grid-input' : 'grid-input invalid-scores'}
-              name={ `${props.subject.Class__r.Name}-${markType}` }
+              name={ `${props.subject.Class__r.Name}+${props.subject.Id}+${markType}` }
               value={ props.subject[markType] === null ? '' : props.subject[markType]}
             /></div>);
         })
@@ -44,7 +44,7 @@ export default function SubjectColumn(props) {
           type="text"
           className={gradeClassName(props.subject)}
           onChange={ props.handleSubjectChange }
-          name={ `${props.subject.Class__r.Name}-grade` }
+          name={ `${props.subject.Class__r.Name}+${props.subject.Id}+grade` }
           value={ props.subject.Grade__c }
           required={props.skipValidation || props.subject.Class__r.Name.toLowerCase() !== 'tutorial'}/>
       </div>}
