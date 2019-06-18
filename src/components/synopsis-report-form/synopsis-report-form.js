@@ -175,14 +175,15 @@ class SynopsisReportForm extends React.Component {
 
     this.setState((prevState) => {
       const newState = { ...prevState };
-      const lastDash = name.lastIndexOf('-');
-      const subjectName = name.slice(0, lastDash);
-      const categoryName = name.slice(lastDash + 1);
+      const firstSeparator = name.indexOf('+');
+      const lastSeparator = name.lastIndexOf('+');
+      const subjectName = name.slice(0, firstSeparator);
+      const subjectId = name.slice(firstSeparator + 1, lastSeparator);
+      const categoryName = name.slice(lastSeparator + 1);
 
       const newSubjects = newState.synopsisReport.PointTrackers__r.records
         .map((subject) => {
-          // debugger;
-          if (subject.Class__r.Name === subjectName) {
+          if (subject.Id === subjectId) {
             const newSubject = { ...subject };
             if (categoryName === 'grade') {
               let grade = event.target.value;
