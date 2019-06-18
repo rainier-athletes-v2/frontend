@@ -41,11 +41,13 @@ class SynopsisReportSummerForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.saveStatus !== prevProps.saveStatus) {
-      this.setState({
-        synopsisSaved: true,
-        waitingOnSaves: false,
-      });
-      this.props.clearError();
+      if (this.props.saveStatus && this.props.saveStatus < 300) {
+        this.setState({
+          synopsisSaved: true,
+          waitingOnSaves: false,
+        });
+        this.props.clearError();
+      }
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       this.props.clearError();
