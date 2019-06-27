@@ -56,7 +56,7 @@ class SynopsisReportSummary extends React.Component {
 
   fullReportResponseRTF = synopsisReport => (`
     ${pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? '' : '<p>Point Sheet not turned in.</p><br>'}
-    ${pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
+    ${pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
       && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
     ? `<strong>Game Eligibility Earned: </strong>${synopsisReport.Earned_Playing_Time__c}<br>`
     : `<strong>Mentor Granted Playing Time: </strong>${synopsisReport.Mentor_Granted_Playing_Time__c}
@@ -110,7 +110,7 @@ class SynopsisReportSummary extends React.Component {
           : <React.Fragment>
             <p>Point Sheet not turned in.</p><br />
             </React.Fragment> }
-        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) 
+        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
           && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
           ? <React.Fragment>
             <p><strong>
