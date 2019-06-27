@@ -599,7 +599,7 @@ class SynopsisReportForm extends React.Component {
                   { value: 'Entire Game', label: 'Entire Game' },
                   { value: 'All but Start', label: 'All but Start' },
                   { value: 'Three Quarters', label: 'Three Quarters' },
-                  { value: 'Two Quarterrs', label: 'Two Quarterrs' },
+                  { value: 'Two Quarters', label: 'Two Quarters' },
                   { value: 'One Quarter', label: 'One Quarter' },
                   { value: 'None of Game', label: 'None of Game' },
                 ]

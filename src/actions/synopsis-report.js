@@ -38,17 +38,17 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
     });
 };
 
-const translateGradeNAtoNull = (subjects) => {
-  return subjects.map((subject) => {
-    subject.Grade__c = subject.Grade__c === 'N/A' ? null : subject.Grade__c;
-    return { ...subject };
-  });
-};
+// const translateGradeNAtoNull = (subjects) => {
+//   return subjects.map((subject) => {
+//     subject.Grade__c = subject.Grade__c === 'N/A' ? null : subject.Grade__c;
+//     return { ...subject };
+//   });
+// };
 
 export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
   if (!orgSr.summer_SR) {
-    orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
+    // orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
   }
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
