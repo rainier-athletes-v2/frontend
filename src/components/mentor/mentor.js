@@ -150,6 +150,13 @@ class Mentor extends React.Component {
     this.props.clearSynopsisReport();
   }
 
+  // handleRadioChange = (event) => {
+  //   event.preventDefault();
+  //   const newState = { ...this.state };
+  //   newState.synopsisReport.Summer_weekly_connection_made__c = event.target.value === 'true';
+  //   this.setState(newState);
+  // }
+
   handleSubPT = () => {
     this.setState({
       ...this.state,
