@@ -64,21 +64,22 @@ class SynopsisReportSummerSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
-        <p><strong>Weekly Connection Status</strong></p>
-        { synopsisReport.Summer_weekly_connection_status__c }
+        <p><strong>{ synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
+        { synopsisReport.Summer_weekly_connection_status__c.split(',').map((status, i, list) => {
+          return (<span key={i}>{status}{ i < list.length - 1 ? <br /> : null}</span>);
+        }) }
         <br />
-        <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p>
-        <br />
-        <p><strong>Question of The Week Response</strong></p>
+        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }<br /></p> : null }
+        <p><strong>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Question of The Week Response' : 'Reason for not answering Question of The Week' }</strong></p>
         <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
         <br />
         <p><strong>Last Summer Camp Attendance</strong></p>
-        <p>Student { synopsisReport.Summer_attended_last_camp__c ? 'attended' : 'did not attend' } the last summer camp.</p>
-        <p>{ synopsisReport.Summer_attended_last_camp_notes__c }</p>
+        <p>Student { synopsisReport.Summer_attended_last_camp__c === 'Yes' ? 'attended' : 'did not attend' } the last summer camp.</p>
+        { synopsisReport.Summer_attended_last_camp_notes__c ? <p>{ synopsisReport.Summer_attended_last_camp_notes__c }</p> : null }
         <br />
         <p><strong>Plans for Next Summer Camp Attendance</strong></p>
-        <p>Student { synopsisReport.Summer_attend_next_camp__c ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
-        <p>{ synopsisReport.Summer_next_camp_notes__c }</p>
+        <p>Student { synopsisReport.Summer_attend_next_camp__c === 'Yes' ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
+        { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null }
       </React.Fragment>
     );
 

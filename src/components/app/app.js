@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPhone, faAt, faUser, faKey, faBirthdayCake, faSchool, faSpinner, faCopy, faInfoCircle} from '@fortawesome/free-solid-svg-icons'; //eslint-disable-line
@@ -27,6 +28,14 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="app">
+        <Helmet>
+          <meta charSet="utf-8"/>
+          <title>Rainier Athletes Administrative Portal</title>
+          <meta name="description" content=""/>
+          <meta name="author" content="Jess Franklin, ED"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        </Helmet>
         <BrowserRouter>
           <div>
             <Navbar />
