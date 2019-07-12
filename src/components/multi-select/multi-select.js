@@ -30,7 +30,7 @@ MultiSelect.propTypes = {
   compClass: PropTypes.string,
   compName: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.array,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   options: PropTypes.array,

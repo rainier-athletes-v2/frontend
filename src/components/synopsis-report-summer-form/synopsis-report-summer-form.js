@@ -301,7 +301,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     const weeklyConnectionNotesRequired = this.state.synopsisReport
       && this.state.synopsisReport.Summer_weekly_connection_status__c
-      && this.state.synopsisReport.Summer_weekly_connection_status__c.indexOf('No, for reasons') !== -1;
+      && this.state.synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect for reasons') !== -1;
 
     // question 1
     const mentorMadeScheduledCheckinJSX = (
@@ -366,7 +366,7 @@ class SynopsisReportSummerForm extends React.Component {
                   { value: '', label: '--Select Connection Status--' },
                   { value: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back', label: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back' },
                   { value: 'Student did not show up on the day and time we agreed upon', label: 'Student did not show up on the day and time we agreed upon' },
-                  { value: 'No, for reasons explained below', label: 'No, for reasons explained below' },
+                  { value: 'We did not connect for reasons explained below', label: 'We did not connect for reasons explained below' },
                 ]}/>
             }
             {weeklyConnectionNotesRequired
