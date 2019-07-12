@@ -77,7 +77,6 @@ class SynopsisReportSummerForm extends React.Component {
 
   initRadioButtons = (sr, fieldName) => {
     if (!sr) return -1;
-    console.log(fieldName, sr[fieldName]);
     switch (sr[fieldName]) {
       case 'Yes':
         return 1;
