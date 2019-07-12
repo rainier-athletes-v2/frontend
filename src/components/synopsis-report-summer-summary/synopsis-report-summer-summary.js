@@ -41,6 +41,11 @@ class SynopsisReportSummerSummary extends React.Component {
         alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
       }
     }
+    if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
+      if (this.props.messageBoardUrl) {
+        this.handlePostSrSummary(); // post to basecamp
+      }
+    }
   }
 
   handlePostSrSummary = () => {
@@ -69,7 +74,8 @@ class SynopsisReportSummerSummary extends React.Component {
           return (<span key={i}>{status}{ i < list.length - 1 ? <br /> : null}</span>);
         }) }
         <br />
-        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }<br /></p> : null }
+        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p> : null }
+        <br />
         <p><strong>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Question of The Week Response' : 'Reason for not answering Question of The Week' }</strong></p>
         <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
         <br />
@@ -112,8 +118,8 @@ class SynopsisReportSummerSummary extends React.Component {
                 ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
                 // eslint-disable-next-line no-nested-ternary
                 : this.props.messageBoardUrl
-                  ? <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
-                  : <h5>Unable to post to Basecamp. Missing message board link. Be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
+                  ? null
+                  : <h5>Unable to post to Basecamp. Missing message board link. Give it a few seconds. If it does not post be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
               }
             </div>
           </div>
