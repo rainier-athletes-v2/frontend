@@ -334,12 +334,13 @@ class SynopsisReportSummerForm extends React.Component {
       
       if (this.state.mentorMadeScheduledCheckin !== -1) {
         return (
-        <div className="mentor-met-container" key='mentorMadeCheckin'>
+        <div className="mentor-met-container" key='connectionStatus'>
           {this.state.mentorMadeScheduledCheckin === 1
             ? <MultiSelect
               compClass={this.state.metWithMentee ? 'title' : 'title required'}
               compName="Summer_weekly_connection_status__c"
               label="Select 1 or more connection status values:"
+              selectClass="mentor-met-multi"
               value={this.state.synopsisReport.Summer_weekly_connection_status__c
                 ? this.state.synopsisReport.Summer_weekly_connection_status__c
                 : ''}
@@ -394,49 +395,47 @@ class SynopsisReportSummerForm extends React.Component {
     // question 3
     const questionOfTheWeekResponseJSX = (
       <div className="survey-question-container">
-      <React.Fragment>
-      <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.answeredQoW ? '' : 'required'} htmlFor="made-meeting">Did the student respond to the Question of the Week?</label>
-          <input
-            type="radio"
-            name="qow"
-            value="1"
-            className="inline"
-            checked={this.state.questionOfTheWeek === 1 ? 'checked' : ''}
-            required="true"
-            onChange={this.handleQuestionOfTheWeekChange}/> Yes
-          <input
-            type="radio"
-            name="qow"
-            value="0"
-            className="inline"
-            checked={this.state.questionOfTheWeek === 0 ? 'checked' : ''}
-            requried="true"
-            onChange={this.handleQuestionOfTheWeekChange}/> No
-      </div>
-      </React.Fragment>
-      { this.state.questionOfTheWeek !== -1
-        ? <TextArea
-            compClass={this.state.weeklyQuestionOK ? 'title' : 'title required'}
-            compName="Summer_question_of_the_week_response__c"
-            label={this.state.questionOfTheWeek === 1 ? 'What was student’s response?' : 'Why not?'}
-            placeholder={''}
-            value={ this.state.synopsisReport && this.state.synopsisReport.Summer_question_of_the_week_response__c
-              ? this.state.synopsisReport.Summer_question_of_the_week_response__c
-              : '' }
-            required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
-            onChange={ this.handleTextAreaChange }
-            rows={ 2 }
-            cols={ 80 }
-          />
-        : ''}
+        <div className="mentor-met-container" key='questionOfTheWeek'>
+          <label className={this.state.answeredQoW ? '' : 'required'} htmlFor="made-meeting">Did the student respond to the Question of the Week?</label>
+            <input
+              type="radio"
+              name="qow"
+              value="1"
+              className="inline"
+              checked={this.state.questionOfTheWeek === 1 ? 'checked' : ''}
+              required="true"
+              onChange={this.handleQuestionOfTheWeekChange}/> Yes
+            <input
+              type="radio"
+              name="qow"
+              value="0"
+              className="inline"
+              checked={this.state.questionOfTheWeek === 0 ? 'checked' : ''}
+              requried="true"
+              onChange={this.handleQuestionOfTheWeekChange}/> No
+        </div>
+        { this.state.questionOfTheWeek !== -1
+          ? <TextArea
+              compClass={this.state.weeklyQuestionOK ? 'title' : 'title required'}
+              compName="Summer_question_of_the_week_response__c"
+              label={this.state.questionOfTheWeek === 1 ? 'What was student’s response?' : 'Why not?'}
+              placeholder={''}
+              value={ this.state.synopsisReport && this.state.synopsisReport.Summer_question_of_the_week_response__c
+                ? this.state.synopsisReport.Summer_question_of_the_week_response__c
+                : '' }
+              required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
+              onChange={ this.handleTextAreaChange }
+              rows={ 2 }
+              cols={ 80 }
+            />
+          : ''}
       </div>
     );
 
     // question 4
     const attendedLastSummerCampJSX = (
       <div className="survey-question-container">
-        <div className="mentor-met-container" key='mentorMadeCheckin'>
+        <div className="mentor-met-container" key='attendedLastCamp'>
         <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label>
           <input
             type="radio"
@@ -476,7 +475,7 @@ class SynopsisReportSummerForm extends React.Component {
     // question 5
     const nextSummerCampPlansJSX = (
       <div className="survey-question-container">
-        <div className="mentor-met-container" key='mentorMadeCheckin'>
+        <div className="mentor-met-container" key='attendNextCamp'>
         <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label>
           <input
             type="radio"
@@ -516,7 +515,7 @@ class SynopsisReportSummerForm extends React.Component {
     // question 6
     const familyConnectionJSX = (
       <div className="survey-question-container">
-        <div className="mentor-met-container" key='mentorMadeCheckin'>
+        <div className="mentor-met-container" key='familyConnection'>
         <label className={this.state.familyConnectionStatusOK ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
           <input
             type="radio"
@@ -544,6 +543,7 @@ class SynopsisReportSummerForm extends React.Component {
                 ? this.state.synopsisReport.Summer_family_connection_status__c
                 : ''}
               onChange={ this.handleMultiSelectChange }
+              selectClass="family-met-multi"
               options={
                 [
                   { value: '', label: '--Select Check In Status--' },

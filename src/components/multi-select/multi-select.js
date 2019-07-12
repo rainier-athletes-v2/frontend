@@ -14,7 +14,7 @@ export default function MultiSelect(props) {
         ? <TooltipItem id={props.compName} text={ttText[props.compName]}/>
         : null
       }
-      <select multiple value={props.value}
+      <select className={props.selectClass} multiple value={props.value}
         required
         name={props.compName}
         onChange={props.onChange}>
@@ -34,4 +34,5 @@ MultiSelect.propTypes = {
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   options: PropTypes.array,
+  selectClass: PropTypes.string,
 };
