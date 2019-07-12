@@ -70,9 +70,12 @@ class SynopsisReportSummerForm extends React.Component {
 
   initMultiSelectArray = (sr, fieldName) => {
     if (!sr) return null;
-    const values = sr[fieldName];
-    const returnVal = values.split(',');
-    return returnVal || null;
+    if (sr[fieldName]) {
+      const values = sr[fieldName];
+      const returnVal = values.split(',');
+      return returnVal || null;
+    }
+    return null;
   }
 
   initRadioButtons = (sr, fieldName) => {
