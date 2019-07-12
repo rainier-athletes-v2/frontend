@@ -45,6 +45,12 @@ class SynopsisReportSummary extends React.Component {
         alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
       }
     }
+    console.log('compDidUpdate url, prev url', this.props.messageBoardUrl, prevProps.messageBoardUrl);
+    if (!this.state.waitingForSave && this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
+      if (this.props.messageBoardUrl) {
+        this.handlePostSrSummary(); // post to basecamp
+      }
+    }
   }
 
   handleCopy = () => {
@@ -181,8 +187,8 @@ class SynopsisReportSummary extends React.Component {
                 : playingTimeOnly 
                   ? <h3><button onClick={ this.props.onClose } className="btn btn-secondary" id="pt-only" type="submit">Click to Dismiss</button></h3> 
                   : this.props.messageBoardUrl
-                    ? <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
-                    : <h5>Unable to post to Basecamp. Missing message board link. Be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
+                    ? null
+                    : <h5>Unable to post to Basecamp. Missing message board link. Give it a second. If nothing changes here be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
               }
             </div>
           </div>

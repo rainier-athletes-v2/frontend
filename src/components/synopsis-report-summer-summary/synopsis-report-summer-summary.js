@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as srActions from '../../actions/synopsis-report-summary';
+import * as srSummaryActions from '../../actions/synopsis-report-summary';
+import * as srActions from '../../actions/synopsis-report';
 
 import './_synopsis-report-summer-summary.scss';
 
@@ -14,8 +15,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
-  clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
+  postSrSummary: srSummary => dispatch(srSummaryActions.postSrSummary(srSummary)),
+  clearSrSummaryStatus: () => dispatch(srSummaryActions.clearSrSummaryStatus()),
+  clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
 class SynopsisReportSummerSummary extends React.Component {
@@ -41,10 +43,17 @@ class SynopsisReportSummerSummary extends React.Component {
         alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
       }
     }
+    console.log('compDidUpdate url, prev url', this.props.messageBoardUrl, prevProps.messageBoardUrl);
+    if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
+      if (this.props.messageBoardUrl) {
+        this.handlePostSrSummary(); // post to basecamp
+      }
+    }
   }
 
   handlePostSrSummary = () => {
     this.props.clearSrSummaryStatus();
+    // this.props.clearSynopsisReport();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
 
     const srSummary = {
@@ -69,7 +78,8 @@ class SynopsisReportSummerSummary extends React.Component {
           return (<span key={i}>{status}{ i < list.length - 1 ? <br /> : null}</span>);
         }) }
         <br />
-        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }<br /></p> : null }
+        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p> : null }
+        <br />
         <p><strong>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Question of The Week Response' : 'Reason for not answering Question of The Week' }</strong></p>
         <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
         <br />
@@ -112,8 +122,8 @@ class SynopsisReportSummerSummary extends React.Component {
                 ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
                 // eslint-disable-next-line no-nested-ternary
                 : this.props.messageBoardUrl
-                  ? <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
-                  : <h5>Unable to post to Basecamp. Missing message board link. Be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
+                  ? null
+                  : <h5>Unable to post to Basecamp. Missing message board link. Give it a few seconds. If it does not post be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
               }
             </div>
           </div>
@@ -132,6 +142,7 @@ SynopsisReportSummerSummary.propTypes = {
   onClose: PropTypes.func,
   postSrSummary: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,
+  clearSynopsisReport: PropTypes.func,
   setSynopsisReportLink: PropTypes.func,
   srSummaryStatus: PropTypes.number,
 };
