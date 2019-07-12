@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as srActions from '../../actions/synopsis-report-summary';
+import * as srSummaryActions from '../../actions/synopsis-report-summary';
+import * as srActions from '../../actions/synopsis-report';
 
 import './_synopsis-report-summer-summary.scss';
 
@@ -14,8 +15,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
-  clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
+  postSrSummary: srSummary => dispatch(srSummaryActions.postSrSummary(srSummary)),
+  clearSrSummaryStatus: () => dispatch(srSummaryActions.clearSrSummaryStatus()),
+  clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
 class SynopsisReportSummerSummary extends React.Component {
@@ -41,6 +43,7 @@ class SynopsisReportSummerSummary extends React.Component {
         alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
       }
     }
+    console.log('compDidUpdate url, prev url', this.props.messageBoardUrl, prevProps.messageBoardUrl);
     if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
       if (this.props.messageBoardUrl) {
         this.handlePostSrSummary(); // post to basecamp
@@ -50,6 +53,7 @@ class SynopsisReportSummerSummary extends React.Component {
 
   handlePostSrSummary = () => {
     this.props.clearSrSummaryStatus();
+    // this.props.clearSynopsisReport();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
 
     const srSummary = {
@@ -138,6 +142,7 @@ SynopsisReportSummerSummary.propTypes = {
   onClose: PropTypes.func,
   postSrSummary: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,
+  clearSynopsisReport: PropTypes.func,
   setSynopsisReportLink: PropTypes.func,
   srSummaryStatus: PropTypes.number,
 };

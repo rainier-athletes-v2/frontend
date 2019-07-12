@@ -289,7 +289,7 @@ class SynopsisReportForm extends React.Component {
       && pt.validPointTrackerScores(synopsisReport)
       && this.commNotesAreValid()
       && this.oneTeamNotesAreValid()) {      
-      this.setState({ ...this.state, waitingOnSaves: true });
+      this.setState({ ...this.state, waitingOnSaves: true, synopsisSaved: false });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
       this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
