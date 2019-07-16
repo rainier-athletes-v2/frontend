@@ -10,7 +10,7 @@ import TextArea from '../text-area/text-area';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
-import * as srSummaryActions from '../../actions/synopsis-report-summary';
+import * as srSummaryActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
@@ -44,6 +44,7 @@ const mapStateToProps = state => ({
   synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
   // pointTrackers: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0].PointTrackers__r.records,
   myRole: state.myProfile.role,
+  messageBoardUrl: state.messageBoardUrl,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -717,6 +718,10 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
+    const formButtonOrMessageJSX = this.props.messageBoardUrl
+      ? <h3><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h3>
+      : <h3>Waiting on Basecamp message board URL...</h3>;
+
     const synopsisReportFormJSX = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
@@ -756,7 +761,7 @@ class SynopsisReportForm extends React.Component {
                 { mentorSupportRequestJSX }
                   { this.state.waitingOnSaves 
                     ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                    : <h3><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h3> }
+                    : formButtonOrMessageJSX }
                 </div>
 
               </form>
@@ -795,6 +800,7 @@ SynopsisReportForm.propTypes = {
   cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
+  messageBoardUrl: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);

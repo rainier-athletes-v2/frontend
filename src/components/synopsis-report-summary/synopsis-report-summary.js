@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as pl from '../../lib/pick-list-tests';
-import * as srActions from '../../actions/synopsis-report-summary';
+import * as srActions from '../../actions/message-board-url';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_synopsis-report-summary.scss';

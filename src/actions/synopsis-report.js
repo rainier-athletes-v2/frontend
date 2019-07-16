@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
 import { SYNOPSIS_REPORT_SET, SYNOPSIS_REPORT_CLEAR } from '../lib/types';
-import * as errorActions from './error';
+import { setError, clearError } from './error';
 
 export const setSynopsisReport = sr => ({
   type: SYNOPSIS_REPORT_SET,
@@ -23,6 +23,9 @@ const translateGradeNulltoNA = (subjects) => {
 export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
 
+  store.dispatch(clearError());
+  store.dispatch(clearSynopsisReport());
+
   return superagent.get(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}/${srId}`)
     .set('Authorization', `Bearer ${token}`)
     .send('Content-Type', 'application/json')
@@ -35,6 +38,9 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
         sr.records[0].summer_SR = true;
       }
       return store.dispatch(setSynopsisReport(sr));
+    })
+    .catch((res) => {
+      return store.dispatch(setError(res.status));
     });
 };
 
@@ -47,6 +53,9 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
 
 export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
+
+  store.dispatch(clearError());
+
   if (!orgSr.summer_SR) {
     // orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
   }
@@ -55,6 +64,6 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
     .then((result) => {
-      return store.dispatch(errorActions.setError(result.status));
+      return store.dispatch(setError(result.status));
     });
 };
