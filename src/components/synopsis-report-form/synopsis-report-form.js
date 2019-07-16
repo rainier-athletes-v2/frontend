@@ -10,7 +10,7 @@ import TextArea from '../text-area/text-area';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
-import * as srSummaryActions from '../../actions/synopsis-report-summary';
+import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
@@ -42,16 +42,17 @@ const names = {
 const mapStateToProps = state => ({
   synopsisReportLink: state.synopsisReportLink,
   synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
-  // pointTrackers: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0].PointTrackers__r.records,
   myRole: state.myProfile.role,
+  messageBoardUrl: state.messageBoardUrl,
+  error: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
   createSynopsisReportPdf: (student, sr) => dispatch(srPdfActions.createSynopsisReportPdf(student, sr)),
   setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
-  getMsgBoardUrl: studentEmail => dispatch(srSummaryActions.getMsgBoardUrl(studentEmail)),
-  clearMsgBoardUrl: () => dispatch(srSummaryActions.clearMsgBoardUrl()),
+  getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
+  clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
 });
 
@@ -62,16 +63,45 @@ class SynopsisReportForm extends React.Component {
     this.state = {};
     this.state.synopsisReport = this.props.synopsisReport;
     this.state.communications = this.initCommunicationsState(this.props.synopsisReport);
-    this.state.synopsisSaved = false;
+    this.state.savedToSalesforce = false;
+    this.state.waitingOnSalesforce = false;
+    this.state.savedToGoogleDrive = false;
+    this.state.waitingOnGoogleDrive = false;
 
     this.props.clearMsgBoardUrl();
   }
 
   componentDidUpdate = (prevProps) => {
+    if (this.props.error !== prevProps.error) {
+      if (this.state.waitingOnSalesforce
+        && (this.state.synopsisReport 
+        && !pl.playingTimeOnly(this.state.synopsisReport.Synopsis_Report_Status__c))) {
+        this.props.clearError();
+        const { synopsisReport, communications } = this.state;
+        const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
+        this.setState({
+          waitingOnSalesforce: false,
+          savedToSalesforce: true,
+          waitingOnGoogleDrive: true,
+          savedToGoogleDrive: false,
+        });
+        this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
+      } else if (this.state.waitingOnSalesforce
+        && (this.state.synopsisReport
+        && pl.playingTimeOnly(this.state.synopsisReport.Synopsis_Report_Status__c))) {
+        this.props.clearError();
+        this.setState({
+          waitingOnSalesforce: false,
+          savedToSalesforce: true,
+          waitingOnGoogleDrive: false,
+          savedToGoogleDrive: true,
+        });
+      }
+    }
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
       this.setState({
-        synopsisSaved: true,
-        waitingOnSaves: false,
+        savedToGoogleDrive: true,
+        waitingOnGoogleDrive: false,
         synopsisLink: this.props.synopsisReportLink,
       });
       this.props.clearError();
@@ -82,6 +112,7 @@ class SynopsisReportForm extends React.Component {
         synopsisReport: { ...this.props.synopsisReport },
         communications: this.initCommunicationsState(this.props.synopsisReport),
       });
+      this.props.clearError();
       this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
     }
     const earnedPlayingTime = this.props.synopsisReport && this.props.synopsisReport.summer_SR ? '' : pt.calcPlayingTime(this.state.synopsisReport);
@@ -289,10 +320,15 @@ class SynopsisReportForm extends React.Component {
       && pt.validPointTrackerScores(synopsisReport)
       && this.commNotesAreValid()
       && this.oneTeamNotesAreValid()) {      
-      this.setState({ ...this.state, waitingOnSaves: true, synopsisSaved: false });
+      this.setState({ 
+        ...this.state, 
+        waitingOnSalesforce: true, 
+        savedToSalesforce: false,
+        waitingOnGoogleDrive: false,
+        savedToGoogleDrive: false,
+      });
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
-      this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -304,9 +340,14 @@ class SynopsisReportForm extends React.Component {
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.PlayingTimeOnly;
 
     if (this.validMentorInput(synopsisReport)) {
-      this.setState({ ...this.state, waitingOnSaves: true });
+      this.setState({ 
+        ...this.state, 
+        waitingOnSalesforce: true,
+        savedToSalesforce: false,
+        waitingOnGoogleDrive: false,
+        savedToGoogleDrive: true,
+      });
       this.props.saveSynopsisReport({ ...synopsisReport });
-      this.props.setSynopsisReportLink('playing time only'); // so SR summary model is triggered.
     } else {
       alert('Please provide required information before submitting playing time.'); // eslint-disable-line
     }
@@ -569,7 +610,7 @@ class SynopsisReportForm extends React.Component {
         </span>
         <span>
           <FontAwesomeIcon icon="key" className="fa-2x"/>
-          {this.props.content && this.props.content.studentData.synergyPassword} {/* Buffer.from(this.props.content.studentData.synergy.password, 'base64').toString()} */}
+          {this.props.content && this.props.content.studentData.synergyPassword} 
         </span>
       </div>
     );
@@ -646,11 +687,11 @@ class SynopsisReportForm extends React.Component {
 
     const submitPlayingTimeOnlyButtonJSX = (
       <div className="synopsis">
-        { this.state.waitingOnSaves 
+        { this.state.waitingOnSalesforce 
           ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
           : <React.Fragment>
               <button type="submit" onClick={ this.handlePlayingTimeSubmit } className="btn btn-secondary" id="playing-time-only">Submit Playing Time Only</button>
-              <p>Please plan to complete the rest of the report by Sunday evening and post Summary to Basecamp. </p> 
+              <p>Please plan to complete the rest of the report by Sunday evening. Thank you!</p> 
             </React.Fragment> }
       </div>
     );
@@ -717,6 +758,29 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
+    const formButtonOrMessage = () => {
+      if (!this.props.messageBoardUrl) {
+        return (<React.Fragment>
+          <h5>Waiting for Basecamp connection...</h5>
+          <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+        </React.Fragment>);
+      }
+      if (this.state.waitingOnGoogleDrive) {
+        return (<React.Fragment>
+          <h3>Saving PDF to Google Drive...</h3>
+          <p>This is slow. Please be patient.</p>
+        </React.Fragment>);
+      }
+      if (this.state.waitingOnSalesforce) {
+        return (<h3>Saving synopsis report to Salesforce...</h3>);
+      } 
+      if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce
+        && this.state.waitingOnGoogleDrive && this.state.savedToGoogleDrive)) {
+        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
+      }
+      return null;
+    };
+
     const synopsisReportFormJSX = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
@@ -753,10 +817,8 @@ class SynopsisReportForm extends React.Component {
                 { oneTeamJSX }
                 { synopsisCommentsJSX }
                 <div className="modal-footer">
-                { mentorSupportRequestJSX }
-                  { this.state.waitingOnSaves 
-                    ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                    : <h3><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h3> }
+                  { mentorSupportRequestJSX }
+                  { formButtonOrMessage() }
                 </div>
 
               </form>
@@ -770,7 +832,7 @@ class SynopsisReportForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved
+        { this.state.savedToGoogleDrive
           ? <SynopsisReportSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 
@@ -795,6 +857,8 @@ SynopsisReportForm.propTypes = {
   cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
+  messageBoardUrl: PropTypes.string,
+  error: PropTypes.number,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);
