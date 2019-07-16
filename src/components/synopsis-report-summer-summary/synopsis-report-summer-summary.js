@@ -1,51 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as srActions from '../../actions/synopsis-report-summary';
+import clearSynopsisReport from '../../actions/synopsis-report';
+import clearError from '../../actions/error';
+import * as bcActions from '../../actions/basecamp';
 
 import './_synopsis-report-summer-summary.scss';
 
 const mapStateToProps = state => ({
   basecampToken: state.basecampToken,
-  srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
-  postSrSummary: srSummary => dispatch(srActions.postSrSummary(srSummary)),
-  clearSrSummaryStatus: () => dispatch(srActions.clearSrSummaryStatus()),
+  postSummaryToBasecamp: srSummary => dispatch(bcActions.postSummaryToBasecamp(srSummary)),
+  clearError: () => dispatch(clearError()),
+  clearSynopsisReport: () => dispatch(clearSynopsisReport()),
 });
 
 class SynopsisReportSummerSummary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.state.mbUrlRetrieved = !!props.messageBoardUrl;
-    this.state.summarySaved = false;
-    this.state.waitingForSave = false;
+    this.state.waitingOnBasecamp = true;
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.srSummaryStatus !== prevProps.srSummaryStatus) {
-      this.setState({
-        ...this.state,
-        summarySaved: !!this.props.srSummaryStatus, // save complete if status is non-null
-        waitingForSave: !this.props.srSummaryStatus, // set waiting false if status is null (cleared)
-        mbUrlRetrieved: !!this.props.messageBoardUrl,
-      });
-      if (this.props.srSummaryStatus < 300) { // expect 201 on success
-        this.props.onClose(); // force close of modal
-      } else {
-        alert(`An error occured posting to Basecamp, status ${this.props.srSummaryStatus}`);
+    if (this.props.error !== prevProps.error) {
+      if (this.state.waitingOnBasecamp) {
+        this.setState({
+          ...this.state,
+          waitingOnBasecamp: false,
+        });
       }
     }
   }
 
-  handlePostSrSummary = () => {
-    this.props.clearSrSummaryStatus();
-    this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
+  componentDidMount = () => {
+    return this.postSummary();
+  }
+
+  postSummary = () => {
+    // this.props.clearBasecampStatus();
+    // this.props.clearSynopsisReport();
+    // this.setState({ ...this.state, waitingOnBasecamp: true });
 
     const srSummary = {
       subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
@@ -53,7 +52,8 @@ class SynopsisReportSummerSummary extends React.Component {
       basecampToken: this.props.basecampToken,
       messageBoardUrl: this.props.messageBoardUrl,
     };
-    return this.props.postSrSummary(srSummary);
+
+    return this.props.postSummaryToBasecamp(srSummary);
   }
 
   render() {
@@ -69,7 +69,8 @@ class SynopsisReportSummerSummary extends React.Component {
           return (<span key={i}>{status}{ i < list.length - 1 ? <br /> : null}</span>);
         }) }
         <br />
-        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }<br /></p> : null }
+        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p> : null }
+        <br />
         <p><strong>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Question of The Week Response' : 'Reason for not answering Question of The Week' }</strong></p>
         <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
         <br />
@@ -80,6 +81,13 @@ class SynopsisReportSummerSummary extends React.Component {
         <p><strong>Plans for Next Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attend_next_camp__c === 'Yes' ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
         { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null }
+      </React.Fragment>
+    );
+
+    const basecampResponseJSX = (
+      <React.Fragment>
+        <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5>
+        <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
       </React.Fragment>
     );
 
@@ -107,13 +115,9 @@ class SynopsisReportSummerSummary extends React.Component {
             </div>
 
             <div className="modal-footer">
-              {/* eslint-disable-next-line no-nested-ternary */}
-              {this.state.waitingForSave 
-                ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                // eslint-disable-next-line no-nested-ternary
-                : this.props.messageBoardUrl
-                  ? <h3><button onClick={ this.handlePostSrSummary } className="btn btn-secondary" id="full-report" type="submit">Post Summary</button>  to Student&#39;s Basecamp Message Board</h3>
-                  : <h5>Unable to post to Basecamp. Missing message board link. Be sure you and student are members of the project and student email is the same in Basecamp and Salesforce.</h5>
+              {this.state.waitingOnBasecamp 
+                ? <h5>Saving summary to Basecamp...</h5> 
+                : basecampResponseJSX
               }
             </div>
           </div>
@@ -128,12 +132,13 @@ SynopsisReportSummerSummary.propTypes = {
   synopsisLink: PropTypes.string,
   basecampToken: PropTypes.string,
   messageBoardUrl: PropTypes.string,
-  error: PropTypes.string,
+  error: PropTypes.number,
   onClose: PropTypes.func,
-  postSrSummary: PropTypes.func,
-  clearSrSummaryStatus: PropTypes.func,
-  setSynopsisReportLink: PropTypes.func,
-  srSummaryStatus: PropTypes.number,
+  postSummaryToBasecamp: PropTypes.func,
+  // clearBasecampStatus: PropTypes.func,
+  clearSynopsisReport: PropTypes.func,
+  // setSynopsisReportLink: PropTypes.func,
+  // basecampStatus: PropTypes.number,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerSummary);

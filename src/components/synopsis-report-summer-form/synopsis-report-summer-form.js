@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
 import MultiSelect from '../multi-select/multi-select';
 import * as srActions from '../../actions/synopsis-report';
-import * as srSummaryActions from '../../actions/synopsis-report-summary';
-import * as srPdfActions from '../../actions/synopsis-report-pdf';
+import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as errorActions from '../../actions/error';
 
@@ -16,16 +14,16 @@ import './_synopsis-report-summer-form.scss';
 
 const mapStateToProps = state => ({
   synopsisReport: state.synopsisReport && state.synopsisReport.records && state.synopsisReport.records[0],
-  synopsisReportLink: state.synopsisReport && state.synopsisReportLink,
   myRole: state.myProfile && state.myProfile.role,
-  saveStatus: state.error,
+  messageBoardUrl: state.messageBoardUrl,
+  error: state.error,
 });
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  setSynopsisReportLink: link => dispatch(srPdfActions.setSynopsisReportLink(link)),
-  getMsgBoardUrl: studentEmail => dispatch(srSummaryActions.getMsgBoardUrl(studentEmail)),
-  clearMsgBoardUrl: () => dispatch(srSummaryActions.clearMsgBoardUrl()),
+  getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
+  clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
+  // saveSummaryToBasecamp: srSummary => dispatch(basecampActions.postSummaryToBasecamp(srSummary)),
   clearError: () => dispatch(errorActions.clearError()),
 });
 
@@ -35,27 +33,26 @@ class SynopsisReportSummerForm extends React.Component {
 
     this.state = {};
     this.state.synopsisReport = this.props.synopsisReport;
-    this.state.synopsisSaved = false;
+    this.state.savedToSalesforce = false;
+    this.state.waitingOnSalesforce = false;
     this.state.mentorMadeScheduledCheckin = -1;
     this.state.questionOfTheWeek = -1;
     this.props.clearMsgBoardUrl();
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.saveStatus !== prevProps.saveStatus) {
-      if (this.props.saveStatus && this.props.saveStatus < 300) {
+    if (this.props.error !== prevProps.error) {
+      if (this.state.waitingOnSalesforce) {
         this.setState({
-          synopsisSaved: true,
-          waitingOnSaves: false,
+          waitingOnSalesfore: false,
+          savedToSalesforce: true,
         });
-        this.props.clearError();
       }
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
-      this.props.clearError();
       const sr = this.props.synopsisReport;
       sr.Summer_weekly_connection_status__c = this.initMultiSelectArray(sr, 'Summer_weekly_connection_status__c');
-      sr.Summer_family_connection_status__c = this.initMultiSelectArray(sr, 'Summer_family_connection_status__c');
+      sr.Summer_family_connection_status__c = sr.Summer_family_connection_status__c ? this.initMultiSelectArray(sr, 'Summer_family_connection_status__c') : [];
       this.setState({ 
         synopsisReport: sr,
         lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
@@ -64,15 +61,19 @@ class SynopsisReportSummerForm extends React.Component {
         questionOfTheWeek: this.initRadioButtons(this.props.synopsisReport, 'Summer_question_of_the_week_answered__c'),
         familyConnectionMade: this.initRadioButtons(this.props.synopsisReport, 'Summer_family_connection_made__c'),
       });
+      this.props.clearError();
       this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
     }
   }
 
   initMultiSelectArray = (sr, fieldName) => {
-    if (!sr) return null;
-    const values = sr[fieldName];
-    const returnVal = values.split(',');
-    return returnVal || null;
+    if (!sr) return [];
+    if (sr[fieldName]) {
+      const values = sr[fieldName];
+      const returnVal = values.split(',');
+      return returnVal || [];
+    }
+    return [];
   }
 
   initRadioButtons = (sr, fieldName) => {
@@ -90,8 +91,7 @@ class SynopsisReportSummerForm extends React.Component {
   componentDidMount = () => {
     this.setState((prevState) => {
       const newState = { ...prevState };
-      newState.synopsisSaved = false;
-      this.props.setSynopsisReportLink('');
+      newState.savedToSalesforce = false;
       newState.metWithMentee = true;
       newState.studentConnectionNotesOK = true;
       newState.answeredQoW = true;
@@ -215,7 +215,7 @@ class SynopsisReportSummerForm extends React.Component {
     const newState = { ...this.state };
     const { synopsisReport } = newState;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
-    const familyConnectionStatusValues = synopsisReport.Summer_family_connection_status__c.join(',');
+    const familyConnectionStatusValues = synopsisReport.Summer_family_connection_made__c === 'Yes' ? synopsisReport.Summer_family_connection_status__c.join(',') : '';
     synopsisReport.Summer_family_connection_status__c = familyConnectionStatusValues;
     if (synopsisReport.Summer_weekly_connection_status__c instanceof Array) {
       const weeklyConnectionStatusValues = synopsisReport.Summer_weekly_connection_status__c.join(',');
@@ -223,8 +223,12 @@ class SynopsisReportSummerForm extends React.Component {
     }
     const validMentorInput = this.validMentorInput(synopsisReport);
     if (validMentorInput) {      
-      this.setState({ ...newState, waitingOnSaves: true, synopsisSaved: false });
-      this.props.saveSynopsisReport({ ...synopsisReport });
+      this.setState({
+        ...newState, 
+        waitingOnSalesforce: true, 
+        savedToSalesforce: false,   
+      });
+      this.props.saveSynopsisReport({ ...synopsisReport }); // save SR to salesforce
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -610,6 +614,12 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    const formButtonOrMessageJSX = this.props.messageBoardUrl
+      ? <h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h5>
+      : <React.Fragment>
+        <h5>Waiting on Basecamp connection...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+        </React.Fragment>;
+
     const synopsisReportForm = this.props.synopsisReport
       ? (
       <div className="points-tracker panel point-tracker-modal">
@@ -637,9 +647,7 @@ class SynopsisReportSummerForm extends React.Component {
                 { familyConnectionJSX }
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
-                  { this.state.waitingOnSaves 
-                    ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                    : <h3><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h3> }
+                { formButtonOrMessageJSX }
                 </div>
 
               </form>
@@ -653,7 +661,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.synopsisSaved
+        { this.state.savedToSalesforce
           ? <SynopsisReportSummerSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 
@@ -678,7 +686,8 @@ SynopsisReportSummerForm.propTypes = {
   cancelClick: PropTypes.func,
   content: PropTypes.object,
   myRole: PropTypes.string,
-  saveStatus: PropTypes.number,
+  error: PropTypes.number,
+  messageBoardUrl: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);

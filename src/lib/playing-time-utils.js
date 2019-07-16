@@ -37,7 +37,8 @@ const ONE_TOKEN_GRADE = 70; // grade at or above earns 1 token
 
 const calcPlayingTime = (sr) => {
   if (!sr) return null;
-
+  if (!sr.PointTrackers__r) return null;
+  
   const subjects = sr.PointTrackers__r.records;
   const student = sr.Student__r;
 

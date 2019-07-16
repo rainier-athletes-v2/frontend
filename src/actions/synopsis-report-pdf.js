@@ -4,6 +4,7 @@ import ReactDOMServer from 'react-dom/server';
 import SynopsisReportHtml from '../components/synopsis-report-html/synopsis-report-html';
 import * as routes from '../lib/routes';
 import { SYNOPSIS_REPORT_LINK_CLEAR, SYNOPSIS_REPORT_LINK_SET } from '../lib/types';
+import { setError, clearError } from './error';
 
 export const setSynopsisReportLink = link => ({
   type: SYNOPSIS_REPORT_LINK_SET,
@@ -101,14 +102,17 @@ export const createSynopsisReportPdf = (student, synopsisReport) => (store) => {
     html: synopsisReportToHTML(student, synopsisReport),
   };
 
+  store.dispatch(clearError());
+  
   return superagent.post(`${API_URL}${routes.SYNOPSIS_PDF_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
     .set('Content-Type', 'application/json')
     .send(data)
     .then((res) => {
-      return store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+      store.dispatch(setSynopsisReportLink(res.body.webViewLink));
+      return store.dispatch(setError(res.status));
     })
     .catch((err) => {
-      return store.dispatch(setSynopsisReportLink(`Error status ${err.status} returned`));
+      return store.dispatch(setError(err.status));
     });
 };
