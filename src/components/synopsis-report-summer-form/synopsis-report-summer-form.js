@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
@@ -35,9 +34,7 @@ class SynopsisReportSummerForm extends React.Component {
     this.state = {};
     this.state.synopsisReport = this.props.synopsisReport;
     this.state.savedToSalesforce = false;
-    this.state.savedToBasecamp = false;
     this.state.waitingOnSalesforce = false;
-    this.state.waitingOnBasecamp = false;
     this.state.mentorMadeScheduledCheckin = -1;
     this.state.questionOfTheWeek = -1;
     this.props.clearMsgBoardUrl();
@@ -51,18 +48,11 @@ class SynopsisReportSummerForm extends React.Component {
           savedToSalesforce: true,
         });
       }
-      // if (this.props.saveStatus && this.props.saveStatus < 300) {
-      //   this.setState({
-      //     synopsisSaved: true,
-      //     waitingOnSaves: false,
-      //   });
-      //   this.props.clearError();
-      // }
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       const sr = this.props.synopsisReport;
       sr.Summer_weekly_connection_status__c = this.initMultiSelectArray(sr, 'Summer_weekly_connection_status__c');
-      sr.Summer_family_connection_status__c = this.initMultiSelectArray(sr, 'Summer_family_connection_status__c');
+      sr.Summer_family_connection_status__c = sr.Summer_family_connection_status__c ? this.initMultiSelectArray(sr, 'Summer_family_connection_status__c') : [];
       this.setState({ 
         synopsisReport: sr,
         lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
@@ -77,13 +67,13 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   initMultiSelectArray = (sr, fieldName) => {
-    if (!sr) return null;
+    if (!sr) return [];
     if (sr[fieldName]) {
       const values = sr[fieldName];
       const returnVal = values.split(',');
-      return returnVal || null;
+      return returnVal || [];
     }
-    return null;
+    return [];
   }
 
   initRadioButtons = (sr, fieldName) => {
@@ -102,7 +92,6 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState((prevState) => {
       const newState = { ...prevState };
       newState.savedToSalesforce = false;
-      newState.savedToBasecamp = false;
       newState.metWithMentee = true;
       newState.studentConnectionNotesOK = true;
       newState.answeredQoW = true;
@@ -226,7 +215,7 @@ class SynopsisReportSummerForm extends React.Component {
     const newState = { ...this.state };
     const { synopsisReport } = newState;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
-    const familyConnectionStatusValues = synopsisReport.Summer_family_connection_status__c.join(',');
+    const familyConnectionStatusValues = synopsisReport.Summer_family_connection_made__c === 'Yes' ? synopsisReport.Summer_family_connection_status__c.join(',') : '';
     synopsisReport.Summer_family_connection_status__c = familyConnectionStatusValues;
     if (synopsisReport.Summer_weekly_connection_status__c instanceof Array) {
       const weeklyConnectionStatusValues = synopsisReport.Summer_weekly_connection_status__c.join(',');
@@ -237,9 +226,7 @@ class SynopsisReportSummerForm extends React.Component {
       this.setState({
         ...newState, 
         waitingOnSalesforce: true, 
-        savedToSalesforce: false, 
-        waitingOnBasecamp: true, 
-        savedToBasecamp: false, 
+        savedToSalesforce: false,   
       });
       this.props.saveSynopsisReport({ ...synopsisReport }); // save SR to salesforce
     } else {
@@ -630,7 +617,7 @@ class SynopsisReportSummerForm extends React.Component {
     const formButtonOrMessageJSX = this.props.messageBoardUrl
       ? <h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h5>
       : <React.Fragment>
-        <h5>Waiting on Basecamp message board URL...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+        <h5>Waiting on Basecamp connection...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
         </React.Fragment>;
 
     const synopsisReportForm = this.props.synopsisReport
@@ -660,9 +647,7 @@ class SynopsisReportSummerForm extends React.Component {
                 { familyConnectionJSX }
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
-                  { this.state.waitingOnSaves 
-                    ? <FontAwesomeIcon icon="spinner" className="fa-spin fa-2x"/> 
-                    : formButtonOrMessageJSX }
+                { formButtonOrMessageJSX }
                 </div>
 
               </form>

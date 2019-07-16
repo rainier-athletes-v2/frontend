@@ -38,9 +38,6 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
         sr.records[0].summer_SR = true;
       }
       return store.dispatch(setSynopsisReport(sr));
-    })
-    .catch((res) => {
-      return store.dispatch(setError(res.status));
     });
 };
 

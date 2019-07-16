@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import clearSynopsisReport from '../../actions/synopsis-report';
 import clearError from '../../actions/error';
 import * as bcActions from '../../actions/basecamp';
@@ -116,10 +115,8 @@ class SynopsisReportSummerSummary extends React.Component {
             </div>
 
             <div className="modal-footer">
-              {/* eslint-disable-next-line no-nested-ternary */}
               {this.state.waitingOnBasecamp 
                 ? <h5>Saving summary to Basecamp...</h5> 
-                // eslint-disable-next-line no-nested-ternary
                 : basecampResponseJSX
               }
             </div>
