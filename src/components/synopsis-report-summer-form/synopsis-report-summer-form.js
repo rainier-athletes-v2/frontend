@@ -51,8 +51,6 @@ class SynopsisReportSummerForm extends React.Component {
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
       const sr = this.props.synopsisReport;
-      sr.Summer_weekly_connection_status__c = this.initMultiSelectArray(sr, 'Summer_weekly_connection_status__c');
-      sr.Summer_family_connection_status__c = sr.Summer_family_connection_status__c ? this.initMultiSelectArray(sr, 'Summer_family_connection_status__c') : [];
       this.setState({ 
         synopsisReport: sr,
         lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
@@ -102,12 +100,12 @@ class SynopsisReportSummerForm extends React.Component {
       newState.nextSummerCampOK = true;
       newState.lastCampNotesOK = true;
       newState.nextCampNotesOK = true;
-      newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_status__c');
+      newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
       newState.familyConnectionStatusOK = true;
       newState.familyConnectionNotesOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
-      newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Summer_weekly_connection_status__c');
+      newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Summer_weekly_connection_made__c');
       newState.questionOfTheWeek = this.initRadioButtons(newState.SynopsisReport, 'Summer_question_of_the_week_answered__c');
       return newState;
     });
@@ -140,13 +138,6 @@ class SynopsisReportSummerForm extends React.Component {
     return this.setState(newState);
   }
 
-  handleWeeklyConnectionChange = (event) => {
-    const { value } = event.target;
-    const newState = { ...this.state };
-    newState.synopsisReport.Summer_weekly_connection_status__c = value;
-    return this.setState(newState);
-  }
-
   handleTextAreaChange = (event) => {
     event.persist();
     this.handleSimpleFieldChange(event);
@@ -162,14 +153,10 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const metWithMentee = !!sr.Summer_weekly_connection_status__c;
+    const metWithMentee = !!sr.Summer_weekly_connection_made__c;
     const answeredQoW = !!sr.Summer_question_of_the_week_answered__c;
-    const studentConnectionNotesOK = sr.Summer_weekly_connection_status__c 
-      && (
-        (sr.Summer_weekly_connection_status__c.indexOf('No, for reasons') !== -1
-          && sr.Summer_weekly_connection_other_notes) 
-        || !!sr.Summer_weekly_connection_status__c
-      );
+    const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'No' 
+      && sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes;
     const weeklyQuestionOK = !!sr.Summer_question_of_the_week_response__c;
     const lastSummerCampOK = !!sr.Summer_attended_last_camp__c;
     const nextSummerCampOK = !!sr.Summer_attend_next_camp__c;
@@ -215,12 +202,6 @@ class SynopsisReportSummerForm extends React.Component {
     const newState = { ...this.state };
     const { synopsisReport } = newState;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
-    const familyConnectionStatusValues = synopsisReport.Summer_family_connection_made__c === 'Yes' ? synopsisReport.Summer_family_connection_status__c.join(',') : '';
-    synopsisReport.Summer_family_connection_status__c = familyConnectionStatusValues;
-    if (synopsisReport.Summer_weekly_connection_status__c instanceof Array) {
-      const weeklyConnectionStatusValues = synopsisReport.Summer_weekly_connection_status__c.join(',');
-      synopsisReport.Summer_weekly_connection_status__c = weeklyConnectionStatusValues;
-    }
     const validMentorInput = this.validMentorInput(synopsisReport);
     if (validMentorInput) {      
       this.setState({
@@ -289,6 +270,15 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState(newState);
   }
 
+  handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.synopsisReport[name] = checked;
+      return newState; 
+    });
+  }
+
   render() {
     const srHeadingJSX = (
       <div className="row">
@@ -304,8 +294,7 @@ class SynopsisReportSummerForm extends React.Component {
     );
 
     const weeklyConnectionNotesRequired = this.state.synopsisReport
-      && this.state.synopsisReport.Summer_weekly_connection_status__c
-      && this.state.synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect for reasons') !== -1;
+      && this.state.synopsisReport.Summer_conn_missed_other__c;
 
     // question 1
     const mentorMadeScheduledCheckinJSX = (
@@ -333,65 +322,71 @@ class SynopsisReportSummerForm extends React.Component {
     );
 
     // question 2
+    const madeCheckinValues = [
+      { text: 'I met with student at the agreed upon day and time (+2 Character Capital)', prop: 'Summer_conn_met__c' },
+      { text: 'Student called me at the agreed upon day and time (+2 Character Capital)', prop: 'Summer_conn_called__c' },
+      { text: 'I called student 30 minutes after the agreed upon time as student did not call me (+1 Character Capital)', prop: 'Summer_conn_late_call__c' },
+      { text: 'We connected via Basecamp (Love that you are using Basecamp as an additional way to communicate! Keep it up!)', prop: 'Summer_conn_basecamp__c' },
+    ];
+
+    const missedCheckinValues = [
+      { text: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back', prop: 'Summer_conn_no_answer__c' },
+      { text: 'Student did not show up on the day and time we agreed upon', prop: 'Summer_conn_no_show__c' },
+      { text: 'We did not connect for reasons explained below', prop: 'Summer_conn_missed_other__c' },
+    ];
+
     const weeklyConnectionStatusJSX = () => {
       if (!this.state.synopsisReport) return null;
       
       if (this.state.mentorMadeScheduledCheckin !== -1) {
         return (
-        <div className="mentor-met-container" key='connectionStatus'>
-          {this.state.mentorMadeScheduledCheckin === 1
-            ? <MultiSelect
-              compClass={this.state.metWithMentee ? 'title' : 'title required'}
-              compName="Summer_weekly_connection_status__c"
-              label="Select 1 or more connection status values:"
-              selectClass="mentor-met-multi"
-              value={this.state.synopsisReport.Summer_weekly_connection_status__c
-                ? this.state.synopsisReport.Summer_weekly_connection_status__c
-                : ''}
-              onChange={ this.handleMultiSelectChange}
-
-              options={
-                [
-                  { value: '', label: '--Select Connection Status--' },
-                  { value: 'I met with student at the agreed upon day and time (+2 Character Capital)', label: 'I met with student at the agreed upon day and time (+2 Character Capital)' },
-                  { value: 'Student called me at the agreed upon day and time (+2 Character Capital)', label: 'Student called me at the agreed upon day and time (+2 Character Capital)' },
-                  { value: 'I called student 30 minutes after the agreed upon time as student did not call me (+1 Character Capital)', label: 'I called student 30 minutes after the agreed upon time as student did not call me (+1 Character Capital)' },
-                  { value: 'We connected via Basecamp', label: 'We connected via Basecamp (Love that you are using Basecamp as an additional way to communicate! Keep it up!)' },
-                ]} />
-            : <DropDown
-                compClass={this.state.metWithMentee ? 'title' : 'title required'}
-                compName="Summer_weekly_connection_status__c"
-                label="Select a miss-connection status:"
-                value={this.state.synopsisReport.Summer_weekly_connection_status__c
-                  ? this.state.synopsisReport.Summer_weekly_connection_status__c
-                  : ''}
-                onChange={ this.handleSimpleFieldChange}
-
-                options={ [
-                  { value: '', label: '--Select Connection Status--' },
-                  { value: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back', label: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back' },
-                  { value: 'Student did not show up on the day and time we agreed upon', label: 'Student did not show up on the day and time we agreed upon' },
-                  { value: 'We did not connect for reasons explained below', label: 'We did not connect for reasons explained below' },
-                ]}/>
-            }
-            {weeklyConnectionNotesRequired
-              ? <div className="survey-question-container">
-                  <TextArea
-                    compClass={this.state.studentConnectionNotesOK ? 'title' : 'title required'}
-                    compName="Summer_weekly_connection_other_notes__c"
-                    label="Please explain your response (required):"
-                    placeholder={''}
-                    value={ this.state.synopsisReport && this.state.synopsisReport.Summer_weekly_connection_other_notes__c
-                      ? this.state.synopsisReport.Summer_weekly_connection_other_notes__c
-                      : '' }
-                    required={weeklyConnectionNotesRequired}
-                    onChange={ this.handleTextAreaChange }
-                    rows={ 2 }
-                    cols={ 80 }
-                  />
-                </div>
-              : '' }
-        </div>);
+          <fieldset>
+            <div className="mentor-met-container" key='connectionStatus'>
+              <div className="mentor-met-container">
+                <label className="title">Weekly Connection Status</label>
+                {this.state.mentorMadeScheduledCheckin === 1
+                  ? madeCheckinValues.map((value, i) => {
+                    return (<div className="survey-question-container" key={ i }>
+                      <input
+                        type="checkbox"
+                        name={ value.prop } // oneTeamQuestion }
+                        onChange= { this.handleCheckboxChange }
+                        checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
+                      <label htmlFor={ value.prop }>{ value.text }</label>
+                    </div>);
+                  })
+                  : missedCheckinValues.map((value, i) => {
+                    return (<div className="survey-question-container" key={ i }>
+                      <input
+                        type="checkbox"
+                        name={ value.prop } // oneTeamQuestion }
+                        onChange= { this.handleCheckboxChange }
+                        checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
+                      <label htmlFor={ value.prop }>{ value.text }</label>
+                    </div>);
+                  })
+                }
+                {weeklyConnectionNotesRequired
+                  ? <div className="survey-question-container">
+                      <TextArea
+                        compClass={this.state.studentConnectionNotesOK ? 'title' : 'title required'}
+                        compName="Summer_weekly_connection_other_notes__c"
+                        label="Please explain your response (required):"
+                        placeholder={''}
+                        value={ this.state.synopsisReport && this.state.synopsisReport.Summer_weekly_connection_other_notes__c
+                          ? this.state.synopsisReport.Summer_weekly_connection_other_notes__c
+                          : '' }
+                        required={weeklyConnectionNotesRequired}
+                        onChange={ this.handleTextAreaChange }
+                        rows={ 2 }
+                        cols={ 80 }
+                      />
+                    </div>
+                  : '' }
+              </div>
+            </div>
+          </fieldset>
+        );
       }
       return null;
     };
@@ -400,7 +395,8 @@ class SynopsisReportSummerForm extends React.Component {
     const questionOfTheWeekResponseJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='questionOfTheWeek'>
-          <label className={this.state.answeredQoW ? '' : 'required'} htmlFor="made-meeting">Did the student respond to the Question of the Week?</label>
+        <label className="title">Question of The Week</label><br />
+          <label className={this.state.answeredQoW ? '' : 'required'} htmlFor="qow">Did the student respond to the Question of the Week?</label>
             <input
               type="radio"
               name="qow"
@@ -418,21 +414,6 @@ class SynopsisReportSummerForm extends React.Component {
               requried="true"
               onChange={this.handleQuestionOfTheWeekChange}/> No
         </div>
-        { this.state.questionOfTheWeek !== -1
-          ? <TextArea
-              compClass={this.state.weeklyQuestionOK ? 'title' : 'title required'}
-              compName="Summer_question_of_the_week_response__c"
-              label={this.state.questionOfTheWeek === 1 ? 'What was student’s response?' : 'Why not?'}
-              placeholder={''}
-              value={ this.state.synopsisReport && this.state.synopsisReport.Summer_question_of_the_week_response__c
-                ? this.state.synopsisReport.Summer_question_of_the_week_response__c
-                : '' }
-              required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
-              onChange={ this.handleTextAreaChange }
-              rows={ 2 }
-              cols={ 80 }
-            />
-          : ''}
       </div>
     );
 
@@ -440,6 +421,7 @@ class SynopsisReportSummerForm extends React.Component {
     const attendedLastSummerCampJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='attendedLastCamp'>
+        <label className="title">Summer Camp</label><br />
         <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label>
           <input
             type="radio"
@@ -517,9 +499,19 @@ class SynopsisReportSummerForm extends React.Component {
     );
 
     // question 6
+    const familyConnectionTypes = [
+      { text: 'Phone Call', prop: 'Summer_family_conn_phone__c' },
+      { text: 'Summer Camp', prop: 'Summer_family_conn_camp__c' },
+      { text: 'Mentor Meal', prop: 'Summer_family_conn_meal__c' },
+      { text: 'YMCA', prop: 'Summer_family_conn_ymca__c' },
+      { text: 'Digital', prop: 'Summer_family_conn_digital__c' },
+      { text: 'Other', prop: 'Summer_family_conn_other__c' },
+    ];
+
     const familyConnectionJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='familyConnection'>
+        <label className="title">Family Connection</label><br />
         <label className={this.state.familyConnectionStatusOK ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
           <input
             type="radio"
@@ -539,29 +531,18 @@ class SynopsisReportSummerForm extends React.Component {
             onChange={this.handleFamilyConnectionChange}/> No
       </div>
         { this.state.familyConnectionMade === 1 
-          ? <MultiSelect
-              compClass={this.state.familyConnectionStatusOK ? 'title' : 'title required'}
-              compName="Summer_family_connection_status__c"
-              label="Please characterize your family connection (Select all that apply):"
-              value={this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_status__c
-                ? this.state.synopsisReport.Summer_family_connection_status__c
-                : ''}
-              onChange={ this.handleMultiSelectChange }
-              selectClass="family-met-multi"
-              options={
-                [
-                  { value: '', label: '--Select Check In Status--' },
-                  { value: 'Phone Call', label: 'Phone Call' },
-                  { value: 'Summer Camp', label: 'Summer Camp' },
-                  { value: 'Mentor Meal', label: 'Mentor Meal' },
-                  { value: 'YMCA', label: 'YMCA' },
-                  { value: 'Digital', label: 'Digital' },
-                  { value: 'Other', label: 'Other' },
-                ]
-              }/>
+          ? familyConnectionTypes.map((value, i) => {
+            return (<div className="survey-question-container" key={ i }>
+              <input
+                type="checkbox"
+                name={ value.prop } // oneTeamQuestion }
+                onChange= { this.handleCheckboxChange }
+                checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
+              <label htmlFor={ value.prop }>{ value.text }</label>
+              </div>);
+          })
           : '' }
-          { this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_status__c
-            && this.state.synopsisReport.Summer_family_connection_status__c.indexOf('Other') !== -1
+          { this.state.synopsisReport && this.state.synopsisReport.Summer_family_conn_other__c
             ? <TextArea
                 compClass={this.state.familyConnectionNotesOK ? 'title' : 'title required'}
                 compName="Summer_family_connection_other_notes__c"
