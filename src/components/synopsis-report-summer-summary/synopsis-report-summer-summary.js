@@ -65,14 +65,16 @@ class SynopsisReportSummerSummary extends React.Component {
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
         <p><strong>{ synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
-        { synopsisReport.Summer_weekly_connection_status__c.split(',').map((status, i, list) => {
-          return (<span key={i}>{status}{ i < list.length - 1 ? <br /> : null}</span>);
-        }) }
-        <br />
-        { synopsisReport.Summer_weekly_connection_status__c.indexOf('We did not connect') !== -1 ? <p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p> : null }
-        <br />
-        <p><strong>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Question of The Week Response' : 'Reason for not answering Question of The Week' }</strong></p>
-        <p>{ synopsisReport.Summer_question_of_the_week_response__c }</p>
+        { synopsisReport.Summer_conn_met__c ? 'Mentor met with student at the agreed upon day and time. ' : null }
+        { synopsisReport.Summer_conn_called__c ? 'Student called at the agreed upon day and time. ' : null }
+        { synopsisReport.Summer_conn_late_call__c ? 'Mentor called student 30 minutes after the agreed upon time as student did not call mentor. ' : null }
+        { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : null }
+        { synopsisReport.Summer_conn_no_answer__c ? 'Mentor called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back. ' : null }
+        { synopsisReport.Summer_conn_no_show__c ? 'Student did not show up on the day and time we agreed upon. ' : null }
+        {/* { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : null } */}
+        { synopsisReport.Summer_conn_missed_other__c ? <React.Fragment><br /><p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p></React.Fragment> : null }
+        <br /><br />
+        <p><strong>Question of The Week</strong></p><p>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Student answered Question of The Week.' : 'Student did not answer Question of The Week.' }</p>
         <br />
         <p><strong>Last Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attended_last_camp__c === 'Yes' ? 'attended' : 'did not attend' } the last summer camp.</p>
