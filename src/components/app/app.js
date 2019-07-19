@@ -30,7 +30,7 @@ export default class App extends React.Component {
       <div className="app">
         <Helmet>
           <meta charSet="utf-8"/>
-          <title>Rainier Athletes Administrative Portal</title>
+          <title>Rainier Athletes Mentor Portal</title>
           <meta name="description" content=""/>
           <meta name="author" content="Jess Franklin, ED"/>
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
