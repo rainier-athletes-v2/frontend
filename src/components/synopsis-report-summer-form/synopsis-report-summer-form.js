@@ -91,9 +91,9 @@ class SynopsisReportSummerForm extends React.Component {
       const newState = { ...prevState };
       newState.savedToSalesforce = false;
       newState.metWithMentee = true;
+      newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
       newState.answeredQoW = true;
-      newState.weeklyQuestionOK = true;
       newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
       newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
       newState.lastSummerCampOK = true;
@@ -101,6 +101,7 @@ class SynopsisReportSummerForm extends React.Component {
       newState.lastCampNotesOK = true;
       newState.nextCampNotesOK = true;
       newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
+      newState.familyConnectionOK = true;
       newState.familyConnectionStatusOK = true;
       newState.familyConnectionNotesOK = true;
       newState.mentorSupportRequestOK = true;
@@ -115,26 +116,6 @@ class SynopsisReportSummerForm extends React.Component {
     const { name, value } = event.target;
     const newState = { ...this.state };
     newState.synopsisReport[name] = value;
-    return this.setState(newState);
-  }
-
-  handleMultiSelectChange = (event) => {
-    const { options, name } = event.target;
-    const newState = { ...this.state };
-    const value = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        value.push(options[i].value);
-      }
-    }
-    newState.synopsisReport[name] = value;
-    return this.setState(newState);
-  }
-
-  handleWeeklyConnectionMadeChange = (event) => {
-    const { value } = event.target;
-    const newState = { ...this.state };
-    newState.synopsisReport.Summer_weekly_connection_made__c = value;
     return this.setState(newState);
   }
 
@@ -154,45 +135,57 @@ class SynopsisReportSummerForm extends React.Component {
 
   validMentorInput = (sr) => {
     const metWithMentee = !!sr.Summer_weekly_connection_made__c;
+    const weeklyConnectionStatusOK = (sr.Summer_weekly_connection_made__c === 'Yes'
+      && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
+      || (sr.Summer_weekly_connection_made__c === 'No'
+      && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
     const answeredQoW = !!sr.Summer_question_of_the_week_answered__c;
-    const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'No' 
-      && sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes;
-    const weeklyQuestionOK = !!sr.Summer_question_of_the_week_response__c;
+    const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'Yes'
+      || !sr.Summer_conn_missed_other__c
+      || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
     const lastSummerCampOK = !!sr.Summer_attended_last_camp__c;
     const nextSummerCampOK = !!sr.Summer_attend_next_camp__c;
     const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c || sr.Summer_attended_last_camp__c === 'Yes';
     const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || sr.Summer_attend_next_camp__c === 'Yes';
     const familyConnectionOK = !!sr.Summer_family_connection_made__c;
-    const familyConnectionStatusOK = sr.Summer_family_connection_made__c === 'No' || sr.Summer_family_connection_status__c;
+    const familyConnectionStatusOK = sr.Summer_family_connection_made__c === 'No' 
+      || (sr.Summer_family_connection_made__c === 'Yes' 
+      && (sr.Summer_family_conn_phone__c || sr.Summer_family_conn_camp__c || sr.Summer_family_conn_meal__c
+        || sr.Summer_family_conn_ymca__c || sr.Summer_family_conn_digital__c || sr.Summer_family_conn_other__c));
+    const familyConnectionNotesOK = sr.Summer_family_connection_made__c === 'No'
+      || !sr.Summer_family_conn_other__c 
+      || (sr.Summer_family_conn_other__c && !!sr.Summer_family_connection_other_notes__c);
     const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
 
     this.setState({
       metWithMentee,
+      weeklyConnectionStatusOK,
       answeredQoW,
       studentConnectionNotesOK,
-      weeklyQuestionOK,
       lastSummerCampOK,
       lastCampNotesOK,
       nextSummerCampOK,
       nextCampNotesOK,
       familyConnectionOK,
       familyConnectionStatusOK,
+      familyConnectionNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
     });
 
     return metWithMentee 
+      && weeklyConnectionStatusOK
       && answeredQoW
       && studentConnectionNotesOK
-      && weeklyQuestionOK
       && lastSummerCampOK
       && lastCampNotesOK
       && nextSummerCampOK
       && nextCampNotesOK
       && familyConnectionOK
       && familyConnectionStatusOK
+      && familyConnectionNotesOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
   }
@@ -220,8 +213,16 @@ class SynopsisReportSummerForm extends React.Component {
     newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
     if (newState.mentorMadeScheduledCheckin === 1) {
       newState.synopsisReport.Summer_weekly_connection_made__c = 'Yes';
+      newState.synopsisReport.Summer_conn_no_answer__c = false;
+      newState.synopsisReport.Summer_conn_no_show__c = false;
+      newState.synopsisReport.Summer_conn_missed_other__c = false;
+      newState.synopsisReport.Summer_weekly_connection_other_notes__c = '';
     } else {
       newState.synopsisReport.Summer_weekly_connection_made__c = 'No';
+      newState.synopsisReport.Summer_conn_met__c = false;
+      newState.synopsisReport.Summer_conn_called__c = false;
+      newState.synopsisReport.Summer_conn_late_call__c = false;
+      newState.synopsisReport.Summer_conn_basecamp__c = false;
     }
     this.setState(newState);
   }
@@ -245,6 +246,7 @@ class SynopsisReportSummerForm extends React.Component {
     } else {
       newState.synopsisReport.Summer_attended_last_camp__c = 'No';
     }
+    newState.synopsisReport.Summer_attended_last_camp_notes__c = '';
     this.setState(newState);
   }
 
@@ -256,6 +258,7 @@ class SynopsisReportSummerForm extends React.Component {
     } else {
       newState.synopsisReport.Summer_attend_next_camp__c = 'No';
     }
+    newState.synopsisReport.Summer_next_camp_notes__c = '';
     this.setState(newState);
   }
 
@@ -266,6 +269,13 @@ class SynopsisReportSummerForm extends React.Component {
       newState.synopsisReport.Summer_family_connection_made__c = 'Yes';
     } else {
       newState.synopsisReport.Summer_family_connection_made__c = 'No';
+      newState.synopsisReport.Summer_family_conn_phone__c = false;
+      newState.synopsisReport.Summer_family_conn_camp__c = false;
+      newState.synopsisReport.Summer_family_conn_meal__c = false;
+      newState.synopsisReport.Summer_family_conn_ymca__c = false;
+      newState.synopsisReport.Summer_family_conn_digital__c = false;
+      newState.synopsisReport.Summer_family_conn_other__c = false;
+      newState.synopsisReport.Summer_family_connection_other_notes__c = '';
     }
     this.setState(newState);
   }
@@ -343,7 +353,7 @@ class SynopsisReportSummerForm extends React.Component {
           <fieldset>
             <div className="mentor-met-container" key='connectionStatus'>
               <div className="mentor-met-container">
-                <label className="title">Weekly Connection Status</label>
+                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status</label>
                 {this.state.mentorMadeScheduledCheckin === 1
                   ? madeCheckinValues.map((value, i) => {
                     return (<div className="survey-question-container" key={ i }>
@@ -395,8 +405,8 @@ class SynopsisReportSummerForm extends React.Component {
     const questionOfTheWeekResponseJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='questionOfTheWeek'>
-        <label className="title">Question of The Week</label><br />
-          <label className={this.state.answeredQoW ? '' : 'required'} htmlFor="qow">Did the student respond to the Question of the Week?</label>
+        <label className={ this.state.answeredQoW ? 'title' : 'title required' }>Question of The Week</label><br />
+          <label htmlFor="qow">Did the student respond to the Question of the Week?</label>
             <input
               type="radio"
               name="qow"
@@ -511,8 +521,8 @@ class SynopsisReportSummerForm extends React.Component {
     const familyConnectionJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='familyConnection'>
-        <label className="title">Family Connection</label><br />
-        <label className={this.state.familyConnectionStatusOK ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
+        <label className={this.state.familyConnectionOK ? 'title' : 'title required'}>Family Connection</label><br />
+        <label htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
           <input
             type="radio"
             name="familyConn"
@@ -530,33 +540,37 @@ class SynopsisReportSummerForm extends React.Component {
             requried="true"
             onChange={this.handleFamilyConnectionChange}/> No
       </div>
-        { this.state.familyConnectionMade === 1 
-          ? familyConnectionTypes.map((value, i) => {
-            return (<div className="survey-question-container" key={ i }>
-              <input
-                type="checkbox"
-                name={ value.prop } // oneTeamQuestion }
-                onChange= { this.handleCheckboxChange }
-                checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
-              <label htmlFor={ value.prop }>{ value.text }</label>
-              </div>);
-          })
-          : '' }
-          { this.state.synopsisReport && this.state.synopsisReport.Summer_family_conn_other__c
-            ? <TextArea
-                compClass={this.state.familyConnectionNotesOK ? 'title' : 'title required'}
-                compName="Summer_family_connection_other_notes__c"
-                label="Please explain selection of 'other':"
-                placeholder={''}
-                value={ this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_other_notes__c
-                  ? this.state.synopsisReport.Summer_family_connection_other_notes__c
-                  : '' }
-                required={ true }
-                onChange={ this.handleTextAreaChange }
-                rows={ 2 }
-                cols={ 80 }
-              />
-            : ''}
+        { this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'Yes' 
+          ? <React.Fragment>
+              <label className={ this.state.familyConnectionStatusOK ? 'title' : 'title required'}>Connection Type:</label>
+              { familyConnectionTypes.map((value, i) => {
+                return (<div className="survey-question-container" key={ i }>
+                  <input
+                    type="checkbox"
+                    name={ value.prop } 
+                    onChange= { this.handleCheckboxChange }
+                    checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
+                  <label htmlFor={ value.prop }>{ value.text }</label>
+                  </div>);
+              })}
+          </React.Fragment>
+          : '' 
+        }
+        { this.state.synopsisReport && this.state.synopsisReport.Summer_family_conn_other__c
+          ? <TextArea
+              compClass={this.state.familyConnectionNotesOK ? 'title' : 'title required'}
+              compName="Summer_family_connection_other_notes__c"
+              label="Please explain selection of 'other':"
+              placeholder={''}
+              value={ this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_other_notes__c
+                ? this.state.synopsisReport.Summer_family_connection_other_notes__c
+                : '' }
+              required={ true }
+              onChange={ this.handleTextAreaChange }
+              rows={ 2 }
+              cols={ 80 } />
+          : ''
+        }
       </div>
     );
 
