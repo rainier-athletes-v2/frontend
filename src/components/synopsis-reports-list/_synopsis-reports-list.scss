@@ -48,17 +48,17 @@ only screen and (max-width: 768px) {
     border: none;
     border-bottom: 1px solid #eee;
     position: relative;
-    padding-left: 200px;
-    margin-left: 150px;
+    padding-left: 20px;
+    margin-left: 100px;
   }
   td:before {
     position: absolute;
     top: 12px;
     left: 6px;
-    width: 200px;
+    width: 100px;
     padding-right: 40px;
     white-space: nowrap;
-    margin-left: -150px;
+    margin-left: -100px;
   }
   td:nth-of-type(1):before { content: "Name"; }
   td:nth-of-type(2):before { content: "Report Dates"; }
