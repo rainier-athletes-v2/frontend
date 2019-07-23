@@ -7,7 +7,6 @@ span .title {
 
 .point-tracker-modal {
   display: block;
-  
   width: 600px;
   max-width: 100%;
 
@@ -56,7 +55,7 @@ span .title {
       overflow: auto;
       padding: 20px 5px 20px 10px;
       border: 0 !important;
-      // border: 0 !important;
+      border: 0 !important;
     }
 
     .modal-header {
@@ -162,13 +161,6 @@ select {
   width: 100%;
 }
 
-// .survey-questions-2 {
-//   margin: 5px 0px;
-//   display: inline-block;
-//   width: 50%;
-//   margin-right: 4px;
-//   float: left;
-// }
 
 .survey-questions input {
   display: inline;

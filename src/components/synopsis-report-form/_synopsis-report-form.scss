@@ -94,9 +94,9 @@ select {
   margin-top: 0px;
   padding-top: 0px;
 
-  .inline {
-    margin-left: 12px;
-  }
+  // .inline {
+  //   margin-left: 12px;
+  // }
 }
 
 .survey-question-container {
@@ -104,38 +104,28 @@ select {
   clear: both;
   line-height: 18px;
 
-  .inline {
-    margin-left: 12px;
-  }
+  // .inline {
+  //   margin-left: 12px;
+  // }
 }
 
 .survey-questions {
-  width: 100%;
-  display: inline-block;
-}
-
-.survey-questions-2 {
-  margin: 5px 0px;
-  display: inline-block;
-  width: 50%;
-  margin-right: 4px;
-  float: left;
+  // width: 100%;
+  display: inline;
 }
 
 .survey-questions input,
-.survey-questions label,
-.survey-questions-2 input,
-.survey-questions-2 label {
+.survey-questions label {
   display: inline-block;
   margin-right: 8px;
 
 }
 
-.survey-questions label {
-  display: inline-block;
-  margin-bottom: 0;
-  vertical-align: middle;
-}
+// .survey-questions label {
+//   display: inline-block;
+//   margin-bottom: 0;
+//   vertical-align: middle;
+// }
 
 .points-tracker {
 
@@ -245,9 +235,9 @@ textarea {
   padding-bottom: 0px;
 }
 
-.request-dropdown-container {
-  // outline: 1px solid blue;
-}
+// .request-dropdown-container {
+//   outline: 1px solid blue;
+// }
 
 .support-request-notes {
   .title {
@@ -256,6 +246,6 @@ textarea {
   }
 }
 
-.gpa-display-container {
+// .gpa-display-container {
   
-}
+// }
