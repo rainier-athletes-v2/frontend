@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
-import DropDown from '../drop-down/drop-down';
+// import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-import MultiSelect from '../multi-select/multi-select';
+// import MultiSelect from '../multi-select/multi-select';
 import * as srActions from '../../actions/synopsis-report';
 import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
@@ -310,7 +310,7 @@ class SynopsisReportSummerForm extends React.Component {
     const mentorMadeScheduledCheckinJSX = (
       <React.Fragment>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student this week?</label>
+        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student this week?</label><br className="rwd-break" />
           <input
             type="radio"
             name="made-meeting"
@@ -360,7 +360,6 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
-                        className="inline"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
@@ -371,7 +370,6 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
-                        className="inline"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
@@ -408,7 +406,7 @@ class SynopsisReportSummerForm extends React.Component {
       <div className="survey-question-container">
         <div className="mentor-met-container" key='questionOfTheWeek'>
         <label className={ this.state.answeredQoW ? 'title' : 'title required' }>Question of The Week</label><br />
-          <label htmlFor="qow">Did the student respond to the Question of the Week?</label>
+          <label htmlFor="qow">Did the student respond to the Question of the Week?</label><br className="rwd-break" />
             <input
               type="radio"
               name="qow"
@@ -434,7 +432,7 @@ class SynopsisReportSummerForm extends React.Component {
       <div className="survey-question-container">
         <div className="mentor-met-container" key='attendedLastCamp'>
         <label className="title">Summer Camp</label><br />
-        <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label>
+        <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label><br className="rwd-break" />
           <input
             type="radio"
             name="lastCamp"
@@ -474,7 +472,7 @@ class SynopsisReportSummerForm extends React.Component {
     const nextSummerCampPlansJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='attendNextCamp'>
-        <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label>
+        <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label><br className="rwd-break" />
           <input
             type="radio"
             name="nextCamp"
@@ -562,7 +560,7 @@ class SynopsisReportSummerForm extends React.Component {
           ? <TextArea
               compClass={this.state.familyConnectionNotesOK ? 'title' : 'title required'}
               compName="Summer_family_connection_other_notes__c"
-              label="Please explain selection of 'other':"
+              label="Please explain selection of 'other': "
               placeholder={''}
               value={ this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_other_notes__c
                 ? this.state.synopsisReport.Summer_family_connection_other_notes__c

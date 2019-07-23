@@ -138,15 +138,14 @@ select {
 .mentor-met-container {
   // outline: 1px solid red;
   width: 100%;
-  // clear: both;
+  clear: both;
   line-height: 18px;
   margin-top: 0px;
   padding-top: 0px;
 
-  .inline {
-    margin-left: 12px;
-    margin-right: 10px;
-  }
+  // .inline {
+  //   margin-left: 12px;
+  // }
 }
 
 .survey-question-container {
@@ -154,15 +153,13 @@ select {
   clear: both;
   line-height: 18px;
 
-  .inline {
-    margin-left: 12px;
-    margin-right: 10px;
-  }
+  // .inline {
+  //   margin-left: 12px;
+  // }
 }
 
 .survey-questions {
   width: 100%;
-  display: inline-block;
 }
 
 // .survey-questions-2 {
@@ -170,28 +167,26 @@ select {
 //   display: inline-block;
 //   width: 50%;
 //   margin-right: 4px;
-//   // float: left;
+//   float: left;
 // }
 
-.survey-questions input,
-.survey-questions-2 input {
-  display: inline-block;
-  margin-right: 12px;
-}
-
-.survey-questions label,
-.survey-questions-2 label {
+.survey-questions input {
   display: inline;
+  margin-right: 12px;
+
 }
 
-// .survey-questions label {
-//   display: inline-block;
-//   margin-bottom: 0;
-//   vertical-align: middle;
-// }
+.survey-questions label {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+@media screen and (min-width: 768px) {
+  .rwd-break { display: none; }
+}
 
 .points-tracker {
-
     h2 {
       color: $color-brand-blue;
       padding-bottom: .5em;
