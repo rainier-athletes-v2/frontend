@@ -32,8 +32,7 @@ td:last-child {
   text-align: right;
 }
 
-@media
-only screen and (max-width: 768px) {
+@media only screen and (max-width: 768px) {
   table, thead, tbody, th, td, tr {
     display: block;
   }
