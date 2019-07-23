@@ -360,6 +360,7 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
+                        className="inline"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
@@ -370,6 +371,7 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
+                        className="inline"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
