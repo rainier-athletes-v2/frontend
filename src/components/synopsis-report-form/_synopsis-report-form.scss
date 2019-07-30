@@ -94,9 +94,9 @@ select {
   margin-top: 0px;
   padding-top: 0px;
 
-  // .inline {
-  //   margin-left: 12px;
-  // }
+  .inline {
+    margin-left: 12px;
+  }
 }
 
 .survey-question-container {
@@ -104,9 +104,13 @@ select {
   clear: both;
   line-height: 18px;
 
-  // .inline {
-  //   margin-left: 12px;
-  // }
+  .inline {
+    margin-left: 12px;
+  }
+
+  .text-align {
+    margin-right: 5px;
+  }
 }
 
 .survey-questions {

@@ -138,6 +138,8 @@ select {
 
 .mentor-met-container {
   // outline: 1px solid red;
+  // overflow-wrap: break-word;
+  // display: inline-block;
   width: 100%;
   clear: both;
   line-height: 18px;
@@ -150,12 +152,18 @@ select {
 }
 
 .survey-question-container {
+  // overflow-wrap: break-word;
+  display: inline-block;
   width: 100%;
   clear: both;
   line-height: 18px;
 
   .inline {
     margin-left: 12px;
+  }
+
+  .text-align {
+    margin-right: 5px;
   }
 }
 
@@ -171,9 +179,9 @@ select {
 }
 
 .survey-questions label {
-  display: inline-block;
+  // display: inline;
   margin-bottom: 0;
-  vertical-align: middle;
+  // vertical-align: middle;
 }
 
 @media screen and (min-width: 768px) {

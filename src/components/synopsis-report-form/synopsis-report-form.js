@@ -481,6 +481,7 @@ class SynopsisReportForm extends React.Component {
             <input
               type="checkbox"
               name={ names[keyName].prop} // oneTeamQuestion }
+              className="text-align"
               onChange= { this.handleCheckboxChange }
               checked={ (this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop]) || false }/>
             <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
