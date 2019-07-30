@@ -14,6 +14,7 @@ span .title {
   z-index: 100;
   left: 50%;
   top: 45%;
+  -webkit-transform: translateX(-50%);
   transform: translate(-50%, -50%);
     // position: fixed;
     // height: 77vh;
@@ -143,9 +144,9 @@ select {
   margin-top: 0px;
   padding-top: 0px;
 
-  // .inline {
-  //   margin-left: 12px;
-  // }
+  .inline {
+    margin-left: 12px;
+  }
 }
 
 .survey-question-container {
@@ -153,9 +154,9 @@ select {
   clear: both;
   line-height: 18px;
 
-  // .inline {
-  //   margin-left: 12px;
-  // }
+  .inline {
+    margin-left: 12px;
+  }
 }
 
 .survey-questions {
