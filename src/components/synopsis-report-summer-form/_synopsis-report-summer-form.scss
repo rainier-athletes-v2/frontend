@@ -5,27 +5,66 @@ span .title {
   margin-top: 0px;
 }
 
+.required {
+  color: red !important;
+
+  // @media only screen and (max-width: 768px) {
+  //   color: white;
+  // }
+}
+
 .point-tracker-modal {
-    position: absolute;
-    height: 77vh;
-    overflow: scroll;
-    left: 45%;
-    -webkit-transform: translateX(-45%);
-    transform: translateX(-45%);
-    box-shadow: 0 0 12px rgba(0,0,0, 0.3);
+  display: block;
+  width: 600px;
+  max-width: 100%;
+  height: 85vh;
+  position: fixed;
+  z-index: 100;
+  left: 50%;
+  top: 45%;
+  -webkit-transform: translateX(-50%);
+  transform: translate(-50%, -50%);
+    // position: fixed;
+    // height: 77vh;
+    // overflow: scroll;
+    // left: 45%;
+    // -webkit-transform: translateX(-45%);
+    // transform: translateX(-45%);
+  box-shadow: 0 0 12px rgba(0,0,0, 0.3);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100vh;
+    margin-left: 0;
+  }
 
     .container, .col-md-12, .col-md-6, .col-md-4 {
       padding: 0 !important;
     }
 
     .modal-dialog {
-      @media (min-width: 576px) {
-        max-width: inherit !important;
-        margin: 0.5em !important;
+      // @media (min-width: 576px) {
+        // max-width: inherit !important;
+        // margin: 0.5em !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 50;
       }
     }
 
+
     .modal-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      padding: 20px 5px 20px 10px;
+      border: 0 !important;
       border: 0 !important;
     }
 
@@ -60,6 +99,11 @@ span .title {
       height: 0px;
       margin-bottom: 0px;
     }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 label.title {
@@ -102,6 +146,8 @@ select {
 
 .mentor-met-container {
   // outline: 1px solid red;
+  // overflow-wrap: break-word;
+  // display: inline-block;
   width: 100%;
   clear: both;
   line-height: 18px;
@@ -114,6 +160,8 @@ select {
 }
 
 .survey-question-container {
+  // overflow-wrap: break-word;
+  display: inline-block;
   width: 100%;
   clear: both;
   line-height: 18px;
@@ -121,38 +169,34 @@ select {
   .inline {
     margin-left: 12px;
   }
+
+  .text-align {
+    margin-right: 5px;
+  }
 }
 
 .survey-questions {
   width: 100%;
-  display: inline-block;
 }
 
-.survey-questions-2 {
-  margin: 5px 0px;
-  display: inline-block;
-  width: 50%;
-  margin-right: 4px;
-  float: left;
-}
 
-.survey-questions input,
-.survey-questions label,
-.survey-questions-2 input,
-.survey-questions-2 label {
-  display: inline-block;
-  margin-right: 8px;
+.survey-questions input {
+  display: inline;
+  margin-right: 12px;
 
 }
 
 .survey-questions label {
-  display: inline-block;
+  // display: inline;
   margin-bottom: 0;
-  vertical-align: middle;
+  // vertical-align: middle;
+}
+
+@media screen and (min-width: 768px) {
+  .rwd-break { display: none; }
 }
 
 .points-tracker {
-
     h2 {
       color: $color-brand-blue;
       padding-bottom: .5em;
@@ -235,9 +279,13 @@ textarea {
   }
 }
 
-.required {
-  color: red !important;
-}
+// .required {
+//   color: red;
+
+//   // @media only screen and (max-width: 768px) {
+//   //   color: white;
+//   // }
+// }
 
 .modal-footer {
   flex-direction: column;
@@ -259,9 +307,9 @@ textarea {
   padding-bottom: 0px;
 }
 
-.request-dropdown-container {
-  // outline: 1px solid blue;
-}
+// .request-dropdown-container {
+//   outline: 1px solid blue;
+// }
 
 .support-request-notes {
   .title {
@@ -270,6 +318,6 @@ textarea {
   }
 }
 
-.gpa-display-container {
+// .gpa-display-container {
   
-}
+// }

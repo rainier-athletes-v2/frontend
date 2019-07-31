@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
-import DropDown from '../drop-down/drop-down';
+// import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-import MultiSelect from '../multi-select/multi-select';
+// import MultiSelect from '../multi-select/multi-select';
 import * as srActions from '../../actions/synopsis-report';
 import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
@@ -93,7 +93,7 @@ class SynopsisReportSummerForm extends React.Component {
       newState.metWithMentee = true;
       newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
-      newState.answeredQoW = true;
+      newState.questionOfTheWeekOK = true;
       newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
       newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
       newState.lastSummerCampOK = true;
@@ -139,7 +139,7 @@ class SynopsisReportSummerForm extends React.Component {
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
       || (sr.Summer_weekly_connection_made__c === 'No'
       && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
-    const answeredQoW = !!sr.Summer_question_of_the_week_answered__c;
+    const questionOfTheWeekOK = !!sr.Summer_question_of_the_week_answered__c;
     const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'Yes'
       || !sr.Summer_conn_missed_other__c
       || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
@@ -162,7 +162,7 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState({
       metWithMentee,
       weeklyConnectionStatusOK,
-      answeredQoW,
+      questionOfTheWeekOK,
       studentConnectionNotesOK,
       lastSummerCampOK,
       lastCampNotesOK,
@@ -177,7 +177,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     return metWithMentee 
       && weeklyConnectionStatusOK
-      && answeredQoW
+      && questionOfTheWeekOK
       && studentConnectionNotesOK
       && lastSummerCampOK
       && lastCampNotesOK
@@ -310,7 +310,7 @@ class SynopsisReportSummerForm extends React.Component {
     const mentorMadeScheduledCheckinJSX = (
       <React.Fragment>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student this week?</label>
+        <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you connect with your RA student this week?</label><br className="rwd-break" />
           <input
             type="radio"
             name="made-meeting"
@@ -360,6 +360,7 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
+                        className="text-align"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
@@ -370,6 +371,7 @@ class SynopsisReportSummerForm extends React.Component {
                       <input
                         type="checkbox"
                         name={ value.prop } // oneTeamQuestion }
+                        className="text-align"
                         onChange= { this.handleCheckboxChange }
                         checked={ (this.state.synopsisReport && this.state.synopsisReport[value.prop]) || false }/>
                       <label htmlFor={ value.prop }>{ value.text }</label>
@@ -405,8 +407,8 @@ class SynopsisReportSummerForm extends React.Component {
     const questionOfTheWeekResponseJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='questionOfTheWeek'>
-        <label className={ this.state.answeredQoW ? 'title' : 'title required' }>Question of The Week</label><br />
-          <label htmlFor="qow">Did the student respond to the Question of the Week?</label>
+        <h6 className="title">Question of The Week</h6>
+          <label className={ this.state.questionOfTheWeekOK ? '' : 'required' } htmlFor="qow">Did the student respond to the Question of the Week?</label><br className="rwd-break" />
             <input
               type="radio"
               name="qow"
@@ -432,7 +434,7 @@ class SynopsisReportSummerForm extends React.Component {
       <div className="survey-question-container">
         <div className="mentor-met-container" key='attendedLastCamp'>
         <label className="title">Summer Camp</label><br />
-        <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label>
+        <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label><br className="rwd-break" />
           <input
             type="radio"
             name="lastCamp"
@@ -472,7 +474,7 @@ class SynopsisReportSummerForm extends React.Component {
     const nextSummerCampPlansJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='attendNextCamp'>
-        <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label>
+        <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label><br className="rwd-break" />
           <input
             type="radio"
             name="nextCamp"
@@ -521,8 +523,8 @@ class SynopsisReportSummerForm extends React.Component {
     const familyConnectionJSX = (
       <div className="survey-question-container">
         <div className="mentor-met-container" key='familyConnection'>
-        <label className={this.state.familyConnectionOK ? 'title' : 'title required'}>Family Connection</label><br />
-        <label htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
+        <h6 className="title">Family Connection</h6>
+        <label className={this.state.familyConnectionOK ? '' : 'required'}htmlFor="made-meeting">Did you connect with your RA student’s family this week?</label>
           <input
             type="radio"
             name="familyConn"
@@ -560,7 +562,7 @@ class SynopsisReportSummerForm extends React.Component {
           ? <TextArea
               compClass={this.state.familyConnectionNotesOK ? 'title' : 'title required'}
               compName="Summer_family_connection_other_notes__c"
-              label="Please explain selection of 'other':"
+              label="Please explain selection of 'other': "
               placeholder={''}
               value={ this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_other_notes__c
                 ? this.state.synopsisReport.Summer_family_connection_other_notes__c
@@ -609,11 +611,17 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
-    const formButtonOrMessageJSX = this.props.messageBoardUrl
-      ? <h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h5>
-      : <React.Fragment>
-        <h5>Waiting on Basecamp connection...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
-        </React.Fragment>;
+    const formButtonOrMessage = () => {
+      if (this.props.messageBoardUrl) {
+        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h5>);
+      }
+      if (this.props.error) {
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.</p></React.Fragment>);
+      }
+      return (<React.Fragment>
+      <h5>Waiting on Basecamp connection...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+      </React.Fragment>);
+    };
 
     const synopsisReportForm = this.props.synopsisReport
       ? (
@@ -642,7 +650,7 @@ class SynopsisReportSummerForm extends React.Component {
                 { familyConnectionJSX }
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
-                { formButtonOrMessageJSX }
+                { formButtonOrMessage() }
                 </div>
 
               </form>

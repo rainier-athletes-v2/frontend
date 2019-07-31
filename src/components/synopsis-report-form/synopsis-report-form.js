@@ -327,6 +327,7 @@ class SynopsisReportForm extends React.Component {
         waitingOnGoogleDrive: false,
         savedToGoogleDrive: false,
       });
+      this.props.clearError();
       const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
       this.props.saveSynopsisReport({ ...mergedSynopsisReport });
     } else {
@@ -481,6 +482,7 @@ class SynopsisReportForm extends React.Component {
             <input
               type="checkbox"
               name={ names[keyName].prop} // oneTeamQuestion }
+              className="text-align"
               onChange= { this.handleCheckboxChange }
               checked={ (this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop]) || false }/>
             <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
@@ -552,7 +554,7 @@ class SynopsisReportForm extends React.Component {
       <fieldset>
         <span className="title">Communication Touch Points</span>
         <div className="survey-questions">
-          <table className="table">
+          <table className="comm-tp">
             <thead>
               <tr>
                 <th>RA Core Pillar</th>
@@ -758,13 +760,7 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    const formButtonOrMessage = () => {
-      if (!this.props.messageBoardUrl) {
-        return (<React.Fragment>
-          <h5>Waiting for Basecamp connection...</h5>
-          <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
-        </React.Fragment>);
-      }
+    const formButtonOrMessage = () => {  
       if (this.state.waitingOnGoogleDrive) {
         return (<React.Fragment>
           <h3>Saving PDF to Google Drive...</h3>
@@ -773,10 +769,21 @@ class SynopsisReportForm extends React.Component {
       }
       if (this.state.waitingOnSalesforce) {
         return (<h3>Saving synopsis report to Salesforce...</h3>);
+      }
+      if (!this.props.messageBoardUrl) {
+        if (!this.props.error) {
+          return (<React.Fragment>
+            <h5>Waiting for Basecamp connection...</h5>
+            <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+          </React.Fragment>);
+        }
       } 
       if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce
         && this.state.waitingOnGoogleDrive && this.state.savedToGoogleDrive)) {
-        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
+        if (this.props.messageBoardUrl) {
+          return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
+        }
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.</p></React.Fragment>);  
       }
       return null;
     };
