@@ -154,7 +154,6 @@ select {
       }
     }
 
-
     .btn-secondary {
       background-color: $color-button-green;
       padding: $pad;
@@ -199,7 +198,7 @@ textarea {
   position: relative;
 }
 
-.table {
+table.comm-tp {
   th {
     width: 200px;
   }
@@ -207,6 +206,46 @@ textarea {
   textarea {
     width: 100%;
   }
+
+  @media only screen and (max-width: 768px) {
+    table.comm-tp, thead, tbody, th, td, tr {
+      display: block;
+    }
+  
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+  
+  
+    tr { border: 1px solid #ccc; }
+  
+    td {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 20px;
+      margin-left: 100px;
+    }
+
+
+    td:before {
+      position: absolute;
+      left: 6px;
+      width: 100px;
+      padding-right: 40px;
+      white-space: nowrap;
+      margin-left: -100px;
+    }
+  
+    td:nth-of-type(1):before { content: "RA Core Pillar: "; }
+    td:nth-of-type(2):before { content: "Face-to-Face"; }
+    td:nth-of-type(3):before { content: "Digital"; }
+    td:nth-of-type(4):before { content: "Phone"; }
+    td:nth-of-type(5):before { content: "Other" }
+  }
+
 }
 
 .fa-spin {
@@ -215,9 +254,9 @@ textarea {
   }
 }
 
-.required {
-  color: red !important;
-}
+// .required {
+//   color: red;    
+// }
 
 .modal-footer {
   flex-direction: column;

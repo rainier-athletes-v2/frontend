@@ -553,7 +553,7 @@ class SynopsisReportForm extends React.Component {
       <fieldset>
         <span className="title">Communication Touch Points</span>
         <div className="survey-questions">
-          <table className="table">
+          <table className="comm-tp">
             <thead>
               <tr>
                 <th>RA Core Pillar</th>

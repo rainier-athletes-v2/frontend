@@ -15,7 +15,7 @@ function SynopsisReportsList(props) {
     <React.Fragment>
       <h3 className="heading">Most Recent Synopsis Reports</h3>
       { props.srData.length
-        ? <table>
+        ? <table className="reports-list">
           <thead>
             <tr>
               <th>Name</th>
