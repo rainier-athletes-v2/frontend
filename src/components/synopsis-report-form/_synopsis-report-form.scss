@@ -207,6 +207,12 @@ table.comm-tp {
     width: 100%;
   }
 
+  td:last-child {
+    text-align: left;
+    // content: none;
+  }
+
+
   @media only screen and (max-width: 768px) {
     table.comm-tp, thead, tbody, th, td, tr {
       display: block;
@@ -229,7 +235,6 @@ table.comm-tp {
       margin-left: 100px;
     }
 
-
     td:before {
       position: absolute;
       left: 6px;
@@ -243,8 +248,11 @@ table.comm-tp {
     td:nth-of-type(2):before { content: "Face-to-Face"; }
     td:nth-of-type(3):before { content: "Digital"; }
     td:nth-of-type(4):before { content: "Phone"; }
-    td:nth-of-type(5):before { content: "Other" }
+    td:nth-of-type(5):before { content: "Other"; }
   }
+  // .required {
+
+  // }
 
 }
 
