@@ -43,7 +43,12 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    return this.postSummary();
+    if (this.props.messageBoardUrl) {
+      this.setState({ waitingOnBasecamp: true });
+      return this.postSummary();
+    }
+    this.setState({ waitingOnBasecamp: false });
+    return null;
   }
 
   handleCopy = () => {
@@ -89,6 +94,17 @@ class SynopsisReportSummary extends React.Component {
     };
 
     return this.props.postSummaryToBasecamp(srSummary);
+  }
+
+  basecampResponse = () => {
+    if (this.props.messageBoardUrl) {
+      return (<React.Fragment>
+      <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5><button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
+      </React.Fragment>);
+    }
+    return (<React.Fragment><h5>Summary not posted to Basecamp. Contact an administrator.</h5>;
+      <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
+      </React.Fragment>);
   }
 
   render() {
@@ -150,13 +166,6 @@ class SynopsisReportSummary extends React.Component {
           </React.Fragment>
     );
 
-    const basecampResponseJSX = (
-      <React.Fragment>
-        <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5>
-        <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
-      </React.Fragment>
-    );
-
     return (
       <div className="panel summary-modal">
         <div className="modal-dialog">
@@ -184,7 +193,7 @@ class SynopsisReportSummary extends React.Component {
             <div className="modal-footer">
               { this.state.waitingOnBasecamp
                 ? <h5>Saving summary to Basecamp...</h5>
-                : basecampResponseJSX 
+                : this.basecampResponse() 
               }
             </div>
           </div>

@@ -5,6 +5,14 @@ span .title {
   margin-top: 0px;
 }
 
+.required {
+  color: red !important;
+
+  // @media only screen and (max-width: 768px) {
+  //   color: white;
+  // }
+}
+
 .point-tracker-modal {
   display: block;
   width: 600px;
@@ -271,13 +279,13 @@ textarea {
   }
 }
 
-.required {
-  color: red;
+// .required {
+//   color: red;
 
-  // @media only screen and (max-width: 768px) {
-  //   color: white;
-  // }
-}
+//   // @media only screen and (max-width: 768px) {
+//   //   color: white;
+//   // }
+// }
 
 .modal-footer {
   flex-direction: column;
