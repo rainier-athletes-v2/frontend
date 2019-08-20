@@ -106,6 +106,17 @@ span .title {
   padding: 0;
 }
 
+input[type=checkbox] {
+  float: left;
+}
+
+label {
+  display: flex !important;
+  padding-left: 0.3em;
+  // text-indent: -.7em;
+  // margin-left: 1.5em;
+}
+
 label.title {
   margin: 0px;
   padding: 0px;
@@ -170,9 +181,9 @@ select {
     margin-left: 12px;
   }
 
-  .text-align {
-    margin-right: 5px;
-  }
+  // .text-align {
+  //   margin-right: 5px;
+  // }
 }
 
 .survey-questions {
