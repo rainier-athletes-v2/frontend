@@ -217,11 +217,13 @@ class SynopsisReportForm extends React.Component {
           if (subject.Id === subjectId) {
             const newSubject = { ...subject };
             if (categoryName === 'grade') {
-              let grade = event.target.value;
-              if (grade.toUpperCase() === 'N') grade = 'N/A';
+              let grade = event.target.value.toUpperCase();
+              console.log('target value (grade):', grade);
+              if (grade === 'N') grade = 'N/A';
               if (subjectName.toLowerCase() === 'tutorial') grade = 'N/A';
               if (grade !== 'N/A') {
-                newSubject.Grade__c = pt.validateGrade(grade) ? parseInt(grade, 10) : '';
+                // newSubject.Grade__c = pt.validateGrade(grade) ? parseInt(grade, 10) : '';
+                newSubject.Grade__c = pt.validateGrade(grade) ? grade : '';
               } else {
                 newSubject.Grade__c = 'N/A';
               }
