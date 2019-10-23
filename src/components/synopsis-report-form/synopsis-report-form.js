@@ -28,9 +28,24 @@ const oneTeam = [
 
 const names = {
   mentorGrantedPlayingTimeComments: { text: 'Mentor Granted Playing Time Explanation:', prop: 'Mentor_Granted_Playing_Time_Explanation__c' },
-  studentActionItems: { text: 'Student Action Items:', prop: 'Student_Action_Items__c' },
-  sportsUpdate: { text: 'Sports Update:', prop: 'Sports_Update__c' },
-  additionalComments: { text: 'Additional Comments:', prop: 'Additional_Comments__c' },
+  studentActionItems: { 
+    text: 'Student Action Items:', 
+    prop: 'Student_Action_Items__c', 
+    placeholder: 'Explain specific actions you and the student discussed about taking over the weekend or the following week. This may be anything from retaking a test or organizing a binder or practicing 10 made baskets before Monday.', 
+    required: true,
+  },
+  sportsUpdate: { 
+    text: 'Sports Update:',
+    prop: 'Sports_Update__c', 
+    placeholder: 'After discussing with the student, explain highlights from previous games/practices. Also include date, time and location for upcoming games so everyone can attend when they are able!', 
+    required: true,
+  },
+  additionalComments: { 
+    text: 'Additional Comments to inform the core community:', 
+    prop: 'Additional_Comments__c', 
+    placeholder: '',
+    required: false,
+  },
   wednesdayCheckin: { text: 'Wednesday Check-In', prop: 'Wednesday_Check_In__c' },
   mentorMeal: { text: 'Mentor Meal', prop: 'Mentor_Meal__c' },
   sportsGame: { text: 'Sports Game Meet-Up', prop: 'Sports_Game__c' },
@@ -292,7 +307,7 @@ class SynopsisReportForm extends React.Component {
     const mentorSupportRequestNotesOK = pl.playingTimeOnly(sr.Synopsis_Report_Status__c)
       || !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
-    debugger;
+
     this.setState({
       playingTimeGranted,
       commentsMade,
@@ -571,7 +586,10 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-            { this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status_Reason__c && this.state.synopsisReport.Point_Sheet_Status_Reason__c === 'Other'
+            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c 
+              && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
+              && !!this.state.synopsisReport.Point_Sheet_Status_Reason__c 
+              && this.state.synopsisReport.Point_Sheet_Status_Reason__c === 'Other'
               ? <div className="survey-question-container">
                   <TextArea
                     compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
@@ -749,6 +767,7 @@ class SynopsisReportForm extends React.Component {
     ];
 
     const synopsisCommentsJSX = (
+      <fieldset>
       <div className="synopsis">
         {
           synopsisComments.map((comment, i) => (
@@ -760,6 +779,8 @@ class SynopsisReportForm extends React.Component {
                 value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop]
                   ? this.state.synopsisReport[names[comment].prop]
                   : '' }
+                placeholder={ names[comment].placeholder }
+                required={ names[comment].required }
                 onChange={ this.handleTextAreaChange }
                 rows={ 6 }
                 cols={ 80 } />
@@ -767,6 +788,7 @@ class SynopsisReportForm extends React.Component {
           ))
         }
       </div>
+      </fieldset>
     );
 
     const mentorSupportRequestJSX = (
@@ -864,9 +886,9 @@ class SynopsisReportForm extends React.Component {
                   />
                   : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
+                { synopsisCommentsJSX }
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
-                { synopsisCommentsJSX }
                 <div className="modal-footer">
                   { mentorSupportRequestJSX }
                   { formButtonOrMessage() }

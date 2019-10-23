@@ -43,7 +43,7 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    if (this.props.messageBoardUrl) {
+    if (this.props.messageBoardUrl && this.props.synopsisReport && pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
       this.setState({ waitingOnBasecamp: true });
       return this.postSummary();
     }
@@ -97,12 +97,18 @@ class SynopsisReportSummary extends React.Component {
   }
 
   basecampResponse = () => {
+    if (pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
+      return (<React.Fragment>
+        <h5>Eligibility Recorded</h5>
+        <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
+      </React.Fragment>);
+    }
     if (this.props.messageBoardUrl) {
       return (<React.Fragment>
       <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5><button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
       </React.Fragment>);
     }
-    return (<React.Fragment><h5>Summary not posted to Basecamp. Contact an administrator.</h5>;
+    return (<React.Fragment><h5>Summary not posted to Basecamp. Contact an administrator.</h5>
       <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
       </React.Fragment>);
   }

@@ -1,5 +1,9 @@
 @import '../../style/vars';
 
+textarea::placeholder {
+  opacity: 0.5 !important;
+}
+
 span .title {
   padding-top: 5px;
   margin-top: 0px;
