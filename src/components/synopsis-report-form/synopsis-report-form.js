@@ -516,11 +516,14 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
+    const anyOneTeamChecked = this.state.synopsisReport
+                    && oneTeam.some(team => this.state.synopsisReport[names[team].prop]);
+
     const oneTeamJSX = (
       <fieldset>
         <div className="mentor-met-container">
-        <label className="title">One Team Face-to-Face Meet-Ups</label>
-        <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/>
+        <label className="title">In addition to your regular weekly check in, please indicate which, if any, additional ONE Team meet-ups you had with Rainier Athletes this week</label>
+        {/* <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/> */}
         {oneTeam.map((keyName, i) => (
           <div className="survey-question-container" key={ i }>
             <input
@@ -533,19 +536,22 @@ class SynopsisReportForm extends React.Component {
           </div>
         ))
         }
-          <div className="survey-question-container">
+        { anyOneTeamChecked
+          ? <div className="survey-question-container">
             <TextArea
               compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
               compName="One_Team_Notes__c"
-              label="One Team Notes:"
+              label="Additional ONE Team Meet-Ups Notes:"
               value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
                 ? this.state.synopsisReport.One_Team_Notes__c
                 : '' }
               onChange={ this.handleTextAreaChange }
-              placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+              // placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+              placeholder="Please provide any details about how your additional meeting(s) went."
               required={ this.state.synopsisReport && !!this.state.synopsisReport.Other_Meetup__c }
             />
           </div>
+          : '' }
         </div>
     </fieldset>
     );
@@ -614,7 +620,7 @@ class SynopsisReportForm extends React.Component {
 
     const communicationPillarsTableJSX = (
       <fieldset>
-        <span className="title">Communication Touch Points</span>
+        <span className="title">Please check boxes to indicate how and with whom you communicated this week:</span>
         <div className="survey-questions">
           <table className="comm-tp">
             <thead>
