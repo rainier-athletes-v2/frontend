@@ -103,7 +103,7 @@ export default function SynopsisReportHtml(props) {
   </React.Fragment>;
 
   const studentCalendarJSX = <React.Fragment>
-    <h3><a href={student.studentData.googleCalendarUrl} target="_blank" rel="noopener noreferrer">Student&rsquo;s Google Calendar</a></h3>
+    <h3><a href={student.studentData.googleCalendarUrl} target="_blank" rel="noopener noreferrer">Student Activity Calendar</a></h3>
   </React.Fragment>;
 
   const playingTimeJSX = <React.Fragment>
