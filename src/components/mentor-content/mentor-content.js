@@ -96,7 +96,7 @@ export default function MentorContent(props) {
           <a className="btn-link-1" href={ student.studentData ? student.studentData.googleCalendarUrl : null }
             alt="link to student calendar"
             target="blank"
-            rel="noopener noreferrer">Student Calendar</a>
+            rel="noopener noreferrer">Student Activity Calendar</a>
         </div>
       </div>
       <div className="row">
