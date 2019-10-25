@@ -51,10 +51,10 @@ const calcPlayingTime = (sr) => {
   const numberOfSubjects = subjects.length;
   const totalClassTokens = numberOfSubjects * CLASS_TOKENS_PER_SUBJECT - (isElementarySchool ? 0 : CLASS_TOKENS_PER_SUBJECT);
   const totalTutorialTokens = isElementarySchool ? 0 : TUTORIAL_MAX_TOKENS_PER_WEEK;
-  const totalNAGradeTokens = subjects.reduce((a, c) => a + (c.Grade__c === 'N/A' ? 2 : 0), 0) - 2; // - 1 for the actual tutorial
-  // cGRADE onst totalGradeTokens = isElementarySchool ? 0 : numberOfSubjects * GRADE_TOKENS_PER_SUBJECT - (isElementarySchool ? 0 : CLASS_TOKENS_PER_SUBJECT);
-  // GRADE removed + totalGradeTokens from the following formula. Grades not included in calculations
-  const totalTokensPossible = totalClassTokens - totalNAGradeTokens + totalTutorialTokens;
+  // GRADE const totalNAGradeTokens = subjects.reduce((a, c) => a + (c.Grade__c === 'N/A' ? 2 : 0), 0) - 2; // - 1 for the actual tutorial
+  // GRADE const totalGradeTokens = isElementarySchool ? 0 : numberOfSubjects * GRADE_TOKENS_PER_SUBJECT - (isElementarySchool ? 0 : CLASS_TOKENS_PER_SUBJECT);
+  // GRADE removed + totalGradeTokens - totalNAGradeTokens from the following formula. Grades not included in calculations
+  const totalTokensPossible = totalClassTokens + totalTutorialTokens;
 
   const totalEarnedTokens = subjects.map((subject) => {
     // GRADE const grade = subject.Grade__c;
@@ -85,7 +85,7 @@ const calcPlayingTime = (sr) => {
     
     return subjectTokensEarned;
   });
-
+  console.log('totalEarnedTokens array', totalEarnedTokens || 'undefined');
   const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
   const tokenPercentage = totalTokensEarned / totalTokensPossible;
   // console.log(`earned/possible: ${totalTokensEarned}/${totalTokensPossible}, %:${tokenPercentage}`);
@@ -95,7 +95,7 @@ const calcPlayingTime = (sr) => {
   if (tokenPercentage >= PT.threeQ.pct) earnedPlayingTime = PT.threeQ.label;
   if (tokenPercentage >= PT.allButStart.pct) earnedPlayingTime = PT.allButStart.label;
   if (tokenPercentage >= PT.entireGame.pct) earnedPlayingTime = PT.entireGame.label;
-
+  console.log('num subj', numberOfSubjects, 'tokens possible', totalTokensPossible, 'tokens earned', totalTokensEarned, '%', tokenPercentage, 'result', earnedPlayingTime);
   return earnedPlayingTime;
 };
 
