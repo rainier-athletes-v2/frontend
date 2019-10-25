@@ -735,23 +735,20 @@ class SynopsisReportForm extends React.Component {
 
     const mentorGrantedPlayingTimeCommentsJSX = (
       <div className="synopsis">
-        {
-          showMentorGrantedPlayingTimeExplanation()
-            ? <div key="mentorGrantedPlayingTimeComments">
+        <div key="mentorGrantedPlayingTimeComments">
                 <TextArea
                   compClass={`title ${this.state.commentsMade ? '' : 'required'}`}
                   compName="Mentor_Granted_Playing_Time_Explanation__c"
-                  label="Mentor Granted Playing Time Explanation:"
+                  label="Playing Time Comments"
                   value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
                     ? this.state.synopsisReport.Mentor_Granted_Playing_Time_Explanation__c
                     : '' }
+                  placeholder={showMentorGrantedPlayingTimeExplanation() ? 'Please explain why you over-rode earned playing time.' : ''}
                   onChange={ this.handleTextAreaChange }
                   rows={ 2 }
                   cols={ 80 }
                 />
-              </div>
-            : null
-        }
+        </div>
       </div>
     );
 
