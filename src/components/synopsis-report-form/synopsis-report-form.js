@@ -28,9 +28,24 @@ const oneTeam = [
 
 const names = {
   mentorGrantedPlayingTimeComments: { text: 'Mentor Granted Playing Time Explanation:', prop: 'Mentor_Granted_Playing_Time_Explanation__c' },
-  studentActionItems: { text: 'Student Action Items:', prop: 'Student_Action_Items__c' },
-  sportsUpdate: { text: 'Sports Update:', prop: 'Sports_Update__c' },
-  additionalComments: { text: 'Additional Comments:', prop: 'Additional_Comments__c' },
+  studentActionItems: { 
+    text: 'Student Action Items:', 
+    prop: 'Student_Action_Items__c', 
+    placeholder: 'Explain specific actions you and the student discussed about taking over the weekend or the following week. This may be anything from retaking a test or organizing a binder or practicing 10 made baskets before Monday.', 
+    required: true,
+  },
+  sportsUpdate: { 
+    text: 'Sports Update:',
+    prop: 'Sports_Update__c', 
+    placeholder: 'After discussing with the student, explain highlights from previous games/practices. Also include date, time and location for upcoming games so everyone can attend when they are able!', 
+    required: true,
+  },
+  additionalComments: { 
+    text: 'Additional Comments to inform the core community:', 
+    prop: 'Additional_Comments__c', 
+    placeholder: '',
+    required: false,
+  },
   wednesdayCheckin: { text: 'Wednesday Check-In', prop: 'Wednesday_Check_In__c' },
   mentorMeal: { text: 'Mentor Meal', prop: 'Mentor_Meal__c' },
   sportsGame: { text: 'Sports Game Meet-Up', prop: 'Sports_Game__c' },
@@ -191,6 +206,8 @@ class SynopsisReportForm extends React.Component {
       newState.playingTimeGranted = true;
       newState.commentsMade = true;
       newState.metWithMentee = true;
+      newState.missedCheckinReasonOK = true;
+      newState.pointSheetMissedReasonOK = true;
       newState.pointSheetStatusOK = true;
       newState.pointSheetStatusNotesOK = true;
       newState.mentorSupportRequestOK = true;
@@ -218,7 +235,6 @@ class SynopsisReportForm extends React.Component {
             const newSubject = { ...subject };
             if (categoryName === 'grade') {
               let grade = event.target.value.toUpperCase();
-              console.log('target value (grade):', grade);
               if (grade === 'N') grade = 'N/A';
               if (subjectName.toLowerCase() === 'tutorial') grade = 'N/A';
               if (grade !== 'N/A') {
@@ -281,9 +297,12 @@ class SynopsisReportForm extends React.Component {
       || (!!sr.Mentor_Granted_Playing_Time__c && sr.Mentor_Granted_Playing_Time__c !== sr.Earned_Playing_Time__c);
     const commentsMade = !!sr.Mentor_Granted_Playing_Time_Explanation__c || !commentsRequired;
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
+    const missedCheckinReasonOK = sr.Weekly_Check_In_Status__c === 'Met' || !!sr.Weekly_Check_In_Missed_Reason__c;
     const pointSheetStatusOK = !!sr.Point_Sheet_Status__c;
-    const pointSheetStatusNotesOK = pl.turnedIn(sr.Point_Sheet_Status__c) 
-      || (!pl.turnedIn(sr.Point_Sheet_Status__c) && !!sr.Point_Sheet_Status_Notes__c);
+    const pointSheetMissedReasonOK = sr.Point_Sheet_Status__c === 'Turned in' || !!sr.Point_Sheet_Status_Reason__c;
+    const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned in'
+      || sr.Point_Sheet_Status_Reason__c !== 'Other'
+      || !!sr.Point_Sheet_Status_Notes__c;
     const mentorSupportRequestOK = pl.playingTimeOnly(sr.Synopsis_Report_Status__c) || !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = pl.playingTimeOnly(sr.Synopsis_Report_Status__c)
       || !pl.yes(sr.Mentor_Support_Request__c)
@@ -293,7 +312,9 @@ class SynopsisReportForm extends React.Component {
       playingTimeGranted,
       commentsMade,
       metWithMentee,
+      missedCheckinReasonOK,
       pointSheetStatusOK,
+      pointSheetMissedReasonOK,
       pointSheetStatusNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
@@ -302,7 +323,9 @@ class SynopsisReportForm extends React.Component {
     return playingTimeGranted 
       && commentsMade 
       && metWithMentee 
+      && missedCheckinReasonOK
       && pointSheetStatusOK
+      && pointSheetMissedReasonOK
       && pointSheetStatusNotesOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
@@ -454,6 +477,7 @@ class SynopsisReportForm extends React.Component {
     );
 
     const mentorMadeScheduledCheckinJSX = (
+      <fieldset>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
         <DropDown
           compClass={this.state.metWithMentee ? 'title' : 'title required'}
@@ -467,18 +491,39 @@ class SynopsisReportForm extends React.Component {
             [
               { value: '', label: '--Select Check In Status--' },
               { value: 'Met', label: 'Met' },
-              { value: 'Mentor missed check in', label: 'Mentor missed check in' },
-              { value: 'Student missed check in', label: 'Student missed check in' },
+              { value: 'Did not meet', label: 'Did not meet' },
             ]
           }/>
+          { this.state.synopsisReport && !!this.state.synopsisReport.Weekly_Check_In_Status__c 
+            && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Did not meet' 
+            ? <div className="survey-question-container">
+                <TextArea
+                  compClass={`title ${this.state.missedCheckinReasonOK ? '' : 'required'}`}
+                  compName="Weekly_Check_In_Missed_Reason__c"
+                  label="The RA student did not meet because"
+                  placeholder="Please explain missed checkin..."
+                  value={ this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Missed_Reason__c
+                    ? this.state.synopsisReport.Weekly_Check_In_Missed_Reason__c
+                    : '' }
+                  required={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Did not meet'}
+                  onChange={ this.handleTextAreaChange }
+                  rows={ 2 }
+                  cols={ 80 }
+                />
+              </div>
+            : '' }
       </div>
+      </fieldset>
     );
+
+    const anyOneTeamChecked = this.state.synopsisReport
+                    && oneTeam.some(team => this.state.synopsisReport[names[team].prop]);
 
     const oneTeamJSX = (
       <fieldset>
         <div className="mentor-met-container">
-        <label className="title">One Team Face-to-Face Meet-Ups</label>
-        <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/>
+        <label className="title">In addition to your regular weekly check in, please indicate which, if any, additional ONE Team meet-ups you had with Rainier Athletes this week</label>
+        {/* <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/> */}
         {oneTeam.map((keyName, i) => (
           <div className="survey-question-container" key={ i }>
             <input
@@ -491,19 +536,22 @@ class SynopsisReportForm extends React.Component {
           </div>
         ))
         }
-          <div className="survey-question-container">
+        { anyOneTeamChecked
+          ? <div className="survey-question-container">
             <TextArea
               compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
               compName="One_Team_Notes__c"
-              label="One Team Notes:"
+              label="Additional ONE Team Meet-Ups Notes:"
               value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
                 ? this.state.synopsisReport.One_Team_Notes__c
                 : '' }
               onChange={ this.handleTextAreaChange }
-              placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+              // placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
+              placeholder="Please provide any details about how your additional meeting(s) went."
               required={ this.state.synopsisReport && !!this.state.synopsisReport.Other_Meetup__c }
             />
           </div>
+          : '' }
         </div>
     </fieldset>
     );
@@ -522,21 +570,39 @@ class SynopsisReportForm extends React.Component {
             options={
               [
                 { value: '', label: '--Select Point Sheet Status--' },
-                { value: 'Turned In', label: 'Turned In' },
-                { value: 'Lost', label: 'Lost' },
-                { value: 'Incomplete', label: 'Incomplete' },
-                { value: 'Absent', label: 'Absent' },
-                { value: 'Other', label: 'Other' },
+                { value: 'Turned in', label: 'Turned in' },
+                { value: 'Not turned in', label: 'Not turned in' },
               ]
             }/>
-            { this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c)
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
+            ? <DropDown
+                compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
+                compName="Point_Sheet_Status_Reason__c"
+                label="The RA student did not turn in a point sheet because:"
+                value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Reason__c
+                  ? this.state.synopsisReport.Point_Sheet_Status_Reason__c
+                  : ''}
+                onChange={ this.handleSimpleFieldChange}
+                options={
+                  [
+                    { value: '', label: '--Select Reason for no point sheet--' },
+                    { value: 'It was lost', label: 'It was lost' },
+                    { value: 'Student was absent from school', label: 'Student was absent from school' },
+                    { value: 'Other', label: 'Other' },
+                  ]
+                }/> 
+            : ''}
+            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c 
+              && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
+              && !!this.state.synopsisReport.Point_Sheet_Status_Reason__c 
+              && this.state.synopsisReport.Point_Sheet_Status_Reason__c === 'Other'
               ? <div className="survey-question-container">
                   <TextArea
                     compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
                     compName="Point_Sheet_Status_Notes__c"
-                    label="Point Sheet Status Notes"
+                    label="What happened?"
                     placeholder={this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) 
-                      ? 'Please explain selected status...' 
+                      ? 'Please explain...' 
                       : ''}
                     value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
                       ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
@@ -554,7 +620,7 @@ class SynopsisReportForm extends React.Component {
 
     const communicationPillarsTableJSX = (
       <fieldset>
-        <span className="title">Communication Touch Points</span>
+        <span className="title">Please check boxes to indicate how and with whom you communicated this week:</span>
         <div className="survey-questions">
           <table className="comm-tp">
             <thead>
@@ -657,7 +723,7 @@ class SynopsisReportForm extends React.Component {
     const showMentorGrantedPlayingTimeExplanation = () => {
       if (this.state.synopsisReport) {
         // point sheet status is selected (truthy) and is not Turned In
-        const psStatus = !!this.state.synopsisReport.Point_Sheet_Status__c && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c);
+        const psStatus = !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in';
         // mentor override status is anything truthy
         const mStatus = !!this.state.synopsisReport.Mentor_Granted_Playing_Time__c;
         // Initially (new SR) both status fields should be falsy (null or blank) and we shouldn't show mentor comments
@@ -707,6 +773,7 @@ class SynopsisReportForm extends React.Component {
     ];
 
     const synopsisCommentsJSX = (
+      <fieldset>
       <div className="synopsis">
         {
           synopsisComments.map((comment, i) => (
@@ -718,6 +785,8 @@ class SynopsisReportForm extends React.Component {
                 value={ this.state.synopsisReport && this.state.synopsisReport[names[comment].prop]
                   ? this.state.synopsisReport[names[comment].prop]
                   : '' }
+                placeholder={ names[comment].placeholder }
+                required={ names[comment].required }
                 onChange={ this.handleTextAreaChange }
                 rows={ 6 }
                 cols={ 80 } />
@@ -725,6 +794,7 @@ class SynopsisReportForm extends React.Component {
           ))
         }
       </div>
+      </fieldset>
     );
 
     const mentorSupportRequestJSX = (
@@ -785,7 +855,7 @@ class SynopsisReportForm extends React.Component {
         if (this.props.messageBoardUrl) {
           return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
         }
-        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.</p></React.Fragment>);  
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.)</p></React.Fragment>);  
       }
       return null;
     };
@@ -822,9 +892,9 @@ class SynopsisReportForm extends React.Component {
                   />
                   : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
+                { synopsisCommentsJSX }
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
-                { synopsisCommentsJSX }
                 <div className="modal-footer">
                   { mentorSupportRequestJSX }
                   { formButtonOrMessage() }
