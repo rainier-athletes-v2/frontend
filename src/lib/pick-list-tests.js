@@ -4,10 +4,10 @@ export const former = status => status === 'Former';
 
 // Synopsis_Report__c.Point_Sheet_Status__cc values
 export const PsStatus = {
-  TurnedIn: 'Turned In',
-  Lost: 'Lost',
-  Incomplete: 'Incomplete',
-  Absent: 'Absent',
+  TurnedIn: 'Turned in',
+  Lost: 'Not turned in',
+  Incomplete: 'Not turned in',
+  Absent: 'Not turned in',
   Other: 'Other',
 };
 export const turnedIn = status => status === PsStatus.TurnedIn || status === PsStatus.Incomplete;
@@ -29,8 +29,8 @@ export const completed = status => status === SrStatus.Completed;
 // Synopsis_Report__c.Weekly_Check_In_Status__c values
 export const WciStatus = {
   Met: 'Met',
-  StudentMissed: 'Student missed check in',
-  MentorMissed: 'Mentor missed check in',
+  StudentMissed: 'Did not meet',
+  MentorMissed: 'Did not meet',
 };
 export const met = status => status === WciStatus.Met;
 export const mentorMissed = status => status === WciStatus.MentorMissed;
