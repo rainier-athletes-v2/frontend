@@ -43,7 +43,14 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    if (this.props.messageBoardUrl && this.props.synopsisReport && pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
+    const sr = this.props.synopsisReport;
+    const schoolName = sr.PointTrackers__r 
+      && sr.PointTrackers__r.records
+      && sr.PointTrackers__r.records[0].Class__r
+      && sr.PointTrackers__r.records[0].Class__r.School__r
+      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null;
+    this.setState({ schoolName });
+    if (this.props.messageBoardUrl && this.props.synopsisReport && pl.turnedIn(this.props.synopsisReport.Synopsis_Report_Status__c)) {
       this.setState({ waitingOnBasecamp: true });
       return this.postSummary();
     }
@@ -89,9 +96,9 @@ class SynopsisReportSummary extends React.Component {
     
     <p>Thanks and feel free to respond with comments or questions!</p><br>
     
-    <p>[MENTOR NAME]<br>
-    [MENTOR EMAIL]<br>
-    [STUDENT SCHOOL]`
+    <p>${sr.Mentor__r.Name}<br>
+    ${sr.Mentor__r.npe01__HomeEmail__c}<br>
+    ${this.state.schoolName}`
     );
   };
 
@@ -163,38 +170,38 @@ class SynopsisReportSummary extends React.Component {
         <p className="centered">Please remember to complete their full report by Sunday Evening</p>
       </React.Fragment>
     );
-/*
-`<strong>${sr.Student__r.Name}&#39;s RA Synopsis Report for ${sr.Week__c}</strong>
+    /*
+    `<strong>${sr.Student__r.Name}&#39;s RA Synopsis Report for ${sr.Week__c}</strong>
 
-    <p>${sr.Student__r.Name} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
-    ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p><br>
+      <p>${sr.Student__r.Name} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
+      ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p><br>
 
-    ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
-    ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
+      ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
+      ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
 
-    ${sr.Point_Sheet_Status__c === 'Not turned in' 
-        ? `<p>${sr.Student__r.Name} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c}. 
-      ${sr.Point_Sheet_Status_Reason__c === 'Other' ? `${sr.Point_Sheet_Status_Notes__c}` : ''} </p><br>` : ''}
-    
-    <p><strong>Game Eligibility Earned:</strong> ${sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time_Explanation__c : sr.Earned_Playing_Time__c}</p><br>
-    
-    ${sr.Mentor_Granted_Playing_Time_Explanation__c ? `<p>${sr.Mentor_Granted_Playing_Time_Explanation__c}</p><br>` : ''}
-    
-    <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
-    
-    <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
-    
-    <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
-    
-    <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
-    <a href=${this.props.synopsisReportLink} target="_blank"> CLICK HERE</a><br>
-    
-    <p>Thanks and feel free to respond with comments or questions!</p><br>
-    
-    <p>[MENTOR NAME]<br>
-    [MENTOR EMAIL]<br>
-    [STUDENT SCHOOL]`
-  */
+      ${sr.Point_Sheet_Status__c === 'Not turned in' 
+          ? `<p>${sr.Student__r.Name} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c}. 
+        ${sr.Point_Sheet_Status_Reason__c === 'Other' ? `${sr.Point_Sheet_Status_Notes__c}` : ''} </p><br>` : ''}
+      
+      <p><strong>Game Eligibility Earned:</strong> ${sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time_Explanation__c : sr.Earned_Playing_Time__c}</p><br>
+      
+      ${sr.Mentor_Granted_Playing_Time_Explanation__c ? `<p>${sr.Mentor_Granted_Playing_Time_Explanation__c}</p><br>` : ''}
+      
+      <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
+      
+      <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
+      
+      <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p><br>
+      
+      <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
+      <a href=${this.props.synopsisReportLink} target="_blank"> CLICK HERE</a><br>
+      
+      <p>Thanks and feel free to respond with comments or questions!</p><br>
+      
+      <p>[MENTOR NAME]<br>
+      [MENTOR EMAIL]<br>
+      [STUDENT SCHOOL]`
+    */
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{sr.Student__r.Name}&#39;s RA Synopsis Report for {sr.Week__c}</h4><br />
@@ -242,12 +249,12 @@ class SynopsisReportSummary extends React.Component {
     
     <p>Thanks and feel free to respond with comments or questions!</p>
     
-    <p>[MENTOR NAME]<br />
-    [MENTOR EMAIL]<br />
-    [STUDENT SCHOOL]</p>
+    <p>{sr.Mentor__r.Name}<br />
+    {sr.Mentor__r.npe01__HomeEmail__c}<br />
+    {this.state.schoolName}</p>
     </React.Fragment>
     );
-/*
+    /*
 
         { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
           : <React.Fragment>
