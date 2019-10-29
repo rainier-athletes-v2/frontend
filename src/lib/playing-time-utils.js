@@ -85,7 +85,7 @@ const calcPlayingTime = (sr) => {
     
     return subjectTokensEarned;
   });
-  console.log('totalEarnedTokens array', totalEarnedTokens || 'undefined');
+  // console.log('totalEarnedTokens array', totalEarnedTokens || 'undefined');
   const totalTokensEarned = totalEarnedTokens.reduce((acc, cur) => acc + cur, 0);
   const tokenPercentage = totalTokensEarned / totalTokensPossible;
   // console.log(`earned/possible: ${totalTokensEarned}/${totalTokensPossible}, %:${tokenPercentage}`);
@@ -95,7 +95,7 @@ const calcPlayingTime = (sr) => {
   if (tokenPercentage >= PT.threeQ.pct) earnedPlayingTime = PT.threeQ.label;
   if (tokenPercentage >= PT.allButStart.pct) earnedPlayingTime = PT.allButStart.label;
   if (tokenPercentage >= PT.entireGame.pct) earnedPlayingTime = PT.entireGame.label;
-  console.log('num subj', numberOfSubjects, 'tokens possible', totalTokensPossible, 'tokens earned', totalTokensEarned, '%', tokenPercentage, 'result', earnedPlayingTime);
+  // console.log('num subj', numberOfSubjects, 'tokens possible', totalTokensPossible, 'tokens earned', totalTokensEarned, '%', tokenPercentage, 'result', earnedPlayingTime);
   return earnedPlayingTime;
 };
 
