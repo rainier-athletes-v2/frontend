@@ -10,11 +10,11 @@ export default function TextArea(props) {
         className={ props.compClass }
         htmlFor={ props.compName }>
         { props.label }
+        { ttText[props.compName]
+          ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
+          : null
+        }
       </label>
-      { ttText[props.compName]
-        ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
-        : null
-      }
       <textarea
         name={ props.compName }
         required={ props.required }
