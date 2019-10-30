@@ -7,6 +7,7 @@ import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-su
 import TooltipItem from '../tooltip/tooltip';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
+import ImageButton from '../image-button/image-button';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
@@ -14,6 +15,7 @@ import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as pt from '../../lib/playing-time-utils';
 import * as errorActions from '../../actions/error';
+import * as imageActions from '../../actions/images';
 
 import './_synopsis-report-form.scss';
 
@@ -69,6 +71,7 @@ const mapDispatchToProps = dispatch => ({
   getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
   clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
+  uploadImages: fileData => dispatch(imageActions.uploadImages(fileData)),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -82,7 +85,8 @@ class SynopsisReportForm extends React.Component {
     this.state.waitingOnSalesforce = false;
     this.state.savedToGoogleDrive = false;
     this.state.waitingOnGoogleDrive = false;
-
+    this.state.inputImageLabelText = '(OPTIONAL) Choose image';
+    this.state.imageUploading = false;
     this.props.clearMsgBoardUrl();
   }
 
@@ -460,6 +464,70 @@ class SynopsisReportForm extends React.Component {
       newState.synopsisReport[`${name}_Touch_Points_Other__c`] = value;
       return newState;
     });
+  }
+
+  handleImageUpload = (event) => {
+    const errs = []; 
+    const files = Array.from(event.target.files);
+
+    // if (files.length > 3) {
+    //   const msg = 'Only 3 images can be uploaded at a time';
+    //   return alert(msg); // this.toast(msg, 'custom', 2000, toastColor)  
+    // }
+
+    // const formData = new FormData();
+    const types = ['image/png', 'image/jpeg', 'image/gif'];
+
+    files.forEach((file) => {
+      if (types.every(type => file.type !== type)) {
+        errs.push(`'${file.type}' is not a supported format`);
+      }
+
+      // if (file.size > 150000) {
+      //   errs.push(`'${file.name}' is too large, please pick a smaller file`)
+      // }
+
+      // formData.append(i, file, file.name);
+    });
+
+    if (errs.length) {
+      return alert(errs[0]); // errs.forEach(err => this.toast(err, 'custom', 2000, toastColor))
+    }
+
+    if (files.length > 0) {
+      this.setState({ inputImageLabelText: `${files.length} file(s) selected` });
+    }
+
+    this.setState({ imageUploading: true });
+    
+    this.props.uploadImages(files);
+
+
+    // this is where we create basecamp attachments...
+    /*
+    fetch(`${API_URL}/image-upload`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res
+      }
+      return res.json()
+    })
+    .then(images => {
+      this.setState({
+        uploading: false, 
+        images
+      })
+    })
+    .catch(err => {
+      err.json().then(e => {
+        this.toast(e.message, 'custom', 2000, toastColor)
+        this.setState({ uploading: false })
+      })
+    })
+    */
   }
 
   render() {
@@ -890,6 +958,7 @@ class SynopsisReportForm extends React.Component {
                   : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
                 { synopsisCommentsJSX }
+                <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} />
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
                 <div className="modal-footer">
@@ -935,6 +1004,7 @@ SynopsisReportForm.propTypes = {
   myRole: PropTypes.string,
   messageBoardUrl: PropTypes.string,
   error: PropTypes.number,
+  uploadImages: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);
