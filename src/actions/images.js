@@ -22,16 +22,9 @@ export const uploadImages = (files) => (store) => { // eslint-disable-line
 
   return superagent.post(`${API_URL}${routes.SINGLE_IMAGE_UPLOAD_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
-    // .set('Content-Type', 'multipart/form-data')
-    // .set('Content-Type', 'application/octet-stream')
     .attach('image', files[0])
     .field('name', files[0].name)
-    .field('size', files[0].size)
-    .field('type', files[0].type)
     .then((res) => {
       return store.dispatch(setImageSgids(res.body));
     });
-  // .catch((res) => {
-  //   return store.dispatch(setError(res.status));
-  // })
 };

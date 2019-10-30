@@ -16,6 +16,7 @@ const mapStateToProps = state => ({
   // srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
+  images: state.images,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -102,7 +103,8 @@ class SynopsisReportSummary extends React.Component {
       && sr.PointTrackers__r.records
       && sr.PointTrackers__r.records[0].Class__r
       && sr.PointTrackers__r.records[0].Class__r.School__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null}`
+      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null}<br><br>
+      <bc-attachment sgid="${this.props.images.attachable_sgid}"></bc-attachment>`
     );
   };
 
@@ -202,53 +204,11 @@ class SynopsisReportSummary extends React.Component {
     <p>{sr.Mentor__r.Name}<br />
     {sr.Mentor__r.npe01__HomeEmail__c}<br />
     {this.state.schoolName}</p>
+
+    {this.props.images ? 'An image has been posted to Basecamp.' : null }
     </React.Fragment>
     );
-    /*
-
-        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c) ? null
-          : <React.Fragment>
-            <p>Point Sheet not turned in.</p><br />
-            </React.Fragment> }
-        { pl.turnedIn(synopsisReport.Point_Sheet_Status__c)
-          && (!synopsisReport.Mentor_Granted_Playing_Time__c || synopsisReport.Mentor_Granted_Playing_Time__c === synopsisReport.Earned_Playing_Time__c)
-          ? <React.Fragment>
-            <p><strong>
-            Game Eligibility Earned
-            </strong></p>
-            <br />
-            <p>{synopsisReport.Earned_Playing_Time__c}</p> 
-          </React.Fragment>
-          : <React.Fragment>
-            <p><strong>Mentor Granted Playing Time</strong></p>
-            <p>{synopsisReport.Mentor_Granted_Playing_Time__c}</p>
-            <br />
-            <p><strong>Mentor Comments</strong></p>
-            <p>{synopsisReport.Mentor_Granted_Playing_Time_Explanation__c}</p>
-            <br /> 
-            </React.Fragment> }
-            {synopsisReport.Student_Action_Items__c
-              ? <React.Fragment>
-                <br />
-                <p><strong>Student Action Items</strong></p>
-                <p>{synopsisReport.Student_Action_Items__c}</p>
-                </React.Fragment>
-              : null
-            }
-            {synopsisReport.Sports_Update__c 
-              ? <React.Fragment>
-                <br />
-                <p><strong>Sports Update</strong></p>
-                <p>{synopsisReport.Sports_Update__c}</p>
-                </React.Fragment>
-              : null
-            }
-            <br />
-            <p>Link To Full Synopsis Report (RA Points, Grades, Mentor Comments, etc): 
-            <a href={this.props.synopsisReportLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a></p>
-          </React.Fragment>
-    );
-*/
+    
     return (
       <div className="panel summary-modal">
         <div className="modal-dialog">
@@ -292,6 +252,7 @@ SynopsisReportSummary.propTypes = {
   basecampToken: PropTypes.string,
   messageBoardUrl: PropTypes.string,
   error: PropTypes.number,
+  images: PropTypes.object,
   onClose: PropTypes.func,
   postSummaryToBasecamp: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,

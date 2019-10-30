@@ -478,7 +478,7 @@ class SynopsisReportForm extends React.Component {
     // const formData = new FormData();
     const types = ['image/png', 'image/jpeg', 'image/gif'];
 
-    files.forEach((file, i) => {
+    files.forEach((file) => {
       if (types.every(type => file.type !== type)) {
         errs.push(`'${file.type}' is not a supported format`);
       }
