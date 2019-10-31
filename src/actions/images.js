@@ -1,6 +1,9 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
 import * as t from '../lib/types';
+import * as errorActions from './error';
+import * as imagePreview from './image-previews';
+
 // import { setError, clearError } from './error';
 
 export const setImageSgids = sgids => ({
@@ -17,6 +20,7 @@ export const uploadImages = (files) => (store) => { // eslint-disable-line
   const token = store.getState().basecampToken;
 
   store.dispatch(setImageSgids('WAITING'));
+  // store.dispatch(errorActions.clearError());
 
   files.forEach(file => console.log(`name: ${file.name}, size: ${file.size}, type: ${file.type}`));
 
@@ -25,9 +29,12 @@ export const uploadImages = (files) => (store) => { // eslint-disable-line
     .attach('image', files[0])
     .field('name', files[0].name)
     .then((res) => {
-      return store.dispatch(setImageSgids(res.body));
+      store.dispatch(setImageSgids([res.body]));
+      store.dispatch(imagePreview.clearImagePreviews());
+      console.log('images saved. setting error to 201');
+      return store.dispatch(errorActions.setError(201));
     })
-    .catch((err) => {
+    .catch(() => {
       return store.dispatch(setImageSgids('ERROR'));
     });
 };

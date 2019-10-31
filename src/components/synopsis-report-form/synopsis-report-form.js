@@ -63,7 +63,8 @@ const mapStateToProps = state => ({
   myRole: state.myProfile.role,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
-  images: state.images,
+  bcImages: state.bcImages,
+  imagePreviews: state.imagePreviews,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -73,7 +74,7 @@ const mapDispatchToProps = dispatch => ({
   getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
   clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
-  uploadImages: fileData => dispatch(imageActions.uploadImages(fileData)),
+  uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
   clearImages: () => dispatch(imageActions.clearImageSgids()),
 });
 
@@ -84,11 +85,12 @@ class SynopsisReportForm extends React.Component {
     this.state = {};
     this.state.synopsisReport = this.props.synopsisReport;
     this.state.communications = this.initCommunicationsState(this.props.synopsisReport);
+    this.state.waitingOnImages = false;
+    this.state.imagesSaved = false;
     this.state.savedToSalesforce = false;
     this.state.waitingOnSalesforce = false;
     this.state.savedToGoogleDrive = false;
     this.state.waitingOnGoogleDrive = false;
-    this.state.inputImageLabelText = '(OPTIONAL) Choose image';
     this.state.imageUploading = false;
     this.props.clearMsgBoardUrl();
   }
@@ -114,6 +116,20 @@ class SynopsisReportForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
+      // debugger;
+      if (this.state.waitingOnImages) {
+        console.log('images saved');
+        this.props.clearError();
+        const { synopsisReport, communications } = this.state;
+        const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
+        this.setState({
+          waitingOnImages: false,
+          imagesSaved: true,
+          waitingOnSalesforce: true,
+        });
+        console.log('saveSynopsisReport after images saved');
+        this.props.saveSynopsisReport({ ...mergedSynopsisReport });
+      }
       if (this.state.waitingOnSalesforce
         && (this.state.synopsisReport 
         && !pl.playingTimeOnly(this.state.synopsisReport.Synopsis_Report_Status__c))) {
@@ -126,6 +142,7 @@ class SynopsisReportForm extends React.Component {
           waitingOnGoogleDrive: true,
           savedToGoogleDrive: false,
         });
+        console.log('saved to salesforce, saving PDF to google');
         this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
       } else if (this.state.waitingOnSalesforce
         && (this.state.synopsisReport
@@ -145,6 +162,7 @@ class SynopsisReportForm extends React.Component {
         waitingOnGoogleDrive: false,
         synopsisLink: this.props.synopsisReportLink,
       });
+      console.log('PDF saved to google');
       this.props.clearError();
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
@@ -352,17 +370,26 @@ class SynopsisReportForm extends React.Component {
     if (validMentorInput 
       && pt.validPointTrackerScores(synopsisReport)
       && this.commNotesAreValid()
-      && this.oneTeamNotesAreValid()) {      
-      this.setState({ 
-        ...this.state, 
-        waitingOnSalesforce: true, 
-        savedToSalesforce: false,
-        waitingOnGoogleDrive: false,
-        savedToGoogleDrive: false,
-      });
-      this.props.clearError();
-      const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
-      this.props.saveSynopsisReport({ ...mergedSynopsisReport });
+      && this.oneTeamNotesAreValid()) {
+      if (this.props.imagePreviews) {   
+        this.setState({ 
+          // ...this.state, 
+          waitingOnImages: true,
+          // imagesSaved: false,
+          // waitingOnSalesforce: true, 
+          // savedToSalesforce: false,
+          // waitingOnGoogleDrive: false,
+          // savedToGoogleDrive: false,
+        });
+        this.props.clearError();
+        console.log('saving images');
+        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file)));
+      } else {
+        console.log('no images, saving to salesforce');
+        this.setState({ waitingOnSalesforce: true });
+        const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
+        this.props.saveSynopsisReport({ ...mergedSynopsisReport });
+      }
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -377,8 +404,8 @@ class SynopsisReportForm extends React.Component {
       this.setState({ 
         ...this.state, 
         waitingOnSalesforce: true,
-        savedToSalesforce: false,
-        waitingOnGoogleDrive: false,
+        // savedToSalesforce: false,
+        // waitingOnGoogleDrive: false,
         savedToGoogleDrive: true,
       });
       this.props.saveSynopsisReport({ ...synopsisReport });
@@ -905,7 +932,13 @@ class SynopsisReportForm extends React.Component {
       </div>
     );
 
-    const formButtonOrMessage = () => {  
+    const formButtonOrMessage = () => { 
+      if (this.state.waitingOnImages) {
+        return (<React.Fragment>
+          <h3>Uploading images to Basecamp...</h3>
+          <p>This may take a moment depending on image size(s).</p>
+        </React.Fragment>);
+      } 
       if (this.state.waitingOnGoogleDrive) {
         return (<React.Fragment>
           <h3>Saving PDF to Google Drive...</h3>
@@ -918,7 +951,7 @@ class SynopsisReportForm extends React.Component {
       if (!this.props.messageBoardUrl) {
         if (!this.props.error) {
           return (<React.Fragment>
-            <h5>Waiting for Basecamp connection...</h5>
+            <h5>Waiting for Basecamp Messaging connection...</h5>
             <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
           </React.Fragment>);
         }
@@ -1015,7 +1048,8 @@ SynopsisReportForm.propTypes = {
   error: PropTypes.number,
   uploadImages: PropTypes.func,
   clearImages: PropTypes.func,
-  images: PropTypes.any,
+  imagePreviews: PropTypes.any,
+  bcImages: PropTypes.any,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);
