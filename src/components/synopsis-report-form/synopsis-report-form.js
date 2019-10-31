@@ -7,7 +7,8 @@ import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-su
 import TooltipItem from '../tooltip/tooltip';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-import ImagePreview from '../image-preview/image-preview';
+import ImagePreviews from '../image-previews/image-previews';
+// import ImageButton from '../image-button/image-button';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
@@ -965,7 +966,8 @@ class SynopsisReportForm extends React.Component {
                   : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
                 { synopsisCommentsJSX }
-                <ImagePreview onChange={this.handleImagePreview} labelText={this.state.inputImageLabelText} />
+                {/* <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} /> */}
+                <ImagePreviews />
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
                 <div className="modal-footer">

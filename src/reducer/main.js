@@ -11,7 +11,8 @@ import synopsisReportLink from './synopsis-report-link'; // link to SF PDF on go
 import messageBoardUrl from './message-board-url';
 import myStudents from './myStudents';
 import error from './error';
-import images from './images';
+import bcImages from './images';
+import imagePreviews from './image-previews';
 
 export default combineReducers({
   error,
@@ -22,7 +23,8 @@ export default combineReducers({
   synopsisReportLink,
   messageBoardUrl,
   synopsisReport,
-  images,
+  imagePreviews,
+  bcImages,
   salesforceToken,
   basecampToken,
   salesforceRefresh,
