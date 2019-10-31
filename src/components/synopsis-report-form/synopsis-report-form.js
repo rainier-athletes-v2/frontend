@@ -7,7 +7,7 @@ import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-su
 import TooltipItem from '../tooltip/tooltip';
 import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
-import ImageButton from '../image-button/image-button';
+import ImagePreview from '../image-preview/image-preview';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as srPdfActions from '../../actions/synopsis-report-pdf';
@@ -62,6 +62,7 @@ const mapStateToProps = state => ({
   myRole: state.myProfile.role,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
+  images: state.images,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -72,6 +73,7 @@ const mapDispatchToProps = dispatch => ({
   clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: fileData => dispatch(imageActions.uploadImages(fileData)),
+  clearImages: () => dispatch(imageActions.clearImageSgids()),
 });
 
 class SynopsisReportForm extends React.Component {
@@ -88,6 +90,25 @@ class SynopsisReportForm extends React.Component {
     this.state.inputImageLabelText = '(OPTIONAL) Choose image';
     this.state.imageUploading = false;
     this.props.clearMsgBoardUrl();
+  }
+
+  componentDidMount = () => {
+    this.props.clearImages();
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState.synopsisSaved = false;
+      newState.communications = this.initCommunicationsState(this.props.synopsisReport);
+      newState.playingTimeGranted = true;
+      newState.commentsMade = true;
+      newState.metWithMentee = true;
+      newState.missedCheckinReasonOK = true;
+      newState.pointSheetMissedReasonOK = true;
+      newState.pointSheetStatusOK = true;
+      newState.pointSheetStatusNotesOK = true;
+      newState.mentorSupportRequestOK = true;
+      newState.mentorSupportRequestNotesOK = true;
+      return newState;
+    });
   }
 
   componentDidUpdate = (prevProps) => {
@@ -200,24 +221,6 @@ class SynopsisReportForm extends React.Component {
       sr[notesKey] = p.notes; 
     });
     return sr;
-  }
-
-  componentDidMount = () => {
-    this.setState((prevState) => {
-      const newState = { ...prevState };
-      newState.synopsisSaved = false;
-      newState.communications = this.initCommunicationsState(this.props.synopsisReport);
-      newState.playingTimeGranted = true;
-      newState.commentsMade = true;
-      newState.metWithMentee = true;
-      newState.missedCheckinReasonOK = true;
-      newState.pointSheetMissedReasonOK = true;
-      newState.pointSheetStatusOK = true;
-      newState.pointSheetStatusNotesOK = true;
-      newState.mentorSupportRequestOK = true;
-      newState.mentorSupportRequestNotesOK = true;
-      return newState;
-    });
   }
 
   handleSubjectChange = (event) => {
@@ -464,6 +467,10 @@ class SynopsisReportForm extends React.Component {
       newState.synopsisReport[`${name}_Touch_Points_Other__c`] = value;
       return newState;
     });
+  }
+
+  handleImagePreview = (event) => {
+
   }
 
   handleImageUpload = (event) => {
@@ -958,7 +965,7 @@ class SynopsisReportForm extends React.Component {
                   : <h3>There are no Point Trackers assocated with this Synopsis Report</h3> }
                 { synergyJSX }
                 { synopsisCommentsJSX }
-                <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} />
+                <ImagePreview onChange={this.handleImagePreview} labelText={this.state.inputImageLabelText} />
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
                 <div className="modal-footer">
@@ -1005,6 +1012,8 @@ SynopsisReportForm.propTypes = {
   messageBoardUrl: PropTypes.string,
   error: PropTypes.number,
   uploadImages: PropTypes.func,
+  clearImages: PropTypes.func,
+  images: PropTypes.any,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportForm);

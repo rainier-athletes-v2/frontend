@@ -16,7 +16,7 @@ export const clearImageSgids = () => ({
 export const uploadImages = (files) => (store) => { // eslint-disable-line
   const token = store.getState().basecampToken;
 
-  store.dispatch(clearImageSgids());
+  store.dispatch(setImageSgids('WAITING'));
 
   files.forEach(file => console.log(`name: ${file.name}, size: ${file.size}, type: ${file.type}`));
 
@@ -26,5 +26,8 @@ export const uploadImages = (files) => (store) => { // eslint-disable-line
     .field('name', files[0].name)
     .then((res) => {
       return store.dispatch(setImageSgids(res.body));
+    })
+    .catch((err) => {
+      return store.dispatch(setImageSgids('ERROR'));
     });
 };
