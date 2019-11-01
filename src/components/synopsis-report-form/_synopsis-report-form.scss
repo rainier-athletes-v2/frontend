@@ -64,6 +64,18 @@ span .title {
       height: 0px;
       margin-bottom: 0px;
     }
+
+    .comm-notes-textarea {
+      margin: 0px !important;
+    }
+
+    .show-comm-notes {
+      display: table-row;
+    }
+
+    .hide-comm-notes {
+      display: none;
+    }
 }
 
 label.title {
@@ -71,7 +83,7 @@ label.title {
   padding: 0px;
 }
 
-span.title {
+span .title {
   // margin: 0px;
   margin-top: 2px;
   // padding: 0px;
@@ -218,6 +230,15 @@ table.comm-tp {
 
 
   @media only screen and (max-width: 768px) {
+    span .title {
+      line-height: 1em !important;
+      margin: 1px 1px;
+      padding: 0px;
+    }
+
+    tbody {
+      margin-top: 10px;
+    }
     table.comm-tp, thead, tbody, th, td, tr {
       display: block;
     }
@@ -237,6 +258,7 @@ table.comm-tp {
       position: relative;
       padding-left: 20px;
       margin-left: 100px;
+      height: 20px;
     }
 
     td:before {
@@ -253,6 +275,8 @@ table.comm-tp {
     td:nth-of-type(3):before { content: "Digital"; }
     td:nth-of-type(4):before { content: "Phone"; }
     td:nth-of-type(5):before { content: "Other"; }
+    // tr:nth-of-type(2):before { content: "Notes:"; }
+    // td:nth-of-type(6):before { content: "Notes:"; }
   }
   // .required {
 

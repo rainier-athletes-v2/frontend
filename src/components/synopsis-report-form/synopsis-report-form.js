@@ -478,7 +478,8 @@ class SynopsisReportForm extends React.Component {
 
   commNotes = (com, row) => {
     return (<textarea
-      rows="2"
+      className="comm-notes-textarea"
+      rows="3"
       wrap="hard"
       required={this.state.communications[row].other}
       placeholder={this.state.communications[row].other ? 'Please explain choice of Other' : ''}
@@ -755,12 +756,16 @@ class SynopsisReportForm extends React.Component {
                     <td key={`${com.role}${i}3`}>{this.commCheckbox(com, i, 2)}</td>
                     <td key={`${com.role}${i}4`}>{this.commCheckbox(com, i, 3)}</td>
                   </tr>
-                  {com.other
+                  <tr key={`${com.role}${i}5`} className={ com.other ? 'show-comm-notes' : 'hide-comm-notes'}>
+                      <td className={ this.state.communications[i].other && !this.state.communications[i].notes ? 'required' : '' }>Notes:</td>
+                      <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
+                  </tr>
+                  {/* {com.other
                     ? <tr key={`${com.role}${i}5`}>
                       <td className={ this.state.communications[i].other && !this.state.communications[i].notes ? 'required' : '' }>Notes:</td>
                       <td colSpan="4" key={`${com.role}${i}6`}>{this.commNotes(com, i)}</td>
                     </tr>
-                    : null}
+                    : null} */}
                   </React.Fragment>
                 ))
                 : null
