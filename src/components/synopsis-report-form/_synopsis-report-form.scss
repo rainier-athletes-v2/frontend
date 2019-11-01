@@ -236,6 +236,10 @@ table.comm-tp {
       padding: 0px;
     }
 
+    textarea {
+      padding: 3px;
+    }
+
     tbody {
       margin-top: 10px;
     }
@@ -249,19 +253,22 @@ table.comm-tp {
       left: -9999px;
     }
   
+    .show-comm-notes {
+      display: block;
+    }
   
     tr { border: 1px solid #ccc; }
   
     td {
       border: none;
-      border-bottom: 1px solid #eee;
+      // border-bottom: 1px solid #eee;
       position: relative;
       padding-left: 20px;
       margin-left: 100px;
       height: 20px;
     }
 
-    td:before {
+    tr:nth-child(odd) td:before {
       position: absolute;
       left: 6px;
       width: 100px;
@@ -269,14 +276,71 @@ table.comm-tp {
       white-space: nowrap;
       margin-left: -100px;
     }
-  
-    td:nth-of-type(1):before { content: "RA Core Pillar: "; }
-    td:nth-of-type(2):before { content: "Face-to-Face"; }
-    td:nth-of-type(3):before { content: "Digital"; }
-    td:nth-of-type(4):before { content: "Phone"; }
-    td:nth-of-type(5):before { content: "Other"; }
-    // tr:nth-of-type(2):before { content: "Notes:"; }
-    // td:nth-of-type(6):before { content: "Notes:"; }
+
+    tr:nth-child(even) {
+      width: 100%;
+    }
+
+   .comm-notes-label {
+      width: 20% !important;
+      // position: absolute !important;
+      // height: 58px !important;
+      margin: 7px;
+      padding: 0px !important;
+    }
+   .comm-notes-textarea {
+      // width: 80% !important;
+      height: 58px;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    tr:nth-child(even) td:nth-of-type(1) {
+      // display: none;
+      // position: absolute;
+      // left: 6px;
+      // width: 100px;
+      // padding-right: 40px;
+      // white-space: nowrap;
+      // margin-left: -100px;
+      // width: 100px !important;
+      // margin: 0px !important;
+      // padding: 0px !important;
+      // height: 58px !important;
+    }
+
+    tr:nth-child(even) td:nth-of-type(2) {
+      // height: 58px;
+      // padding-left: 120px;
+      // padding-right: 2px;
+      // padding-bottom: 2px;
+      // background-color: white;
+      // width: 300px;
+      // width: 100% !important;
+    }
+
+    tr:nth-child(even) td:nth-of-type(2) {
+      // width: 80%;
+    }
+    
+    // .comm-notes-textarea textarea {
+    //   z-index: 10;
+    // }
+
+    // tr:nth-child(even) td:nth-child(1) {
+    //   position: absolute;
+    //   top: -9999px;
+    //   left: -9999px;
+    // }
+
+    tr:nth-child(odd) td:nth-of-type(1):before { content: "RA Core Pillar: "; }
+    tr:nth-child(odd) td:nth-of-type(2):before { content: "Face-to-Face"; }
+    tr:nth-child(odd) td:nth-of-type(3):before { content: "Digital"; }
+    tr:nth-child(odd) td:nth-of-type(4):before { content: "Phone"; }
+    tr:nth-child(odd) td:nth-of-type(5):before { content: "Other"; }
+
+    // tr:nth-child(even) td:nth-child(2):before { content: "NOTES:" }
+
   }
   // .required {
 
