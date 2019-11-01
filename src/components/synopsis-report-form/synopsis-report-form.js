@@ -383,7 +383,7 @@ class SynopsisReportForm extends React.Component {
         });
         this.props.clearError();
         console.log('saving images');
-        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file)));
+        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
       } else {
         console.log('no images, saving to salesforce');
         this.setState({ waitingOnSalesforce: true });

@@ -20,16 +20,20 @@ export const uploadImages = (files) => (store) => { // eslint-disable-line
   const token = store.getState().basecampToken;
 
   store.dispatch(setImageSgids('WAITING'));
-  // store.dispatch(errorActions.clearError());
 
   files.forEach(file => console.log(`name: ${file.name}, size: ${file.size}, type: ${file.type}`));
 
-  return superagent.post(`${API_URL}${routes.SINGLE_IMAGE_UPLOAD_ROUTE}`)
-    .set('Authorization', `Bearer ${token}`)
-    .attach('image', files[0])
-    .field('name', files[0].name)
-    .then((res) => {
-      store.dispatch(setImageSgids([res.body]));
+  const uploadPromises = [];
+  files.forEach((file) => {
+    uploadPromises.push(superagent.post(`${API_URL}${routes.SINGLE_IMAGE_UPLOAD_ROUTE}`)
+      .set('Authorization', `Bearer ${token}`)
+      .attach('image', file)
+      .field('name', file.name));
+  });
+  Promise.all(uploadPromises)
+    .then((responses) => {
+      const returnVal = responses.map(response => response.body);
+      store.dispatch(setImageSgids(returnVal));
       store.dispatch(imagePreview.clearImagePreviews());
       console.log('images saved. setting error to 201');
       return store.dispatch(errorActions.setError(201));

@@ -68,7 +68,7 @@ class SynopsisReportSummary extends React.Component {
 
   fullReportResponseRTF = (sr) => {
     if (!sr) return null;
-    debugger;
+
     return (
       `<strong>${sr.Student__r.Name}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
 
@@ -104,6 +104,7 @@ class SynopsisReportSummary extends React.Component {
       && sr.PointTrackers__r.records[0].Class__r
       && sr.PointTrackers__r.records[0].Class__r.School__r
       && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null}<br><br>
+  
       ${this.props.images && this.props.images.length > 0 
         ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
     );
@@ -206,7 +207,7 @@ class SynopsisReportSummary extends React.Component {
     {sr.Mentor__r.npe01__HomeEmail__c}<br />
     {this.state.schoolName}</p>
 
-    {this.props.images ? 'An image has been posted to Basecamp.' : null }
+    {!this.props.images ? null : this.props.images.length > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
     </React.Fragment>
     );
     
