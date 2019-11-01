@@ -1,0 +1,19 @@
+.preview-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  border: 3px solid grey;
+  border-radius: 4px;
+}
+
+.delete-icon {
+  position: absolute;
+  top: 1%;
+  left: 1%;
+  cursor: pointer;
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+}
