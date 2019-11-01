@@ -147,7 +147,8 @@ class SynopsisReportSummary extends React.Component {
     const { synopsisReport } = this.props;
     const sr = synopsisReport;
     const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
-
+    const imageCount = this.props.images && this.props.images.length;
+  
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
         <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
@@ -207,7 +208,7 @@ class SynopsisReportSummary extends React.Component {
     {sr.Mentor__r.npe01__HomeEmail__c}<br />
     {this.state.schoolName}</p>
 
-    {!this.props.images ? null : this.props.images.length > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
+    {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
     </React.Fragment>
     );
     

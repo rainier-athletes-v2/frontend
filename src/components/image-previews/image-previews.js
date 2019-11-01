@@ -9,6 +9,8 @@ import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import ImageButton from '../image-button/image-button';
 import { setImagePreviews } from '../../actions/image-previews';
 
+import './_image-previews.scss';
+
 const mapDispatchToProps = dispatch => ({
   setImagePreviews: images => dispatch(setImagePreviews(images)),
 });
@@ -45,11 +47,11 @@ class ImagePreviews extends React.Component {
     return (
       <div>
         { this.state.images 
-          ? this.state.images.map((image, i) => <div key={i} className="fadein">
-              <div className="delete" onClick={() => this.removeImage(image)} >
+          ? this.state.images.map((image, i) => <div key={i} className="preview-container">
+              <div className="delete-icon" onClick={() => this.removeImage(image)} >
                 <FontAwesomeIcon icon={faTimesCircle} size='2x' />
               </div>
-              <img src={image.url}/>
+              <img className="preview-image" src={image.url}/>
             </div>) 
           : null }
         <ImageButton onChange={this.handleChange} labelText="OPTIONAL: Add Images" />
