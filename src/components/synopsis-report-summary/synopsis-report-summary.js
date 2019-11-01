@@ -16,7 +16,7 @@ const mapStateToProps = state => ({
   // srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
-  images: state.images,
+  images: state.bcImages,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -104,7 +104,9 @@ class SynopsisReportSummary extends React.Component {
       && sr.PointTrackers__r.records[0].Class__r
       && sr.PointTrackers__r.records[0].Class__r.School__r
       && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null}<br><br>
-      <bc-attachment sgid="${this.props.images.attachable_sgid}"></bc-attachment>`
+  
+      ${this.props.images && this.props.images.length > 0 
+        ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
     );
   };
 
@@ -145,7 +147,8 @@ class SynopsisReportSummary extends React.Component {
     const { synopsisReport } = this.props;
     const sr = synopsisReport;
     const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
-
+    const imageCount = this.props.images && this.props.images.length;
+  
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
         <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
@@ -205,7 +208,7 @@ class SynopsisReportSummary extends React.Component {
     {sr.Mentor__r.npe01__HomeEmail__c}<br />
     {this.state.schoolName}</p>
 
-    {this.props.images ? 'An image has been posted to Basecamp.' : null }
+    {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
     </React.Fragment>
     );
     
@@ -252,7 +255,7 @@ SynopsisReportSummary.propTypes = {
   basecampToken: PropTypes.string,
   messageBoardUrl: PropTypes.string,
   error: PropTypes.number,
-  images: PropTypes.object,
+  images: PropTypes.array,
   onClose: PropTypes.func,
   postSummaryToBasecamp: PropTypes.func,
   clearSrSummaryStatus: PropTypes.func,

@@ -1,6 +1,9 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
 import * as t from '../lib/types';
+import * as errorActions from './error';
+import * as imagePreview from './image-previews';
+
 // import { setError, clearError } from './error';
 
 export const setImageSgids = sgids => ({
@@ -16,15 +19,26 @@ export const clearImageSgids = () => ({
 export const uploadImages = (files) => (store) => { // eslint-disable-line
   const token = store.getState().basecampToken;
 
-  store.dispatch(clearImageSgids());
+  store.dispatch(setImageSgids('WAITING'));
 
   files.forEach(file => console.log(`name: ${file.name}, size: ${file.size}, type: ${file.type}`));
 
-  return superagent.post(`${API_URL}${routes.SINGLE_IMAGE_UPLOAD_ROUTE}`)
-    .set('Authorization', `Bearer ${token}`)
-    .attach('image', files[0])
-    .field('name', files[0].name)
-    .then((res) => {
-      return store.dispatch(setImageSgids(res.body));
+  const uploadPromises = [];
+  files.forEach((file) => {
+    uploadPromises.push(superagent.post(`${API_URL}${routes.SINGLE_IMAGE_UPLOAD_ROUTE}`)
+      .set('Authorization', `Bearer ${token}`)
+      .attach('image', file)
+      .field('name', file.name));
+  });
+  Promise.all(uploadPromises)
+    .then((responses) => {
+      const returnVal = responses.map(response => response.body);
+      store.dispatch(setImageSgids(returnVal));
+      store.dispatch(imagePreview.clearImagePreviews());
+      console.log('images saved. setting error to 201');
+      return store.dispatch(errorActions.setError(201));
+    })
+    .catch(() => {
+      return store.dispatch(setImageSgids('ERROR'));
     });
 };
