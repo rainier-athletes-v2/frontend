@@ -8,9 +8,13 @@
 
 .delete-icon {
   position: absolute;
-  top: 1%;
-  left: 1%;
+  top: 0px;
+  left: -4px;
   cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: red;
 }
 
 .preview-image {
