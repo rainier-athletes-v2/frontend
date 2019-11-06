@@ -11,16 +11,19 @@
 }
 
 .inputfile + label {
-  font-size: 1.25em;
-  font-weight: 700;
+  font-family: "Raleway", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  line-height: 2em;
   color: white;
-  background-color: black;
+  background-color: #0B9444;
   display: inline-block;
   cursor: pointer;
-  width: 35%;
+  width: 25%;
+  border-radius: 4px;
 }
 
-.inputfile:focus + label,
 .inputfile + label:hover {
-  background-color: red;
+  background-color: white;
+  color: green;
+  border: 1px solid #0B9444;
 }
