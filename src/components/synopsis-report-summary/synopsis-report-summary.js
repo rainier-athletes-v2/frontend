@@ -86,11 +86,11 @@ class SynopsisReportSummary extends React.Component {
     
     ${sr.Mentor_Granted_Playing_Time_Explanation__c ? `<p>${sr.Mentor_Granted_Playing_Time_Explanation__c}</p><br>` : ''}
     
-    <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c ? sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : null}</p><br>
+    <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c ? sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
     
-    <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : null}</p><br>
+    <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
     
-    <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : null}</p><br>
+    <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
     
     <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
     <a href=${this.props.synopsisReportLink} target="_blank"> CLICK HERE</a><br><br>
