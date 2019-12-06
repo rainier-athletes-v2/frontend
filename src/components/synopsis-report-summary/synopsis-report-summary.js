@@ -69,17 +69,19 @@ class SynopsisReportSummary extends React.Component {
   fullReportResponseRTF = (sr) => {
     if (!sr) return null;
 
-    return (
-      `<strong>${sr.Student__r.Name}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
+    const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
 
-    <p>${sr.Student__r.Name} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
+    return (
+      `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
+
+    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
     ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p><br>
 
     ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
     ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
 
     ${sr.Point_Sheet_Status__c === 'Not turned in' 
-        ? `<p>${sr.Student__r.Name} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c !== 'Other' ? sr.Point_Sheet_Status_Reason__c : sr.Point_Sheet_Status_Notes__c}</p><br>`
+        ? `<p>${studentName} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c !== 'Other' ? sr.Point_Sheet_Status_Reason__c : sr.Point_Sheet_Status_Notes__c}</p><br>`
         : ''}
     
     <p><strong>Game Eligibility Earned:</strong> ${sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time__c : sr.Earned_Playing_Time__c}</p><br>
@@ -148,7 +150,8 @@ class SynopsisReportSummary extends React.Component {
     const sr = synopsisReport;
     const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
     const imageCount = this.props.images && this.props.images.length;
-  
+    const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
+
     const playingTimeOnlyResponseJSX = (
       <React.Fragment>
         <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
@@ -158,14 +161,14 @@ class SynopsisReportSummary extends React.Component {
     
     const fullReportResponseJSX = (
       <React.Fragment>
-        <h4>{sr.Student__r.Name}&#39;s RA Synopsis Report for {sr.Week__c}</h4><br />
-        <p>{sr.Student__r.Name} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week and 
+        <h4>{studentName}&#39;s RA Synopsis Report for {sr.Week__c}</h4><br />
+        <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week and 
     {sr.Point_Sheet_Status__c === 'Turned in' ? ' did ' : ' did not '} turn in a point sheet.</p>
 
     {sr.Point_Sheet_Status__c === 'Did not meet' ? <React.Fragment><p>Explanation for not meeting: {sr.Weekly_Check_In_Missed_Reason__c}</p></React.Fragment> : null}
 
     {sr.Point_Sheet_Status__c === 'Not turned in' 
-      ? <React.Fragment><p>{sr.Student__r.Name} did not turn in a point sheet for reason:   
+      ? <React.Fragment><p>{studentName} did not turn in a point sheet for reason:   
       {sr.Point_Sheet_Status_Reason__c !== 'Other' ? <React.Fragment> {sr.Point_Sheet_Status_Reason__c}</React.Fragment> : <React.Fragment> {sr.Point_Sheet_Status_Notes__c}</React.Fragment>}</p></React.Fragment>
       : null}
     
