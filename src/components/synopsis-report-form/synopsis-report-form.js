@@ -116,6 +116,7 @@ class SynopsisReportForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
+      console.log('*** SR component updated: error:', this.props.error, 'previous error:', prevProps.error, 'waitingOnSalesforce:', this.state.waitingOnSalesforce);
       // debugger;
       if (this.state.waitingOnImages) {
         console.log('images saved');
@@ -142,9 +143,10 @@ class SynopsisReportForm extends React.Component {
           waitingOnGoogleDrive: true,
           savedToGoogleDrive: false,
         });
-        console.log('saved to salesforce, saving PDF to google');
+        console.log('full report saved to salesforce, saving PDF to google');
         this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
-      } else if (this.state.waitingOnSalesforce
+      }
+      if (this.state.waitingOnSalesforce
         && (this.state.synopsisReport
         && pl.playingTimeOnly(this.state.synopsisReport.Synopsis_Report_Status__c))) {
         this.props.clearError();
@@ -154,6 +156,7 @@ class SynopsisReportForm extends React.Component {
           waitingOnGoogleDrive: false,
           savedToGoogleDrive: true,
         });
+        console.log('playing time only saved to salesforce.');
       }
     }
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
@@ -367,6 +370,9 @@ class SynopsisReportForm extends React.Component {
     const { synopsisReport, communications } = this.state;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
+
+    this.props.clearError();
+    
     if (validMentorInput 
       && pt.validPointTrackerScores(synopsisReport)
       && this.commNotesAreValid()
@@ -381,7 +387,6 @@ class SynopsisReportForm extends React.Component {
           // waitingOnGoogleDrive: false,
           // savedToGoogleDrive: false,
         });
-        this.props.clearError();
         console.log('saving images');
         this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
       } else {
