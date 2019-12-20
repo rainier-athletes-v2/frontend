@@ -61,7 +61,7 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
     .then((result) => {
-      console.log('Back from saving sr. Status:', result.status);
+      console.log('saveSR Action back from saving sr. Setting error to:', result.status);
       return store.dispatch(setError(result.status));
     });
 };
