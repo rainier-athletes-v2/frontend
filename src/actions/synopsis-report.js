@@ -57,11 +57,14 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     // orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
   }
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
+  console.log('****** SR being saved *******');
+  console.log(JSON.stringify(sr, null, 2));
+  console.log('****** END SR ******');
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
     .then((result) => {
-      console.log('saveSR Action back from saving sr. Setting error to:', result.status);
+      console.log('>>>>> back from saving sr. Setting error to:', result.status, '<<<<<');
       return store.dispatch(setError(result.status));
     });
 };
