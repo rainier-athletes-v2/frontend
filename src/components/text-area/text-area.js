@@ -4,12 +4,17 @@ import TooltipItem from '../tooltip/tooltip';
 import * as ttText from '../../lib/tooltip-text';
 
 export default function TextArea(props) {
+  const spanStyle = {
+    fontStyle: 'italic',
+    color: props.value.length > 255 ? 'red' : '#A9A9A9'
+  };
+
   return (
     <React.Fragment>
       <label 
         className={ props.compClass }
         htmlFor={ props.compName }>
-        { props.label }
+        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${255-props.value.length} characters left)` }</span>
         { ttText[props.compName]
           ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
           : null
