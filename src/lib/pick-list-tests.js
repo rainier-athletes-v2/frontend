@@ -10,7 +10,7 @@ export const PsStatus = {
   Absent: 'Not turned in',
   Other: 'Other',
 };
-export const turnedIn = status => status === PsStatus.TurnedIn || status === PsStatus.Incomplete;
+export const turnedIn = status => status === PsStatus.TurnedIn;
 export const lost = status => status === PsStatus.Lost;
 export const incomplete = status => status === PsStatus.Incomplete;
 export const absent = status => status === PsStatus.Absent;
