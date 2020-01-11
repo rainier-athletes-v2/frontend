@@ -57,6 +57,7 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     // orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
   }
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
+
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
     .set('Authorization', `Bearer ${token}`)
     .send(sr)
