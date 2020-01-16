@@ -4,9 +4,10 @@ import TooltipItem from '../tooltip/tooltip';
 import * as ttText from '../../lib/tooltip-text';
 
 export default function TextArea(props) {
+  const textAreaMax = 1000;
   const spanStyle = {
     fontStyle: 'italic',
-    color: props.value.length > 255 ? 'red' : '#A9A9A9'
+    color: props.value.length > textAreaMax ? 'red' : '#A9A9A9',
   };
 
   return (
@@ -14,7 +15,7 @@ export default function TextArea(props) {
       <label 
         className={ props.compClass }
         htmlFor={ props.compName }>
-        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${255-props.value.length} characters left)` }</span>
+        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${textAreaMax - props.value.length} characters left)` }</span>
         { ttText[props.compName]
           ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
           : null
