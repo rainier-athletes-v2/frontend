@@ -15,7 +15,7 @@ export default function TextArea(props) {
       <label 
         className={ props.compClass }
         htmlFor={ props.compName }>
-        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${textAreaMax - props.value.length} characters left)` }</span>
+        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${props.value.length} characters entered)` }</span>
         { ttText[props.compName]
           ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
           : null

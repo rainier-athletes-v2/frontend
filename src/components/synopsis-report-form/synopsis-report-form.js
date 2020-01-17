@@ -308,7 +308,10 @@ class SynopsisReportForm extends React.Component {
 
   handleTextAreaChange = (event) => {
     event.persist();
-    this.handleSimpleFieldChange(event);
+    const { value } = event.target;
+    if (value && value.length <= 1000) {
+      this.handleSimpleFieldChange(event);
+    }
   }
 
   handleCheckboxChange = (event) => {
