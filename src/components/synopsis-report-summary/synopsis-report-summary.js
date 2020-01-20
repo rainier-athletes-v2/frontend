@@ -69,7 +69,7 @@ class SynopsisReportSummary extends React.Component {
   fullReportResponseRTF = (sr) => {
     if (!sr) return null;
 
-    const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
+    const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
     return (
       `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>

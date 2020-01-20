@@ -23,7 +23,7 @@ export default function SubjectColumn(props) {
   return (
     <React.Fragment>
       {props.isElementaryStudent ? null : <div className="grid-cell">{ (props.subject.Class__r && props.subject.Class__r.Period__c) || '' }</div>}
-      <div className="grid-cell">{ (props.subject.Class__r.Teacher__r && props.subject.Class__r.Teacher__r.Name) || '' }</div>
+      <div className="grid-cell">{ props.subject.Class__r.Teacher__r && props.subject.Class__r.Teacher__r.LastName }</div>
       <div className="grid-cell">{ props.subject.Class__r.Name }</div>
       {
         scoring.map((markType, i) => {
