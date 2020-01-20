@@ -12,9 +12,6 @@ export default function SubjectColumn(props) {
     return (props.skipValidation || (subject.Grade__c !== null && subject.Grade__c !== '') ? 'grid-input' : 'grid-input invalid-scores');
   };
 
-  const teacherHasName = props.subject.Class__r.Teacher__r && props.subject.Class__r.Teacher__r.Name;
-  const teacherLastName = teacherHasName ? props.subject.Class__r.Teacher__r.LastName : '';
-
   const scoring = [
     'Excused_Days__c',
     'Stamps__c',
@@ -26,7 +23,7 @@ export default function SubjectColumn(props) {
   return (
     <React.Fragment>
       {props.isElementaryStudent ? null : <div className="grid-cell">{ (props.subject.Class__r && props.subject.Class__r.Period__c) || '' }</div>}
-      <div className="grid-cell">{ teacherLastName }</div>
+      <div className="grid-cell">{ props.subject.Class__r.Teacher__r && props.subject.Class__r.Teacher__r.LastName }</div>
       <div className="grid-cell">{ props.subject.Class__r.Name }</div>
       {
         scoring.map((markType, i) => {
