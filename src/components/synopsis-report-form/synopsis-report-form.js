@@ -175,7 +175,7 @@ class SynopsisReportForm extends React.Component {
         communications: this.initCommunicationsState(this.props.synopsisReport),
       });
       this.props.clearError();
-      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Email);
+      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
     }
     const earnedPlayingTime = this.props.synopsisReport && this.props.synopsisReport.summer_SR ? '' : pt.calcPlayingTime(this.state.synopsisReport);
     if (this.state.synopsisReport && earnedPlayingTime !== this.state.synopsisReport.Earned_Playing_Time__c) {
