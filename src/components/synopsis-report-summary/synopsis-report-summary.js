@@ -100,7 +100,7 @@ class SynopsisReportSummary extends React.Component {
     <p>Thanks and feel free to respond with comments or questions!</p><br>
     
     <p>${sr.Mentor__r.Name}<br>
-    ${sr.Mentor__r.npe01__HomeEmail__c}<br>
+    ${sr.Mentor__r.Email}<br>
     ${sr.PointTrackers__r 
       && sr.PointTrackers__r.records
       && sr.PointTrackers__r.records[0].Class__r
@@ -208,7 +208,7 @@ class SynopsisReportSummary extends React.Component {
     <p>Thanks and feel free to respond with comments or questions!</p>
     
     <p>{sr.Mentor__r.Name}<br />
-    {sr.Mentor__r.npe01__HomeEmail__c}<br />
+    {sr.Mentor__r.Email}<br />
     {this.state.schoolName}</p>
 
     {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}

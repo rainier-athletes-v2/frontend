@@ -60,7 +60,7 @@ class SynopsisReportSummerForm extends React.Component {
         familyConnectionMade: this.initRadioButtons(this.props.synopsisReport, 'Summer_family_connection_made__c'),
       });
       this.props.clearError();
-      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.npe01__HomeEmail__c);
+      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Email);
     }
   }
 
