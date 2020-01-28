@@ -506,10 +506,6 @@ class SynopsisReportForm extends React.Component {
     });
   }
 
-  handleImagePreview = (event) => {
-
-  }
-
   handleImageUpload = (event) => {
     const errs = []; 
     const files = Array.from(event.target.files);
@@ -935,7 +931,7 @@ class SynopsisReportForm extends React.Component {
               compClass={ this.state.mentorSupportRequestNotesOK ? 'title' : 'title required' }
               compName="Mentor_Support_Request_Notes__c"
               label="Please explain:"
-              value={ this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c }
+              value={ (this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c) || '' }
               onChange={ this.handleTextAreaChange }
               rows={ 2 }
               cols={ 80 } />
