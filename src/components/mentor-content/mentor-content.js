@@ -88,11 +88,11 @@ export default function MentorContent(props) {
       </div>
       <div className="row">
         <div className="profile-link">
-          <a className="btn-link-1" 
+          {/* <a className="btn-link-1" 
             href={ student.studentData ? student.studentData.synopsisReportArchiveUrl : null }
             alt="link to synopsis report archive"
             target="blank"
-            rel="noopener noreferrer">Synopsis Report Archive</a>
+            rel="noopener noreferrer">Synopsis Report Archive</a> */}
           <a className="btn-link-1" href={ student.studentData ? student.studentData.googleCalendarUrl : null }
             alt="link to student calendar"
             target="blank"
