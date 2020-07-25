@@ -13,4 +13,6 @@ export const ctpInPerson = 'In person communication.';
 export const ctpDigital = 'Digital communication through Basecamp, text message, email, etc.';
 export const ctpPhoneCall = 'Voice communicaiton via phone call, voice message or video chat.';
 // point tracker table
-export const pointSheetGrade = 'Enter grades as A, B, C, D, F or "N/A".'
+export const pointSheetGrade = 'Enter grades as A, B, C, D, F or "N/A".';
+// summer form
+export const weeklyConnection = 'Students can earn points at every checkin! Remind your student to ping you and the Character Capital Accounts to claim points.';

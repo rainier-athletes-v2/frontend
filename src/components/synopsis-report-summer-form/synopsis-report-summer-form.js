@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
 // import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
+import TooltipItem from '../tooltip/tooltip';
 // import MultiSelect from '../multi-select/multi-select';
+import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
@@ -139,14 +141,14 @@ class SynopsisReportSummerForm extends React.Component {
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
       || (sr.Summer_weekly_connection_made__c === 'No'
       && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
-    const questionOfTheWeekOK = !!sr.Summer_question_of_the_week_answered__c;
+    // const questionOfTheWeekOK = !!sr.Summer_question_of_the_week_answered__c;
     const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'Yes'
       || !sr.Summer_conn_missed_other__c
       || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
-    const lastSummerCampOK = !!sr.Summer_attended_last_camp__c;
-    const nextSummerCampOK = !!sr.Summer_attend_next_camp__c;
-    const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c || sr.Summer_attended_last_camp__c === 'Yes';
-    const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || sr.Summer_attend_next_camp__c === 'Yes';
+    // const lastSummerCampOK = !!sr.Summer_attended_last_camp__c;
+    // const nextSummerCampOK = !!sr.Summer_attend_next_camp__c;
+    // const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c || sr.Summer_attended_last_camp__c === 'Yes';
+    // const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || sr.Summer_attend_next_camp__c === 'Yes';
     const familyConnectionOK = !!sr.Summer_family_connection_made__c;
     const familyConnectionStatusOK = sr.Summer_family_connection_made__c === 'No' 
       || (sr.Summer_family_connection_made__c === 'Yes' 
@@ -162,12 +164,12 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState({
       metWithMentee,
       weeklyConnectionStatusOK,
-      questionOfTheWeekOK,
+      // questionOfTheWeekOK,
       studentConnectionNotesOK,
-      lastSummerCampOK,
-      lastCampNotesOK,
-      nextSummerCampOK,
-      nextCampNotesOK,
+      // lastSummerCampOK,
+      // lastCampNotesOK,
+      // nextSummerCampOK,
+      // nextCampNotesOK,
       familyConnectionOK,
       familyConnectionStatusOK,
       familyConnectionNotesOK,
@@ -177,12 +179,12 @@ class SynopsisReportSummerForm extends React.Component {
 
     return metWithMentee 
       && weeklyConnectionStatusOK
-      && questionOfTheWeekOK
+      // && questionOfTheWeekOK
       && studentConnectionNotesOK
-      && lastSummerCampOK
-      && lastCampNotesOK
-      && nextSummerCampOK
-      && nextCampNotesOK
+      // && lastSummerCampOK
+      // && lastCampNotesOK
+      // && nextSummerCampOK
+      // && nextCampNotesOK
       && familyConnectionOK
       && familyConnectionStatusOK
       && familyConnectionNotesOK
@@ -227,40 +229,40 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState(newState);
   }
 
-  handleQuestionOfTheWeekChange = (event) => {
-    const newState = Object.assign({}, this.state);
-    newState.questionOfTheWeek = parseInt(event.target.value, 10);
-    if (newState.questionOfTheWeek === 1) {
-      newState.synopsisReport.Summer_question_of_the_week_answered__c = 'Yes';
-    } else {
-      newState.synopsisReport.Summer_question_of_the_week_answered__c = 'No';
-    }
-    this.setState(newState);
-  }
+  // handleQuestionOfTheWeekChange = (event) => {
+  //   const newState = Object.assign({}, this.state);
+  //   newState.questionOfTheWeek = parseInt(event.target.value, 10);
+  //   if (newState.questionOfTheWeek === 1) {
+  //     newState.synopsisReport.Summer_question_of_the_week_answered__c = 'Yes';
+  //   } else {
+  //     newState.synopsisReport.Summer_question_of_the_week_answered__c = 'No';
+  //   }
+  //   this.setState(newState);
+  // }
 
-  handleLastSummerCampChange = (event) => {
-    const newState = Object.assign({}, this.state);
-    newState.lastSummerCamp = parseInt(event.target.value, 10);
-    if (newState.lastSummerCamp === 1) {
-      newState.synopsisReport.Summer_attended_last_camp__c = 'Yes';
-    } else {
-      newState.synopsisReport.Summer_attended_last_camp__c = 'No';
-    }
-    newState.synopsisReport.Summer_attended_last_camp_notes__c = '';
-    this.setState(newState);
-  }
+  // handleLastSummerCampChange = (event) => {
+  //   const newState = Object.assign({}, this.state);
+  //   newState.lastSummerCamp = parseInt(event.target.value, 10);
+  //   if (newState.lastSummerCamp === 1) {
+  //     newState.synopsisReport.Summer_attended_last_camp__c = 'Yes';
+  //   } else {
+  //     newState.synopsisReport.Summer_attended_last_camp__c = 'No';
+  //   }
+  //   newState.synopsisReport.Summer_attended_last_camp_notes__c = '';
+  //   this.setState(newState);
+  // }
 
-  handleNextSummerCampChange = (event) => {
-    const newState = Object.assign({}, this.state);
-    newState.nextSummerCamp = parseInt(event.target.value, 10);
-    if (newState.nextSummerCamp === 1) {
-      newState.synopsisReport.Summer_attend_next_camp__c = 'Yes';
-    } else {
-      newState.synopsisReport.Summer_attend_next_camp__c = 'No';
-    }
-    newState.synopsisReport.Summer_next_camp_notes__c = '';
-    this.setState(newState);
-  }
+  // handleNextSummerCampChange = (event) => {
+  //   const newState = Object.assign({}, this.state);
+  //   newState.nextSummerCamp = parseInt(event.target.value, 10);
+  //   if (newState.nextSummerCamp === 1) {
+  //     newState.synopsisReport.Summer_attend_next_camp__c = 'Yes';
+  //   } else {
+  //     newState.synopsisReport.Summer_attend_next_camp__c = 'No';
+  //   }
+  //   newState.synopsisReport.Summer_next_camp_notes__c = '';
+  //   this.setState(newState);
+  // }
 
   handleFamilyConnectionChange = (event) => {
     const newState = Object.assign({}, this.state);
@@ -333,15 +335,15 @@ class SynopsisReportSummerForm extends React.Component {
 
     // question 2
     const madeCheckinValues = [
-      { text: 'I met with student at the agreed upon day and time (+2 Character Capital)', prop: 'Summer_conn_met__c' },
-      { text: 'Student called me at the agreed upon day and time (+2 Character Capital)', prop: 'Summer_conn_called__c' },
-      { text: 'I called student 30 minutes after the agreed upon time as student did not call me (+1 Character Capital)', prop: 'Summer_conn_late_call__c' },
+      { text: 'Student and I met social-distancing in-person', prop: 'Summer_conn_met__c' },
+      { text: 'Student and I checked in via video call', prop: 'Summer_conn_called__c' },
+      { text: 'Student and I checked in via phone call', prop: 'Summer_conn_late_call__c' },
       { text: 'We connected via Basecamp (Love that you are using Basecamp as an additional way to communicate! Keep it up!)', prop: 'Summer_conn_basecamp__c' },
     ];
 
     const missedCheckinValues = [
-      { text: 'I called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back', prop: 'Summer_conn_no_answer__c' },
-      { text: 'Student did not show up on the day and time we agreed upon', prop: 'Summer_conn_no_show__c' },
+      { text: 'I was not able to reach out this week', prop: 'Summer_conn_no_answer__c' },
+      { text: 'I tried reaching out but had trouble connecting', prop: 'Summer_conn_no_show__c' },
       { text: 'We did not connect for reasons explained below', prop: 'Summer_conn_missed_other__c' },
     ];
 
@@ -353,7 +355,7 @@ class SynopsisReportSummerForm extends React.Component {
           <fieldset>
             <div className="mentor-met-container" key='connectionStatus'>
               <div className="mentor-met-container">
-                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status</label>
+                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status (Select all that apply)<TooltipItem id={'tooltip-weeklyConnection'} text={ttText.weeklyConnection}/></label>
                 {this.state.mentorMadeScheduledCheckin === 1
                   ? madeCheckinValues.map((value, i) => {
                     return (<div className="survey-question-container" key={ i }>
@@ -402,113 +404,6 @@ class SynopsisReportSummerForm extends React.Component {
       }
       return null;
     };
-
-    // question 3
-    const questionOfTheWeekResponseJSX = (
-      <div className="survey-question-container">
-        <div className="mentor-met-container" key='questionOfTheWeek'>
-        <h6 className="title">Question of The Week</h6>
-          <label className={ this.state.questionOfTheWeekOK ? '' : 'required' } htmlFor="qow">Did the student respond to the Question of the Week?</label><br className="rwd-break" />
-            <input
-              type="radio"
-              name="qow"
-              value="1"
-              className="inline"
-              checked={this.state.questionOfTheWeek === 1 ? 'checked' : ''}
-              required="true"
-              onChange={this.handleQuestionOfTheWeekChange}/> Yes
-            <input
-              type="radio"
-              name="qow"
-              value="0"
-              className="inline"
-              checked={this.state.questionOfTheWeek === 0 ? 'checked' : ''}
-              requried="true"
-              onChange={this.handleQuestionOfTheWeekChange}/> No
-        </div>
-      </div>
-    );
-
-    // question 4
-    const attendedLastSummerCampJSX = (
-      <div className="survey-question-container">
-        <div className="mentor-met-container" key='attendedLastCamp'>
-        <label className="title">Summer Camp</label><br />
-        <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label><br className="rwd-break" />
-          <input
-            type="radio"
-            name="lastCamp"
-            value="1"
-            className="inline"
-            checked={this.state.lastSummerCamp === 1 ? 'checked' : ''}
-            required="true"
-            onChange={this.handleLastSummerCampChange}/> Yes
-          <input
-            type="radio"
-            name="lastCamp"
-            value="0"
-            className="inline"
-            checked={this.state.lastSummerCamp === 0 ? 'checked' : ''}
-            requried="true"
-            onChange={this.handleLastSummerCampChange}/> No
-      </div>
-      { this.state.lastSummerCamp !== -1 
-        ? <TextArea
-            compClass={this.state.lastCampNotesOK ? 'title' : 'title required'}
-            compName="Summer_attended_last_camp_notes__c"
-            label={this.state.lastSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why didn’t they attend? (required)'}
-            placeholder={''}
-            value={ this.state.synopsisReport && this.state.synopsisReport.Summer_attended_last_camp_notes__c
-              ? this.state.synopsisReport.Summer_attended_last_camp_notes__c
-              : '' }
-            // required={ true }
-            onChange={ this.handleTextAreaChange }
-            rows={ 2 }
-            cols={ 80 }
-          />
-        : null }
-      </div>
-    );
-
-    // question 5
-    const nextSummerCampPlansJSX = (
-      <div className="survey-question-container">
-        <div className="mentor-met-container" key='attendNextCamp'>
-        <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label><br className="rwd-break" />
-          <input
-            type="radio"
-            name="nextCamp"
-            value="1"
-            className="inline"
-            checked={this.state.nextSummerCamp === 1 ? 'checked' : ''}
-            required="true"
-            onChange={this.handleNextSummerCampChange}/> Yes
-          <input
-            type="radio"
-            name="nextCamp"
-            value="0"
-            className="inline"
-            checked={this.state.nextSummerCamp === 0 ? 'checked' : ''}
-            requried="true"
-            onChange={this.handleNextSummerCampChange}/> No
-      </div>
-      { this.state.nextSummerCamp !== -1
-        ? <TextArea
-          compClass={this.state.nextCampNotesOK ? 'title' : 'title required'}
-          compName="Summer_next_camp_notes__c"
-          label={this.state.nextSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why won\'t they attend? (required)'}
-          placeholder={''}
-          value={ this.state.synopsisReport && this.state.synopsisReport.Summer_next_camp_notes__c
-            ? this.state.synopsisReport.Summer_next_camp_notes__c
-            : '' }
-          required={ true }
-          onChange={ this.handleTextAreaChange }
-          rows={ 2 }
-          cols={ 80 }
-        />
-        : null }
-      </div>
-    );
 
     // question 6
     const familyConnectionTypes = [
@@ -576,11 +471,30 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
+    const additionalCommentsForTeamJSX = (
+        <div className="survey-question-container">
+          <div key="additionalCommentsForTeam">
+                  <TextArea
+                    compClass="title"
+                    compName="Summer_additional_team_comments__c"
+                    label="Additional Comments for Basecamp Team"
+                    value={ this.state.synopsisReport && this.state.synopsisReport.Summer_additional_team_comments__c
+                      ? this.state.synopsisReport.Summer_additional_team_comments__c
+                      : '' }
+                    placeholder="Any points of importance, fun facts, or further details to share with your student's Basecamp Team?"
+                    onChange={ this.handleTextAreaChange }
+                    rows={ 2 }
+                    cols={ 80 }
+                  />
+          </div>
+        </div>
+    );
+
     const mentorSupportRequestJSX = (
       <div className="container">
         <div className="row ms-select">
           <div className="request-prompt-container">
-            <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>Do you need additional support? </span>
+            <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>Do you need additional support? (This response goes directly to RA Staff only.)</span>
           </div>
           <div className="request-dropdown-container">
             <select
@@ -613,7 +527,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     const formButtonOrMessage = () => {
       if (this.props.messageBoardUrl) {
-        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to Student&#39;s Core Community</h5>);
+        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Report</button>  to Student&#39;s Core Community</h5>);
       }
       if (this.props.error) {
         return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.</p></React.Fragment>);
@@ -629,7 +543,7 @@ class SynopsisReportSummerForm extends React.Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">SUMMER SYNOPSIS REPORT</h5>
+              <h5 className="modal-title">SYNOPSIS REPORT</h5>
               <button type="button" 
                 className="close" 
                 onClick={ this.props.cancelClick }
@@ -644,10 +558,11 @@ class SynopsisReportSummerForm extends React.Component {
                 { srHeadingJSX }
                 { mentorMadeScheduledCheckinJSX }
                 { weeklyConnectionStatusJSX() }
-                { questionOfTheWeekResponseJSX }
-                { attendedLastSummerCampJSX }
-                { nextSummerCampPlansJSX }
+                {/* { questionOfTheWeekResponseJSX } */}
+                {/* { attendedLastSummerCampJSX } */}
+                {/* { nextSummerCampPlansJSX } */}
                 { familyConnectionJSX }
+                { additionalCommentsForTeamJSX }
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
                 { formButtonOrMessage() }
@@ -694,3 +609,110 @@ SynopsisReportSummerForm.propTypes = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);
+
+// question 3
+// const questionOfTheWeekResponseJSX = (
+//   <div className="survey-question-container">
+//     <div className="mentor-met-container" key='questionOfTheWeek'>
+//     <h6 className="title">Question of The Week</h6>
+//       <label className={ this.state.questionOfTheWeekOK ? '' : 'required' } htmlFor="qow">Did the student respond to the Question of the Week?</label><br className="rwd-break" />
+//         <input
+//           type="radio"
+//           name="qow"
+//           value="1"
+//           className="inline"
+//           checked={this.state.questionOfTheWeek === 1 ? 'checked' : ''}
+//           required="true"
+//           onChange={this.handleQuestionOfTheWeekChange}/> Yes
+//         <input
+//           type="radio"
+//           name="qow"
+//           value="0"
+//           className="inline"
+//           checked={this.state.questionOfTheWeek === 0 ? 'checked' : ''}
+//           requried="true"
+//           onChange={this.handleQuestionOfTheWeekChange}/> No
+//     </div>
+//   </div>
+// );
+
+// question 4
+// const attendedLastSummerCampJSX = (
+//   <div className="survey-question-container">
+//     <div className="mentor-met-container" key='attendedLastCamp'>
+//     <label className="title">Summer Camp</label><br />
+//     <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label><br className="rwd-break" />
+//       <input
+//         type="radio"
+//         name="lastCamp"
+//         value="1"
+//         className="inline"
+//         checked={this.state.lastSummerCamp === 1 ? 'checked' : ''}
+//         required="true"
+//         onChange={this.handleLastSummerCampChange}/> Yes
+//       <input
+//         type="radio"
+//         name="lastCamp"
+//         value="0"
+//         className="inline"
+//         checked={this.state.lastSummerCamp === 0 ? 'checked' : ''}
+//         requried="true"
+//         onChange={this.handleLastSummerCampChange}/> No
+//   </div>
+//   { this.state.lastSummerCamp !== -1 
+//     ? <TextArea
+//         compClass={this.state.lastCampNotesOK ? 'title' : 'title required'}
+//         compName="Summer_attended_last_camp_notes__c"
+//         label={this.state.lastSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why didn’t they attend? (required)'}
+//         placeholder={''}
+//         value={ this.state.synopsisReport && this.state.synopsisReport.Summer_attended_last_camp_notes__c
+//           ? this.state.synopsisReport.Summer_attended_last_camp_notes__c
+//           : '' }
+//         // required={ true }
+//         onChange={ this.handleTextAreaChange }
+//         rows={ 2 }
+//         cols={ 80 }
+//       />
+//     : null }
+//   </div>
+// );
+
+// question 5
+// const nextSummerCampPlansJSX = (
+//   <div className="survey-question-container">
+//     <div className="mentor-met-container" key='attendNextCamp'>
+//     <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label><br className="rwd-break" />
+//       <input
+//         type="radio"
+//         name="nextCamp"
+//         value="1"
+//         className="inline"
+//         checked={this.state.nextSummerCamp === 1 ? 'checked' : ''}
+//         required="true"
+//         onChange={this.handleNextSummerCampChange}/> Yes
+//       <input
+//         type="radio"
+//         name="nextCamp"
+//         value="0"
+//         className="inline"
+//         checked={this.state.nextSummerCamp === 0 ? 'checked' : ''}
+//         requried="true"
+//         onChange={this.handleNextSummerCampChange}/> No
+//   </div>
+//   { this.state.nextSummerCamp !== -1
+//     ? <TextArea
+//       compClass={this.state.nextCampNotesOK ? 'title' : 'title required'}
+//       compName="Summer_next_camp_notes__c"
+//       label={this.state.nextSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why won\'t they attend? (required)'}
+//       placeholder={''}
+//       value={ this.state.synopsisReport && this.state.synopsisReport.Summer_next_camp_notes__c
+//         ? this.state.synopsisReport.Summer_next_camp_notes__c
+//         : '' }
+//       required={ true }
+//       onChange={ this.handleTextAreaChange }
+//       rows={ 2 }
+//       cols={ 80 }
+//     />
+//     : null }
+//   </div>
+// );
