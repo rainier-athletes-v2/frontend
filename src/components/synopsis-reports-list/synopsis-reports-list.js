@@ -19,7 +19,7 @@ function SynopsisReportsList(props) {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Report Dates</th>
+              <th>Check in Date</th>
               <th>SR Status</th>
               <th>Point Sheet Status</th>
               <th></th>
