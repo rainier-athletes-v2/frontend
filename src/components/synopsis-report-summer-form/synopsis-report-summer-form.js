@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synopsis-report-summer-summary';
 // import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
+import ImagePreviews from '../image-previews/image-previews';
 import TooltipItem from '../tooltip/tooltip';
 // import MultiSelect from '../multi-select/multi-select';
 import * as ttText from '../../lib/tooltip-text';
@@ -11,6 +12,7 @@ import * as srActions from '../../actions/synopsis-report';
 import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as errorActions from '../../actions/error';
+import * as imageActions from '../../actions/images';
 
 import './_synopsis-report-summer-form.scss';
 
@@ -19,6 +21,8 @@ const mapStateToProps = state => ({
   myRole: state.myProfile && state.myProfile.role,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
+  bcImages: state.bcImages,
+  imagePreviews: state.imagePreviews,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -27,6 +31,8 @@ const mapDispatchToProps = dispatch => ({
   clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
   // saveSummaryToBasecamp: srSummary => dispatch(basecampActions.postSummaryToBasecamp(srSummary)),
   clearError: () => dispatch(errorActions.clearError()),
+  uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
+  clearImages: () => dispatch(imageActions.clearImageSgids()),
 });
 
 class SynopsisReportSummerForm extends React.Component {
@@ -37,6 +43,9 @@ class SynopsisReportSummerForm extends React.Component {
     this.state.synopsisReport = this.props.synopsisReport;
     this.state.savedToSalesforce = false;
     this.state.waitingOnSalesforce = false;
+    this.state.waitingOnImages = false;
+    this.state.imagesSaved = false;
+    this.state.imageUploading = false;
     this.state.mentorMadeScheduledCheckin = -1;
     this.state.questionOfTheWeek = -1;
     this.props.clearMsgBoardUrl();
@@ -44,6 +53,18 @@ class SynopsisReportSummerForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
+      if (this.state.waitingOnImages) {
+        console.log('images saved');
+        this.props.clearError();
+        const { synopsisReport } = this.state;
+        this.setState({
+          waitingOnImages: false,
+          imagesSaved: true,
+          waitingOnSalesforce: true,
+        });
+        console.log('saveSynopsisReport after images saved');
+        this.props.saveSynopsisReport({ ...synopsisReport });
+      }
       if (this.state.waitingOnSalesforce) {
         this.setState({
           waitingOnSalesfore: false,
@@ -55,10 +76,10 @@ class SynopsisReportSummerForm extends React.Component {
       const sr = this.props.synopsisReport;
       this.setState({ 
         synopsisReport: sr,
-        lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
-        nextSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attend_next_camp__c'),
-        mentorMadeScheduledCheckin: this.initRadioButtons(this.props.synopsisReport, 'Summer_weekly_connection_made__c'),
-        questionOfTheWeek: this.initRadioButtons(this.props.synopsisReport, 'Summer_question_of_the_week_answered__c'),
+        // lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
+        // nextSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attend_next_camp__c'),
+        mentorMadeScheduledCheckin: this.initRadioButtons(this.props.synopsisReport, 'Weekly_Check_In_Status__c'),
+        // questionOfTheWeek: this.initRadioButtons(this.props.synopsisReport, 'Summer_question_of_the_week_answered__c'),
         familyConnectionMade: this.initRadioButtons(this.props.synopsisReport, 'Summer_family_connection_made__c'),
       });
       this.props.clearError();
@@ -89,6 +110,7 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   componentDidMount = () => {
+    this.props.clearImages();
     this.setState((prevState) => {
       const newState = { ...prevState };
       newState.savedToSalesforce = false;
@@ -198,13 +220,19 @@ class SynopsisReportSummerForm extends React.Component {
     const { synopsisReport } = newState;
     synopsisReport.Synopsis_Report_Status__c = pl.SrStatus.Completed;
     const validMentorInput = this.validMentorInput(synopsisReport);
-    if (validMentorInput) {      
-      this.setState({
-        ...newState, 
-        waitingOnSalesforce: true, 
-        savedToSalesforce: false,   
-      });
-      this.props.saveSynopsisReport({ ...synopsisReport }); // save SR to salesforce
+
+    this.props.clearError();
+
+    if (validMentorInput) { 
+      if (this.props.imagePreviews) {   
+        this.setState({ waitingOnImages: true });
+        console.log('saving images');
+        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
+      } else {
+        console.log('no images. Saving to salesforce');   
+        this.setState({ waitingOnSalesforce: true });
+        this.props.saveSynopsisReport({ ...synopsisReport }); // save SR to salesforce
+      }
     } else {
       alert('Please provide required information before submitting full report.'); // eslint-disable-line
     }
@@ -214,13 +242,13 @@ class SynopsisReportSummerForm extends React.Component {
     const newState = Object.assign({}, this.state);
     newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
     if (newState.mentorMadeScheduledCheckin === 1) {
-      newState.synopsisReport.Summer_weekly_connection_made__c = 'Yes';
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Yes';
       newState.synopsisReport.Summer_conn_no_answer__c = false;
       newState.synopsisReport.Summer_conn_no_show__c = false;
       newState.synopsisReport.Summer_conn_missed_other__c = false;
       newState.synopsisReport.Summer_weekly_connection_other_notes__c = '';
     } else {
-      newState.synopsisReport.Summer_weekly_connection_made__c = 'No';
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'No';
       newState.synopsisReport.Summer_conn_met__c = false;
       newState.synopsisReport.Summer_conn_called__c = false;
       newState.synopsisReport.Summer_conn_late_call__c = false;
@@ -355,7 +383,7 @@ class SynopsisReportSummerForm extends React.Component {
           <fieldset>
             <div className="mentor-met-container" key='connectionStatus'>
               <div className="mentor-met-container">
-                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status (Select all that apply)<TooltipItem id={'tooltip-weeklyConnection'} text={ttText.weeklyConnection}/></label>
+                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status<TooltipItem id={'tooltip-weeklyConnection'} text={ttText.weeklyConnection}/></label>
                 {this.state.mentorMadeScheduledCheckin === 1
                   ? madeCheckinValues.map((value, i) => {
                     return (<div className="survey-question-container" key={ i }>
@@ -563,6 +591,7 @@ class SynopsisReportSummerForm extends React.Component {
                 {/* { nextSummerCampPlansJSX } */}
                 { familyConnectionJSX }
                 { additionalCommentsForTeamJSX }
+                <ImagePreviews />
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
                 { formButtonOrMessage() }
@@ -606,6 +635,8 @@ SynopsisReportSummerForm.propTypes = {
   myRole: PropTypes.string,
   error: PropTypes.number,
   messageBoardUrl: PropTypes.string,
+  clearImages: PropTypes.func,
+  uploadImages: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);

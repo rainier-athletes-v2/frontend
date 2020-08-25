@@ -381,15 +381,7 @@ class SynopsisReportForm extends React.Component {
       && this.commNotesAreValid()
       && this.oneTeamNotesAreValid()) {
       if (this.props.imagePreviews) {   
-        this.setState({ 
-          // ...this.state, 
-          waitingOnImages: true,
-          // imagesSaved: false,
-          // waitingOnSalesforce: true, 
-          // savedToSalesforce: false,
-          // waitingOnGoogleDrive: false,
-          // savedToGoogleDrive: false,
-        });
+        this.setState({ waitingOnImages: true });
         console.log('saving images');
         this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
       } else {
