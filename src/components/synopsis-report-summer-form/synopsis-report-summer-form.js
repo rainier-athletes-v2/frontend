@@ -663,6 +663,7 @@ SynopsisReportSummerForm.propTypes = {
   messageBoardUrl: PropTypes.string,
   clearImages: PropTypes.func,
   uploadImages: PropTypes.func,
+  imagePreviews: PropTypes.any,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);

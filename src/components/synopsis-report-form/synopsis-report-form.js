@@ -560,6 +560,7 @@ class SynopsisReportForm extends React.Component {
       })
     })
     */
+    return 1;
   }
 
   render() {
