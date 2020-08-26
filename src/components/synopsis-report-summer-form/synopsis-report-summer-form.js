@@ -319,6 +319,31 @@ class SynopsisReportSummerForm extends React.Component {
     });
   }
 
+  handleImageUpload = (event) => {
+    const errs = []; 
+    const files = Array.from(event.target.files);
+
+    const types = ['image/png', 'image/jpeg', 'image/gif'];
+
+    files.forEach((file) => {
+      if (types.every(type => file.type !== type)) {
+        errs.push(`'${file.type}' is not a supported format`);
+      }
+    });
+
+    if (errs.length) {
+      return alert(errs[0]); /
+    }
+
+    if (files.length > 0) {
+      this.setState({ inputImageLabelText: `${files.length} file(s) selected` });
+    }
+
+    this.setState({ imageUploading: true });
+    
+    this.props.uploadImages(files);
+  }
+
   render() {
     const srHeadingJSX = (
       <div className="row">
@@ -591,6 +616,7 @@ class SynopsisReportSummerForm extends React.Component {
                 {/* { nextSummerCampPlansJSX } */}
                 { familyConnectionJSX }
                 { additionalCommentsForTeamJSX }
+                {/* <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} /> */}
                 <ImagePreviews />
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
