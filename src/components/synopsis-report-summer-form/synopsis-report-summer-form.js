@@ -289,7 +289,7 @@ class SynopsisReportSummerForm extends React.Component {
             value="1"
             className="inline"
             checked={this.state.mentorMadeScheduledCheckin === 1 ? 'checked' : ''}
-            required="true"
+            required="required"
             onChange={this.handleMentorMadeScheduledCheckinChange}/> Yes
           <input
             type="radio"
@@ -297,7 +297,7 @@ class SynopsisReportSummerForm extends React.Component {
             value="0"
             className="inline"
             checked={this.state.mentorMadeScheduledCheckin === 0 ? 'checked' : ''}
-            requried="true"
+            requried="required"
             onChange={this.handleMentorMadeScheduledCheckinChange}/> No
       </div>
       </React.Fragment>
@@ -396,7 +396,7 @@ class SynopsisReportSummerForm extends React.Component {
             value="1"
             className="inline"
             checked={this.state.familyConnectionMade === 1 ? 'checked' : ''}
-            required="true"
+            required="required"
             onChange={this.handleFamilyConnectionChange}/> Yes (+1 Character Capital)
           <input
             type="radio"
@@ -404,7 +404,7 @@ class SynopsisReportSummerForm extends React.Component {
             value="0"
             className="inline"
             checked={this.state.familyConnectionMade === 0 ? 'checked' : ''}
-            requried="true"
+            required="required"
             onChange={this.handleFamilyConnectionChange}/> No
       </div>
         { this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'Yes' 
@@ -557,7 +557,7 @@ class SynopsisReportSummerForm extends React.Component {
                 onClick={ this.props.cancelClick }
                 data-dismiss="modal" 
                 aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden={true}>&times;</span>
               </button>
             </div>
 
