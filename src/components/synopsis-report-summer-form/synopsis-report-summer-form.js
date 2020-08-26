@@ -76,10 +76,7 @@ class SynopsisReportSummerForm extends React.Component {
       const sr = this.props.synopsisReport;
       this.setState({ 
         synopsisReport: sr,
-        // lastSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attended_last_camp__c'),
-        // nextSummerCamp: this.initRadioButtons(this.props.synopsisReport, 'Summer_attend_next_camp__c'),
         mentorMadeScheduledCheckin: this.initRadioButtons(this.props.synopsisReport, 'Weekly_Check_In_Status__c'),
-        // questionOfTheWeek: this.initRadioButtons(this.props.synopsisReport, 'Summer_question_of_the_week_answered__c'),
         familyConnectionMade: this.initRadioButtons(this.props.synopsisReport, 'Summer_family_connection_made__c'),
       });
       this.props.clearError();
@@ -117,20 +114,15 @@ class SynopsisReportSummerForm extends React.Component {
       newState.metWithMentee = true;
       newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
-      newState.questionOfTheWeekOK = true;
       newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
       newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
-      newState.lastSummerCampOK = true;
-      newState.nextSummerCampOK = true;
-      newState.lastCampNotesOK = true;
-      newState.nextCampNotesOK = true;
       newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
       newState.familyConnectionOK = true;
       newState.familyConnectionStatusOK = true;
       newState.familyConnectionNotesOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
-      newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Summer_weekly_connection_made__c');
+      newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Weekly_Check_In_Status__c');
       newState.questionOfTheWeek = this.initRadioButtons(newState.SynopsisReport, 'Summer_question_of_the_week_answered__c');
       return newState;
     });
@@ -158,19 +150,14 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const metWithMentee = !!sr.Summer_weekly_connection_made__c;
-    const weeklyConnectionStatusOK = (sr.Summer_weekly_connection_made__c === 'Yes'
+    const metWithMentee = !!sr.Weekly_Check_In_Status__c;
+    const weeklyConnectionStatusOK = (sr.Weekly_Check_In_Status__c === 'Yes'
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
-      || (sr.Summer_weekly_connection_made__c === 'No'
+      || (sr.Weekly_Check_In_Status__c === 'No'
       && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
-    // const questionOfTheWeekOK = !!sr.Summer_question_of_the_week_answered__c;
-    const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'Yes'
+    const studentConnectionNotesOK = sr.Weekly_Check_In_Status__c === 'Yes'
       || !sr.Summer_conn_missed_other__c
       || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
-    // const lastSummerCampOK = !!sr.Summer_attended_last_camp__c;
-    // const nextSummerCampOK = !!sr.Summer_attend_next_camp__c;
-    // const lastCampNotesOK = !!sr.Summer_attended_last_camp_notes__c || sr.Summer_attended_last_camp__c === 'Yes';
-    // const nextCampNotesOK = !!sr.Summer_next_camp_notes__c || sr.Summer_attend_next_camp__c === 'Yes';
     const familyConnectionOK = !!sr.Summer_family_connection_made__c;
     const familyConnectionStatusOK = sr.Summer_family_connection_made__c === 'No' 
       || (sr.Summer_family_connection_made__c === 'Yes' 
@@ -186,12 +173,7 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState({
       metWithMentee,
       weeklyConnectionStatusOK,
-      // questionOfTheWeekOK,
       studentConnectionNotesOK,
-      // lastSummerCampOK,
-      // lastCampNotesOK,
-      // nextSummerCampOK,
-      // nextCampNotesOK,
       familyConnectionOK,
       familyConnectionStatusOK,
       familyConnectionNotesOK,
@@ -201,12 +183,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     return metWithMentee 
       && weeklyConnectionStatusOK
-      // && questionOfTheWeekOK
       && studentConnectionNotesOK
-      // && lastSummerCampOK
-      // && lastCampNotesOK
-      // && nextSummerCampOK
-      // && nextCampNotesOK
       && familyConnectionOK
       && familyConnectionStatusOK
       && familyConnectionNotesOK
@@ -257,41 +234,6 @@ class SynopsisReportSummerForm extends React.Component {
     this.setState(newState);
   }
 
-  // handleQuestionOfTheWeekChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.questionOfTheWeek = parseInt(event.target.value, 10);
-  //   if (newState.questionOfTheWeek === 1) {
-  //     newState.synopsisReport.Summer_question_of_the_week_answered__c = 'Yes';
-  //   } else {
-  //     newState.synopsisReport.Summer_question_of_the_week_answered__c = 'No';
-  //   }
-  //   this.setState(newState);
-  // }
-
-  // handleLastSummerCampChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.lastSummerCamp = parseInt(event.target.value, 10);
-  //   if (newState.lastSummerCamp === 1) {
-  //     newState.synopsisReport.Summer_attended_last_camp__c = 'Yes';
-  //   } else {
-  //     newState.synopsisReport.Summer_attended_last_camp__c = 'No';
-  //   }
-  //   newState.synopsisReport.Summer_attended_last_camp_notes__c = '';
-  //   this.setState(newState);
-  // }
-
-  // handleNextSummerCampChange = (event) => {
-  //   const newState = Object.assign({}, this.state);
-  //   newState.nextSummerCamp = parseInt(event.target.value, 10);
-  //   if (newState.nextSummerCamp === 1) {
-  //     newState.synopsisReport.Summer_attend_next_camp__c = 'Yes';
-  //   } else {
-  //     newState.synopsisReport.Summer_attend_next_camp__c = 'No';
-  //   }
-  //   newState.synopsisReport.Summer_next_camp_notes__c = '';
-  //   this.setState(newState);
-  // }
-
   handleFamilyConnectionChange = (event) => {
     const newState = Object.assign({}, this.state);
     newState.familyConnectionMade = parseInt(event.target.value, 10);
@@ -318,31 +260,6 @@ class SynopsisReportSummerForm extends React.Component {
       return newState; 
     });
   }
-
-  // handleImageUpload = (event) => {
-  //   const errs = []; 
-  //   const files = Array.from(event.target.files);
-
-  //   const types = ['image/png', 'image/jpeg', 'image/gif'];
-
-  //   files.forEach((file) => {
-  //     if (types.every(type => file.type !== type)) {
-  //       errs.push(`'${file.type}' is not a supported format`);
-  //     }
-  //   });
-
-  //   if (errs.length) {
-  //     return alert(errs[0]); // eslint-disable-line
-  //   }
-
-  //   if (files.length > 0) {
-  //     this.setState({ inputImageLabelText: `${files.length} file(s) selected` });
-  //   }
-
-  //   this.setState({ imageUploading: true });
-    
-  //   this.props.uploadImages(files);
-  // }
 
   render() {
     const srHeadingJSX = (
@@ -543,6 +460,44 @@ class SynopsisReportSummerForm extends React.Component {
         </div>
     );
 
+    const whatsBeenHappeningJSX = (
+        <div className="survey-question-container">
+          <div key="whatsBeenHappening">
+                  <TextArea
+                    compClass="title"
+                    compName="Whats_been_happening__c"
+                    label="What's Been Happening"
+                    value={ this.state.synopsisReport && this.state.synopsisReport.Whats_been_happening__c
+                      ? this.state.synopsisReport.Whats_been_happening__c
+                      : '' }
+                    placeholder="What's been happening this week?"
+                    onChange={ this.handleTextAreaChange }
+                    rows={ 2 }
+                    cols={ 80 }
+                  />
+          </div>
+        </div>
+    );
+
+    const onlineSchoolUpdateJSX = (
+        <div className="survey-question-container">
+          <div key="onlineSchoolUpdate">
+                  <TextArea
+                    compClass="title"
+                    compName="Online_School_Update__c"
+                    label="Online School Update"
+                    value={ this.state.synopsisReport && this.state.synopsisReport.Online_School_Update__c
+                      ? this.state.synopsisReport.Online_School_Update__c
+                      : '' }
+                    placeholder="Provide an update on how online school is going for your mentee."
+                    onChange={ this.handleTextAreaChange }
+                    rows={ 2 }
+                    cols={ 80 }
+                  />
+          </div>
+        </div>
+    );
+
     const mentorSupportRequestJSX = (
       <div className="container">
         <div className="row ms-select">
@@ -611,12 +566,10 @@ class SynopsisReportSummerForm extends React.Component {
                 { srHeadingJSX }
                 { mentorMadeScheduledCheckinJSX }
                 { weeklyConnectionStatusJSX() }
-                {/* { questionOfTheWeekResponseJSX } */}
-                {/* { attendedLastSummerCampJSX } */}
-                {/* { nextSummerCampPlansJSX } */}
                 { familyConnectionJSX }
+                { whatsBeenHappeningJSX }
+                { onlineSchoolUpdateJSX }
                 { additionalCommentsForTeamJSX }
-                {/* <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} /> */}
                 <ImagePreviews />
                 <div className="modal-footer">
                 { mentorSupportRequestJSX }
@@ -667,110 +620,3 @@ SynopsisReportSummerForm.propTypes = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SynopsisReportSummerForm);
-
-// question 3
-// const questionOfTheWeekResponseJSX = (
-//   <div className="survey-question-container">
-//     <div className="mentor-met-container" key='questionOfTheWeek'>
-//     <h6 className="title">Question of The Week</h6>
-//       <label className={ this.state.questionOfTheWeekOK ? '' : 'required' } htmlFor="qow">Did the student respond to the Question of the Week?</label><br className="rwd-break" />
-//         <input
-//           type="radio"
-//           name="qow"
-//           value="1"
-//           className="inline"
-//           checked={this.state.questionOfTheWeek === 1 ? 'checked' : ''}
-//           required="true"
-//           onChange={this.handleQuestionOfTheWeekChange}/> Yes
-//         <input
-//           type="radio"
-//           name="qow"
-//           value="0"
-//           className="inline"
-//           checked={this.state.questionOfTheWeek === 0 ? 'checked' : ''}
-//           requried="true"
-//           onChange={this.handleQuestionOfTheWeekChange}/> No
-//     </div>
-//   </div>
-// );
-
-// question 4
-// const attendedLastSummerCampJSX = (
-//   <div className="survey-question-container">
-//     <div className="mentor-met-container" key='attendedLastCamp'>
-//     <label className="title">Summer Camp</label><br />
-//     <label className={this.state.lastSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Did your student attend their last summer camp?</label><br className="rwd-break" />
-//       <input
-//         type="radio"
-//         name="lastCamp"
-//         value="1"
-//         className="inline"
-//         checked={this.state.lastSummerCamp === 1 ? 'checked' : ''}
-//         required="true"
-//         onChange={this.handleLastSummerCampChange}/> Yes
-//       <input
-//         type="radio"
-//         name="lastCamp"
-//         value="0"
-//         className="inline"
-//         checked={this.state.lastSummerCamp === 0 ? 'checked' : ''}
-//         requried="true"
-//         onChange={this.handleLastSummerCampChange}/> No
-//   </div>
-//   { this.state.lastSummerCamp !== -1 
-//     ? <TextArea
-//         compClass={this.state.lastCampNotesOK ? 'title' : 'title required'}
-//         compName="Summer_attended_last_camp_notes__c"
-//         label={this.state.lastSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why didn’t they attend? (required)'}
-//         placeholder={''}
-//         value={ this.state.synopsisReport && this.state.synopsisReport.Summer_attended_last_camp_notes__c
-//           ? this.state.synopsisReport.Summer_attended_last_camp_notes__c
-//           : '' }
-//         // required={ true }
-//         onChange={ this.handleTextAreaChange }
-//         rows={ 2 }
-//         cols={ 80 }
-//       />
-//     : null }
-//   </div>
-// );
-
-// question 5
-// const nextSummerCampPlansJSX = (
-//   <div className="survey-question-container">
-//     <div className="mentor-met-container" key='attendNextCamp'>
-//     <label className={this.state.nextSummerCampOK ? '' : 'required'} htmlFor="made-meeting">Is your student planning to attend their next summer camp?</label><br className="rwd-break" />
-//       <input
-//         type="radio"
-//         name="nextCamp"
-//         value="1"
-//         className="inline"
-//         checked={this.state.nextSummerCamp === 1 ? 'checked' : ''}
-//         required="true"
-//         onChange={this.handleNextSummerCampChange}/> Yes
-//       <input
-//         type="radio"
-//         name="nextCamp"
-//         value="0"
-//         className="inline"
-//         checked={this.state.nextSummerCamp === 0 ? 'checked' : ''}
-//         requried="true"
-//         onChange={this.handleNextSummerCampChange}/> No
-//   </div>
-//   { this.state.nextSummerCamp !== -1
-//     ? <TextArea
-//       compClass={this.state.nextCampNotesOK ? 'title' : 'title required'}
-//       compName="Summer_next_camp_notes__c"
-//       label={this.state.nextSummerCamp === 1 ? 'Provide more detail (optional)' : 'Why won\'t they attend? (required)'}
-//       placeholder={''}
-//       value={ this.state.synopsisReport && this.state.synopsisReport.Summer_next_camp_notes__c
-//         ? this.state.synopsisReport.Summer_next_camp_notes__c
-//         : '' }
-//       required={ true }
-//       onChange={ this.handleTextAreaChange }
-//       rows={ 2 }
-//       cols={ 80 }
-//     />
-//     : null }
-//   </div>
-// );
