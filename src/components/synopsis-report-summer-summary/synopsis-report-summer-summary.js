@@ -80,17 +80,18 @@ class SynopsisReportSummerSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
+        <br />
         <p><strong>{ synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
-        { synopsisReport.Summer_conn_met__c ? 'Mentor met with student at the agreed upon day and time. ' : null }
-        { synopsisReport.Summer_conn_called__c ? 'Student called at the agreed upon day and time. ' : null }
-        { synopsisReport.Summer_conn_late_call__c ? 'Mentor called student 30 minutes after the agreed upon time as student did not call mentor. ' : null }
+        { synopsisReport.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : null }
+        { synopsisReport.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : null }
+        { synopsisReport.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : null }
         { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : null }
-        { synopsisReport.Summer_conn_no_answer__c ? 'Mentor called student 30 minutes after the agreed upon time as student did not call me and student didn’t answer or call me back. ' : null }
-        { synopsisReport.Summer_conn_no_show__c ? 'Student did not show up on the day and time we agreed upon. ' : null }
+        { synopsisReport.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : null }
+        { synopsisReport.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : null }
         {/* { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : null } */}
         { synopsisReport.Summer_conn_missed_other__c ? <React.Fragment><br /><p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p></React.Fragment> : null }
         <br /><br />
-        <p><strong>Question of The Week</strong></p><p>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Student answered Question of The Week.' : 'Student did not answer Question of The Week.' }</p>
+        {/* <p><strong>Question of The Week</strong></p><p>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Student answered Question of The Week.' : 'Student did not answer Question of The Week.' }</p>
         <br />
         <p><strong>Last Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attended_last_camp__c === 'Yes' ? 'attended' : 'did not attend' } the last summer camp.</p>
@@ -98,7 +99,9 @@ class SynopsisReportSummerSummary extends React.Component {
         <br />
         <p><strong>Plans for Next Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attend_next_camp__c === 'Yes' ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
-        { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null }
+        { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null } */}
+        { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p><strong>Additional Basecamp Team Comments</strong></p></React.Fragment> : null }
+        { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p>{ synopsisReport.Summer_additional_team_comments__c }</p></React.Fragment> : null }
       </React.Fragment>
     );
 

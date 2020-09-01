@@ -19,7 +19,7 @@ function SynopsisReportsList(props) {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Report Dates</th>
+              <th>Check in Date</th>
               <th>SR Status</th>
               <th>Point Sheet Status</th>
               <th></th>
@@ -35,7 +35,7 @@ function SynopsisReportsList(props) {
                       <td>{sr.synopsisReportStatus}</td>
                       <td>{sr.pointSheetStatus}</td>
                       <td><button className="btn-link-1" 
-                        onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'summer' ? props.onSummerClick : props.onClick} 
+                        onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'virtual' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
                         name="SynopsisReportsTable">EDIT</button></td>
                     </tr>;
