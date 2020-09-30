@@ -98,8 +98,10 @@ class SynopsisReportSummerForm extends React.Component {
     if (!sr) return -1;
     switch (sr[fieldName]) {
       case 'Yes':
+      case 'Met':
         return 1;
       case 'No':
+      case 'Did not meet':
         return 0;
       default:
         return -1;
