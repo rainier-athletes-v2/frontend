@@ -19,12 +19,14 @@ export const getMsgBoardUrl = studentEmail => (store) => { // eslint-disable-lin
   store.dispatch(clearError());
   store.dispatch(clearMsgBoardUrl());
 
+  console.log('fetching msg board url for', studentEmail);
   return superagent.get(`${API_URL}${routes.SYNOPSIS_SUMMARY_ROUTE}`)
     .set('Authorization', `Bearer ${salesforceToken}`)
     .set('Content-Type', 'application/json')
     .query({ studentEmail, basecampToken })
     .then((res) => {
       const { messageBoardUrl } = res.body;
+      console.log('received msg board url', messageBoardUrl);
       return store.dispatch(setMsgBoardUrl(messageBoardUrl));
     })
     .catch((err) => {
