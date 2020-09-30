@@ -81,14 +81,14 @@ class SynopsisReportSummerSummary extends React.Component {
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
         <br />
-        <p><strong>{ synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
+        <p><strong>{ synopsisReport.Weekly_Check_In_Status__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
         { synopsisReport.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : null }
         { synopsisReport.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : null }
         { synopsisReport.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : null }
         { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : null }
         { synopsisReport.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : null }
         { synopsisReport.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : null }
-        {/* { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : null } */}
+        { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : null }
         { synopsisReport.Summer_conn_missed_other__c ? <React.Fragment><br /><p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p></React.Fragment> : null }
         <br /><br />
         {/* <p><strong>Question of The Week</strong></p><p>{ synopsisReport.Summer_question_of_the_week_answered__c === 'Yes' ? 'Student answered Question of The Week.' : 'Student did not answer Question of The Week.' }</p>
@@ -100,7 +100,13 @@ class SynopsisReportSummerSummary extends React.Component {
         <p><strong>Plans for Next Summer Camp Attendance</strong></p>
         <p>Student { synopsisReport.Summer_attend_next_camp__c === 'Yes' ? 'plans' : 'does not plan' } to attend the next summer camp.</p>
         { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null } */}
-        { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p><strong>Additional Basecamp Team Comments</strong></p></React.Fragment> : null }
+        { synopsisReport.Whats_been_happening__c ? <React.Fragment><p><strong>What&#39;s Been Happening?</strong></p></React.Fragment> : null }
+        { synopsisReport.Whats_been_happening__c ? <React.Fragment><p>{ synopsisReport.Whats_been_happening__c }</p></React.Fragment> : null }
+
+        { synopsisReport.Online_School_Update__c ? <React.Fragment><p><strong>Online School Update</strong></p></React.Fragment> : null }
+        { synopsisReport.Online_School_Update__c ? <React.Fragment><p>{ synopsisReport.Online_School_Update__c }</p></React.Fragment> : null }
+
+        { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p><strong>Additional Team Comments</strong></p></React.Fragment> : null }
         { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p>{ synopsisReport.Summer_additional_team_comments__c }</p></React.Fragment> : null }
       </React.Fragment>
     );

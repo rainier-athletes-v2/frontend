@@ -114,8 +114,8 @@ class SynopsisReportSummerForm extends React.Component {
       newState.metWithMentee = true;
       newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
-      newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
-      newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
+      // newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
+      // newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
       newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
       newState.familyConnectionOK = true;
       newState.familyConnectionStatusOK = true;
@@ -123,7 +123,7 @@ class SynopsisReportSummerForm extends React.Component {
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Weekly_Check_In_Status__c');
-      newState.questionOfTheWeek = this.initRadioButtons(newState.SynopsisReport, 'Summer_question_of_the_week_answered__c');
+      // newState.questionOfTheWeek = this.initRadioButtons(newState.SynopsisReport, 'Summer_question_of_the_week_answered__c');
       return newState;
     });
   }
@@ -151,11 +151,11 @@ class SynopsisReportSummerForm extends React.Component {
 
   validMentorInput = (sr) => {
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
-    const weeklyConnectionStatusOK = (sr.Weekly_Check_In_Status__c === 'Yes'
+    const weeklyConnectionStatusOK = (sr.Weekly_Check_In_Status__c === 'Met'
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
-      || (sr.Weekly_Check_In_Status__c === 'No'
+      || (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
-    const studentConnectionNotesOK = sr.Weekly_Check_In_Status__c === 'Yes'
+    const studentConnectionNotesOK = sr.Weekly_Check_In_Status__c === 'Met'
       || !sr.Summer_conn_missed_other__c
       || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
     const familyConnectionOK = !!sr.Summer_family_connection_made__c;
@@ -219,13 +219,13 @@ class SynopsisReportSummerForm extends React.Component {
     const newState = Object.assign({}, this.state);
     newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
     if (newState.mentorMadeScheduledCheckin === 1) {
-      newState.synopsisReport.Weekly_Check_In_Status__c = 'Yes';
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
       newState.synopsisReport.Summer_conn_no_answer__c = false;
       newState.synopsisReport.Summer_conn_no_show__c = false;
       newState.synopsisReport.Summer_conn_missed_other__c = false;
       newState.synopsisReport.Summer_weekly_connection_other_notes__c = '';
     } else {
-      newState.synopsisReport.Weekly_Check_In_Status__c = 'No';
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Did not meet';
       newState.synopsisReport.Summer_conn_met__c = false;
       newState.synopsisReport.Summer_conn_called__c = false;
       newState.synopsisReport.Summer_conn_late_call__c = false;
