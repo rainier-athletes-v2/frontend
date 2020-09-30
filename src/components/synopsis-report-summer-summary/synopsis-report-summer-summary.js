@@ -102,12 +102,15 @@ class SynopsisReportSummerSummary extends React.Component {
         { synopsisReport.Summer_next_camp_notes__c ? <p>{ synopsisReport.Summer_next_camp_notes__c }</p> : null } */}
         { synopsisReport.Whats_been_happening__c ? <React.Fragment><p><strong>What&#39;s Been Happening?</strong></p></React.Fragment> : null }
         { synopsisReport.Whats_been_happening__c ? <React.Fragment><p>{ synopsisReport.Whats_been_happening__c }</p></React.Fragment> : null }
+        { synopsisReport.Whats_been_happening__c ? <React.Fragment><br /></React.Fragment> : null }
 
         { synopsisReport.Online_School_Update__c ? <React.Fragment><p><strong>Online School Update</strong></p></React.Fragment> : null }
         { synopsisReport.Online_School_Update__c ? <React.Fragment><p>{ synopsisReport.Online_School_Update__c }</p></React.Fragment> : null }
+        { synopsisReport.Online_School_Update__c ? <React.Fragment><br /></React.Fragment> : null }
 
         { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p><strong>Additional Team Comments</strong></p></React.Fragment> : null }
         { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><p>{ synopsisReport.Summer_additional_team_comments__c }</p></React.Fragment> : null }
+        { synopsisReport.Summer_additional_team_comments__c ? <React.Fragment><br /></React.Fragment> : null }
       </React.Fragment>
     );
 
