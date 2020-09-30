@@ -53,17 +53,6 @@ class Mentor extends React.Component {
     this.props.fetchMyStudents();
   }
 
-  // componentDidUpdate = (prevProps) => {
-  //   if (this.props.synopsisReport !== prevProps.synopsisReport) {
-  //     // console.log('mentor.js updated, summer_SR:', this.props.synopsisReport.summer_SR);
-  //     // if (this.props.synopsisReport.summer_SR) {
-  //     //   return this.setState({ modal: MODAL_SUMMER });
-  //     // }
-  //     // return this.setState({ model: MODAL_REGULAR });
-  //   }
-  //   return undefined;
-  // }
-
   handleSidebarClick(e) {
     const i = e.currentTarget.dataset.index;
     if (this.props.myStudents[i].role === 'student') {
