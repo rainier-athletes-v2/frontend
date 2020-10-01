@@ -116,10 +116,7 @@ class SynopsisReportForm extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
-      console.log('*** SR component updated: error:', this.props.error, 'previous error:', prevProps.error, 'waitingOnSalesforce:', this.state.waitingOnSalesforce);
-      // debugger;
       if (this.state.waitingOnImages) {
-        console.log('images saved');
         this.props.clearError();
         const { synopsisReport, communications } = this.state;
         const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
@@ -128,7 +125,6 @@ class SynopsisReportForm extends React.Component {
           imagesSaved: true,
           waitingOnSalesforce: true,
         });
-        console.log('saveSynopsisReport after images saved');
         this.props.saveSynopsisReport({ ...mergedSynopsisReport });
       }
       if (this.state.waitingOnSalesforce
@@ -143,7 +139,6 @@ class SynopsisReportForm extends React.Component {
           waitingOnGoogleDrive: true,
           savedToGoogleDrive: false,
         });
-        console.log('full report saved to salesforce, saving PDF to google');
         this.props.createSynopsisReportPdf(this.props.content, { ...mergedSynopsisReport });
       }
       if (this.state.waitingOnSalesforce
@@ -156,7 +151,6 @@ class SynopsisReportForm extends React.Component {
           waitingOnGoogleDrive: false,
           savedToGoogleDrive: true,
         });
-        console.log('playing time only saved to salesforce.');
       }
     }
     if (this.props.synopsisReportLink !== prevProps.synopsisReportLink) {
@@ -165,7 +159,6 @@ class SynopsisReportForm extends React.Component {
         waitingOnGoogleDrive: false,
         synopsisLink: this.props.synopsisReportLink,
       });
-      console.log('PDF saved to google');
       this.props.clearError();
     }
     if (this.props.synopsisReport !== prevProps.synopsisReport) {
@@ -382,10 +375,8 @@ class SynopsisReportForm extends React.Component {
       && this.oneTeamNotesAreValid()) {
       if (this.props.imagePreviews) {   
         this.setState({ waitingOnImages: true });
-        console.log('saving images');
         this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
       } else {
-        console.log('no images, saving to salesforce');
         this.setState({ waitingOnSalesforce: true });
         const mergedSynopsisReport = this.mergeCommuncationsWithSR(synopsisReport, communications);
         this.props.saveSynopsisReport({ ...mergedSynopsisReport });
@@ -404,8 +395,6 @@ class SynopsisReportForm extends React.Component {
       this.setState({ 
         ...this.state, 
         waitingOnSalesforce: true,
-        // savedToSalesforce: false,
-        // waitingOnGoogleDrive: false,
         savedToGoogleDrive: true,
       });
       this.props.saveSynopsisReport({ ...synopsisReport });
@@ -502,24 +491,12 @@ class SynopsisReportForm extends React.Component {
     const errs = []; 
     const files = Array.from(event.target.files);
 
-    // if (files.length > 3) {
-    //   const msg = 'Only 3 images can be uploaded at a time';
-    //   return alert(msg); // this.toast(msg, 'custom', 2000, toastColor)  
-    // }
-
-    // const formData = new FormData();
     const types = ['image/png', 'image/jpeg', 'image/gif'];
 
     files.forEach((file) => {
       if (types.every(type => file.type !== type)) {
         errs.push(`'${file.type}' is not a supported format`);
       }
-
-      // if (file.size > 150000) {
-      //   errs.push(`'${file.name}' is too large, please pick a smaller file`)
-      // }
-
-      // formData.append(i, file, file.name);
     });
 
     if (errs.length) {
@@ -534,32 +511,6 @@ class SynopsisReportForm extends React.Component {
     
     this.props.uploadImages(files);
 
-
-    // this is where we create basecamp attachments...
-    /*
-    fetch(`${API_URL}/image-upload`, {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => {
-      if (!res.ok) {
-        throw res
-      }
-      return res.json()
-    })
-    .then(images => {
-      this.setState({
-        uploading: false, 
-        images
-      })
-    })
-    .catch(err => {
-      err.json().then(e => {
-        this.toast(e.message, 'custom', 2000, toastColor)
-        this.setState({ uploading: false })
-      })
-    })
-    */
     return 1;
   }
 

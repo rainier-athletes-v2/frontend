@@ -54,7 +54,6 @@ class SynopsisReportSummerForm extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
       if (this.state.waitingOnImages) {
-        console.log('images saved');
         this.props.clearError();
         const { synopsisReport } = this.state;
         this.setState({
@@ -62,7 +61,6 @@ class SynopsisReportSummerForm extends React.Component {
           imagesSaved: true,
           waitingOnSalesforce: true,
         });
-        console.log('saveSynopsisReport after images saved');
         this.props.saveSynopsisReport({ ...synopsisReport });
       }
       if (this.state.waitingOnSalesforce) {
@@ -205,10 +203,8 @@ class SynopsisReportSummerForm extends React.Component {
     if (validMentorInput) { 
       if (this.props.imagePreviews) {   
         this.setState({ waitingOnImages: true });
-        console.log('saving images');
         this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
-      } else {
-        console.log('no images. Saving to salesforce');   
+      } else {  
         this.setState({ waitingOnSalesforce: true });
         this.props.saveSynopsisReport({ ...synopsisReport }); // save SR to salesforce
       }
