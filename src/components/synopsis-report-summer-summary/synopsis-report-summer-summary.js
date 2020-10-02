@@ -161,7 +161,7 @@ class SynopsisReportSummerSummary extends React.Component {
     
         <p>{synopsisReport.Mentor__r.Name}<br />
         {synopsisReport.Mentor__r.Email}<br />
-        {this.state.schoolName}</p>
+        {this.state.schoolName ? this.state.schoolName : ''}</p>
 
         {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' } {/* eslint-disable-line */}
       </React.Fragment>
