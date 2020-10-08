@@ -7,7 +7,8 @@ import './_synopsis-report-html.scss';
 export default function SynopsisReportHtml(props) {
   const { student, synopsisReport } = props;
   const pointTrackers = synopsisReport.PointTrackers__r.records;
-  const studentsSchoolName = pointTrackers[0] && pointTrackers[0].Class__r.School__r.Name;
+  const schoolName = pointTrackers[0] && pointTrackers[0].Class__r.School__r.Name;
+  const studentsSchoolName = schoolName || '';
   const gradeLevel = synopsisReport.Student__r.Student_Grade__c;
   const isMiddleSchool = gradeLevel > 5 && gradeLevel < 9;
   const playingTimeOverride = synopsisReport.Mentor_Granted_Playing_Time__c !== ''
