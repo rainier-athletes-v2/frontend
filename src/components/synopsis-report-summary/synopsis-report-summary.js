@@ -101,14 +101,10 @@ class SynopsisReportSummary extends React.Component {
     
     <p>${sr.Mentor__r.Name}<br>
     ${sr.Mentor__r.Email}<br>
-    ${sr.PointTrackers__r 
-      && sr.PointTrackers__r.records
-      && sr.PointTrackers__r.records[0].Class__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null}<br><br>
+    ${this.state.schoolName ? this.state.schoolName : ''}<br><br>
   
-      ${this.props.images && this.props.images.length > 0 
-        ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
+    ${this.props.images && this.props.images.length > 0 
+          ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
     );
   };
 
