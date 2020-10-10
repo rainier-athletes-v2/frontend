@@ -78,7 +78,7 @@ class SynopsisReportSummerSummary extends React.Component {
     
     <p>${sr.Mentor__r.Name}<br>
     ${sr.Mentor__r.Email}<br>
-    ${this.state.schoolName ? this.state.schoolName : null}<br><br>
+    ${this.state.schoolName ? this.state.schoolName : ''}<br><br>
   
     ${this.props.images && this.props.images.length > 0 
         ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
@@ -161,7 +161,7 @@ class SynopsisReportSummerSummary extends React.Component {
     
         <p>{synopsisReport.Mentor__r.Name}<br />
         {synopsisReport.Mentor__r.Email}<br />
-        {this.state.schoolName ? this.state.schoolName : null}</p>
+        {this.state.schoolName ? this.state.schoolName : ''}</p>
 
         {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' } {/* eslint-disable-line */}
       </React.Fragment>
