@@ -62,8 +62,8 @@ class SynopsisReportSummerSummary extends React.Component {
     ${sr.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : ''}
     ${sr.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : ''}
     ${sr.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : ''}
-    ${sr.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : '</p><br>'}
-    ${sr.Summer_conn_missed_other__c ? `<p>${sr.Summer_weekly_connection_other_notes__c}</p><br>` : ''}
+    ${sr.Summer_conn_missed_other__c ? `${sr.Summer_weekly_connection_other_notes__c}` : ''}
+    </p><br />
 
     ${sr.Whats_been_happening__c ? '<strong>What&#39;s Been Happening?</strong>' : ''}
     ${sr.Whats_been_happening__c ? `<p>${sr.Whats_been_happening__c}</p><br>` : ''}
@@ -127,8 +127,7 @@ class SynopsisReportSummerSummary extends React.Component {
         { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : '' }
         { synopsisReport.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : '' }
         { synopsisReport.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : '' }
-        { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : '' }
-        { synopsisReport.Summer_conn_missed_other__c ? <React.Fragment><br /><p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p></React.Fragment> : '' }
+        { synopsisReport.Summer_conn_missed_other__c ? synopsisReport.Summer_weekly_connection_other_notes__c : '' }
         <br /><br />
       
         { synopsisReport.Whats_been_happening__c ? <React.Fragment><p><strong>What&#39;s Been Happening?</strong></p></React.Fragment> : null }
