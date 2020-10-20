@@ -61,9 +61,9 @@ class SynopsisReportSummerSummary extends React.Component {
     ${sr.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : ''}
     ${sr.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : ''}
     ${sr.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : ''}
-    ${sr.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : ''}</p><br>
-    ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
-    ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
+    ${sr.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : ''}
+    ${sr.Summer_conn_missed_other__c ? `${sr.Summer_weekly_connection_other_notes__c}` : ''}
+    </p><br />
 
     ${sr.Whats_been_happening__c ? '<strong>What&#39;s Been Happening?</strong>' : ''}
     ${sr.Whats_been_happening__c ? `<p>${sr.Whats_been_happening__c}</p><br>` : ''}
@@ -85,20 +85,6 @@ class SynopsisReportSummerSummary extends React.Component {
     );
   };
 
-  // postSummary = () => {
-  //   // this.props.clearBasecampStatus();
-  //   // this.props.clearSynopsisReport();
-  //   // this.setState({ ...this.state, waitingOnBasecamp: true });
-
-  //   const srSummary = {
-  //     subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
-  //     content: document.getElementById('body').innerHTML,
-  //     basecampToken: this.props.basecampToken,
-  //     messageBoardUrl: this.props.messageBoardUrl,
-  //   };
-
-  //   return this.props.postSummaryToBasecamp(srSummary);
-  // }
   postSummary = () => {
     this.props.clearError();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
@@ -135,14 +121,13 @@ class SynopsisReportSummerSummary extends React.Component {
         <h4>{synopsisReport.Week__c}</h4>
         <br />
         <p><strong>{ synopsisReport.Weekly_Check_In_Status__c === 'Met' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
-        { synopsisReport.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : null }
-        { synopsisReport.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : null }
-        { synopsisReport.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : null }
-        { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : null }
-        { synopsisReport.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : null }
-        { synopsisReport.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : null }
-        { synopsisReport.Summer_conn_missed_other__c ? 'We did not connect for reasons explained below: ' : null }
-        { synopsisReport.Summer_conn_missed_other__c ? <React.Fragment><br /><p>{ synopsisReport.Summer_weekly_connection_other_notes__c }</p></React.Fragment> : null }
+        { synopsisReport.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : '' }
+        { synopsisReport.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : '' }
+        { synopsisReport.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : '' }
+        { synopsisReport.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : '' }
+        { synopsisReport.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : '' }
+        { synopsisReport.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : '' }
+        { synopsisReport.Summer_conn_missed_other__c ? synopsisReport.Summer_weekly_connection_other_notes__c : '' }
         <br /><br />
       
         { synopsisReport.Whats_been_happening__c ? <React.Fragment><p><strong>What&#39;s Been Happening?</strong></p></React.Fragment> : null }
