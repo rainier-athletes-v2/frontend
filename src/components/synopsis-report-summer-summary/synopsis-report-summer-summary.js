@@ -85,20 +85,6 @@ class SynopsisReportSummerSummary extends React.Component {
     );
   };
 
-  // postSummary = () => {
-  //   // this.props.clearBasecampStatus();
-  //   // this.props.clearSynopsisReport();
-  //   // this.setState({ ...this.state, waitingOnBasecamp: true });
-
-  //   const srSummary = {
-  //     subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
-  //     content: document.getElementById('body').innerHTML,
-  //     basecampToken: this.props.basecampToken,
-  //     messageBoardUrl: this.props.messageBoardUrl,
-  //   };
-
-  //   return this.props.postSummaryToBasecamp(srSummary);
-  // }
   postSummary = () => {
     this.props.clearError();
     this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
