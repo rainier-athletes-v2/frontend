@@ -13,13 +13,13 @@ function SynopsisReportsList(props) {
 
   return (
     <React.Fragment>
-      <h3 className="heading">Most Recent Synopsis Reports</h3>
+      <h3 className="heading">Most Recent Synopsis { props.srData.length > 1 ? 'Reports' : 'Report' }</h3>
       { props.srData.length
         ? <table className="reports-list">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Report Dates</th>
+              <th>Check in Date</th>
               <th>SR Status</th>
               <th>Point Sheet Status</th>
               <th></th>
@@ -35,7 +35,7 @@ function SynopsisReportsList(props) {
                       <td>{sr.synopsisReportStatus}</td>
                       <td>{sr.pointSheetStatus}</td>
                       <td><button className="btn-link-1" 
-                        onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'summer' ? props.onSummerClick : props.onClick} 
+                        onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'virtual' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
                         name="SynopsisReportsTable">EDIT</button></td>
                     </tr>;
