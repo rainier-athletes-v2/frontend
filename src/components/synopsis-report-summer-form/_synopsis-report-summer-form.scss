@@ -293,17 +293,8 @@ textarea {
   }
 }
 
-// .required {
-//   color: red;
-
-//   // @media only screen and (max-width: 768px) {
-//   //   color: white;
-//   // }
-// }
-
 .modal-footer {
   flex-direction: column;
-  // justify-content: left !important;
 }
 
 .ms-select {
@@ -313,12 +304,23 @@ textarea {
   span {
     padding-right: 5px;
     font-size: 1.2em;
-    text-align: right;
   }
 }
 
 .request-prompt-container {
   padding-bottom: 0px;
+}
+
+.request-dropdown-container {
+  padding-bottom: 2em;
+}
+
+.request-select {
+  display: block;
+}
+
+h5 {
+  padding-top: 0 !important;
 }
 
 // .request-dropdown-container {
