@@ -296,57 +296,13 @@ table.comm-tp {
       padding-right: 7px;
     }
 
-    // tr:nth-child(even) td:nth-of-type(1) {
-      // display: none;
-      // position: absolute;
-      // left: 6px;
-      // width: 100px;
-      // padding-right: 40px;
-      // white-space: nowrap;
-      // margin-left: -100px;
-      // width: 100px !important;
-      // margin: 0px !important;
-      // padding: 0px !important;
-      // height: 58px !important;
-    // }
-
-    // tr:nth-child(even) td:nth-of-type(2) {
-      // height: 58px;
-      // padding-left: 120px;
-      // padding-right: 2px;
-      // padding-bottom: 2px;
-      // background-color: white;
-      // width: 300px;
-      // width: 100% !important;
-    // }
-
-    // tr:nth-child(even) td:nth-of-type(2) {
-      // width: 80%;
-    // }
-    
-    // .comm-notes-textarea textarea {
-    //   z-index: 10;
-    // }
-
-    // tr:nth-child(even) td:nth-child(1) {
-    //   position: absolute;
-    //   top: -9999px;
-    //   left: -9999px;
-    // }
-
     tr:nth-child(odd) td:nth-of-type(1):before { content: "RA Core Pillar: "; }
     tr:nth-child(odd) td:nth-of-type(2):before { content: "Face-to-Face"; }
     tr:nth-child(odd) td:nth-of-type(3):before { content: "Digital"; }
     tr:nth-child(odd) td:nth-of-type(4):before { content: "Phone"; }
     tr:nth-child(odd) td:nth-of-type(5):before { content: "Other"; }
 
-    // tr:nth-child(even) td:nth-child(2):before { content: "NOTES:" }
-
   }
-  // .required {
-
-  // }
-
 }
 
 .fa-spin {
@@ -355,13 +311,8 @@ table.comm-tp {
   }
 }
 
-// .required {
-//   color: red;    
-// }
-
 .modal-footer {
   flex-direction: column;
-  // justify-content: left !important;
 }
 
 .ms-select {
@@ -371,17 +322,28 @@ table.comm-tp {
   span {
     padding-right: 5px;
     font-size: 1.2em;
-    text-align: right;
+
   }
 }
 
 .request-prompt-container {
   padding-bottom: 0px;
 }
+.request-prompt-container {
+  padding-bottom: 0px;
+}
 
-// .request-dropdown-container {
-//   outline: 1px solid blue;
-// }
+.request-dropdown-container {
+  padding-bottom: 2em;
+}
+
+.request-select {
+  display: block;
+}
+
+h5 {
+  padding-top: 0 !important;
+}
 
 .support-request-notes {
   .title {
@@ -389,7 +351,3 @@ table.comm-tp {
     margin-top: 0px !important;
   }
 }
-
-// .gpa-display-container {
-  
-// }
