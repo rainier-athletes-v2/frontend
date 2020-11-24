@@ -850,14 +850,39 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
-    const mentorSupportRequestJSX = (
+    const identityStatementStatusJSX = (
       <div className="container">
-        <div className="row ms-select">
+        <div className="column ms-select">
           <div className="request-prompt-container">
-            <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>Do you need additional support? </span>
+            <span >Please select where you currently are with the Identity Statement Project:</span>
           </div>
           <div className="request-dropdown-container">
             <select
+              name="Identity_Statement_Status__c"
+              onChange={ this.handleSimpleFieldChange }
+              value={ this.state.synopsisReport ? this.state.synopsisReport.Identity_Statement_Status__c : '' }>
+              <option value="Tier 0: Not Started">Tier 0: Not Started</option>
+              <option value="Tier 1: Values Tables">Tier 1: Values Tables</option>
+              <option value="Tier 2: Identity Statement Questions">Tier 2: Identity Statement Questions</option>
+              <option value="Tier 3: Values and Questions Complete">Tier 3: Values and Questions Complete</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    );
+
+
+    const mentorSupportRequestJSX = (
+      <div className="container">
+        <div className="column ms-select">
+          <div className="request-prompt-container">
+            <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>
+            Do you need additional support?
+            </span>
+          </div>
+          <div className="request-dropdown-container">
+            <select
+              className="request-select"
               name="Mentor_Support_Request__c"
               onChange={ this.handleSimpleFieldChange }
               value={ this.state.synopsisReport ? this.state.synopsisReport.Mentor_Support_Request__c : '' }>
@@ -875,7 +900,7 @@ class SynopsisReportForm extends React.Component {
               compClass={ this.state.mentorSupportRequestNotesOK ? 'title' : 'title required' }
               compName="Mentor_Support_Request_Notes__c"
               label="Please explain:"
-              value={ (this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c) || '' }
+              value={ (this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c) || ''}
               onChange={ this.handleTextAreaChange }
               rows={ 2 }
               cols={ 80 } />
@@ -957,6 +982,8 @@ class SynopsisReportForm extends React.Component {
                 { communicationPillarsTableJSX }
                 { oneTeamJSX }
                 <div className="modal-footer">
+                  <h5>The following items are viewed by RA Staff only:</h5>
+                  { identityStatementStatusJSX }
                   { mentorSupportRequestJSX }
                   { formButtonOrMessage() }
                 </div>
