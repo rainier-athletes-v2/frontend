@@ -439,25 +439,6 @@ class SynopsisReportSummerForm extends React.Component {
       </div>
     );
 
-    const additionalCommentsForTeamJSX = (
-        <div className="survey-question-container">
-          <div key="additionalCommentsForTeam">
-                  <TextArea
-                    compClass="title"
-                    compName="Summer_additional_team_comments__c"
-                    label="Additional Comments for Basecamp Team"
-                    value={ this.state.synopsisReport && this.state.synopsisReport.Summer_additional_team_comments__c
-                      ? this.state.synopsisReport.Summer_additional_team_comments__c
-                      : '' }
-                    placeholder="Any points of importance, fun facts, or further details to share with your student's Basecamp Team?"
-                    onChange={ this.handleTextAreaChange }
-                    rows={ 2 }
-                    cols={ 80 }
-                  />
-          </div>
-        </div>
-    );
-
     const whatsBeenHappeningJSX = (
         <div className="survey-question-container">
           <div key="whatsBeenHappening">
@@ -469,25 +450,6 @@ class SynopsisReportSummerForm extends React.Component {
                       ? this.state.synopsisReport.Whats_been_happening__c
                       : '' }
                     placeholder="What's been happening this week?"
-                    onChange={ this.handleTextAreaChange }
-                    rows={ 2 }
-                    cols={ 80 }
-                  />
-          </div>
-        </div>
-    );
-
-    const onlineSchoolUpdateJSX = (
-        <div className="survey-question-container">
-          <div key="onlineSchoolUpdate">
-                  <TextArea
-                    compClass="title"
-                    compName="Online_School_Update__c"
-                    label="Online School Update"
-                    value={ this.state.synopsisReport && this.state.synopsisReport.Online_School_Update__c
-                      ? this.state.synopsisReport.Online_School_Update__c
-                      : '' }
-                    placeholder="Provide an update on how online school is going for your mentee."
                     onChange={ this.handleTextAreaChange }
                     rows={ 2 }
                     cols={ 80 }
@@ -590,8 +552,6 @@ class SynopsisReportSummerForm extends React.Component {
                 { weeklyConnectionStatusJSX() }
                 { familyConnectionJSX }
                 { whatsBeenHappeningJSX }
-                { onlineSchoolUpdateJSX }
-                { additionalCommentsForTeamJSX }
                 <ImagePreviews />
                 <div className="modal-footer">
                 <h5>The following items are viewed by RA Staff only:</h5>
