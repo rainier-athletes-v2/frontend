@@ -686,44 +686,64 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
-    const anyOneTeamChecked = this.state.synopsisReport
-                    && oneTeam.some(team => this.state.synopsisReport[names[team].prop]);
-
     const oneTeamJSX = (
+      <React.Fragment>
+      <div className="title">
+          <h5>ONE TEAM CONNECTIONS</h5>
+      </div>
+      <div>
+          <p>(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
+      </div>
       <fieldset>
         <div className="mentor-met-container">
-        <label className="title">In addition to your regular weekly check in, please indicate which, if any, additional ONE Team meet-ups you had with Rainier Athletes this week</label>
-        {/* <TooltipItem id="tooltip-oneTeamMeetups" text={ttText.oneTeamMeetups}/> */}
-        {oneTeam.map((keyName, i) => (
-          <div className="survey-question-container" key={ i }>
-            <input
-              type="checkbox"
-              name={ names[keyName].prop} // oneTeamQuestion }
-              className="text-align"
-              onChange= { this.handleCheckboxChange }
-              checked={ (this.state.synopsisReport && this.state.synopsisReport[names[keyName].prop]) || false }/>
-            <label htmlFor={ names[keyName].prop }>{ names[keyName].text }</label>
+        <DropDown
+          compClass={this.state.metWithMentee ? 'title' : 'title required'}
+          compName="Family_Connection__c"
+          label="Family Connection"
+          value={this.state.synopsisReport && this.state.synopsisReport.Family_Connection__c
+            ? this.state.synopsisReport.Family_Connection__c
+            : ''}
+          onChange={ this.handleSimpleFieldChange}
+          options={
+            [
+              { value: '', label: 'Did you connect with your RA student’s family this week?' },
+              { value: 'Yes', label: 'Yes (met in person or over video call and/or communicated via Basecamp, email or phone)' },
+              { value: 'No', label: 'No' },
+            ]
+          }/>
+        <DropDown
+          compClass={this.state.metWithMentee ? 'title' : 'title required'}
+          compName="Teacher_Connection__c"
+          label="Teacher Connection"
+          value={this.state.synopsisReport && this.state.synopsisReport.Teacher_Connection__c
+            ? this.state.synopsisReport.Teacher_Connection__c
+            : ''}
+          onChange={ this.handleSimpleFieldChange}
+          options={
+            [
+              { value: '', label: 'Did you connect with 1 or more of your RA student’s teachers this week?' },
+              { value: 'Yes', label: 'Yes (met in person or over video call and/or communicated via Basecamp, email or phone)' },
+              { value: 'No', label: 'No' },
+            ]
+          }/>
+        <DropDown
+          compClass={this.state.metWithMentee ? 'title' : 'title required'}
+          compName="Coach_Connection__c"
+          label="Coach Connection"
+          value={this.state.synopsisReport && this.state.synopsisReport.Coach_Connection__c
+            ? this.state.synopsisReport.Coach_Connection__c
+            : ''}
+          onChange={ this.handleSimpleFieldChange}
+          options={
+            [
+              { value: '', label: 'Did you connect with your RA student’s coach this week?' },
+              { value: 'Yes', label: 'Yes (attended a game or practice and/or communicated via email or phone)' },
+              { value: 'No', label: 'No' },
+            ]
+          }/>
           </div>
-        ))
-        }
-        { anyOneTeamChecked
-          ? <div className="survey-question-container">
-            <TextArea
-              compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
-              compName="One_Team_Notes__c"
-              label="Additional ONE Team Meet-Ups Notes:"
-              value={ this.state.synopsisReport && this.state.synopsisReport.One_Team_Notes__c
-                ? this.state.synopsisReport.One_Team_Notes__c
-                : '' }
-              onChange={ this.handleTextAreaChange }
-              // placeholder={ this.state.synopsisReport && this.state.synopsisReport.Other_Meetup__c ? 'Please explain selection of Other' : ''}
-              placeholder="Please provide any details about how your additional meeting(s) went."
-              required={ this.state.synopsisReport && !!this.state.synopsisReport.Other_Meetup__c }
-            />
-          </div>
-          : '' }
-        </div>
-    </fieldset>
+        </fieldset>
+      </React.Fragment>
     );
 
     const pointSheetStatusJSX = (
@@ -1082,6 +1102,7 @@ class SynopsisReportForm extends React.Component {
               <form className="data-entry container">
                 { srHeadingJSX }
                 { mentorMadeScheduledCheckinJSX }
+                { oneTeamJSX }
                 { pointSheetStatusJSX }
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
@@ -1098,7 +1119,7 @@ class SynopsisReportForm extends React.Component {
                 {/* <ImageButton onChange={this.handleImageUpload} labelText={this.state.inputImageLabelText} /> */}
                 <ImagePreviews />
                 { communicationPillarsTableJSX }
-                { oneTeamJSX }
+                
                 <div className="modal-footer">
                   <h5>The following items are viewed by RA Staff only:</h5>
                   { identityStatementStatusJSX }
