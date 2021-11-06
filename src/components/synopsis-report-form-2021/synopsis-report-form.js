@@ -746,6 +746,89 @@ class SynopsisReportForm extends React.Component {
       </React.Fragment>
     );
 
+    const identityStatementJSX = (
+      <React.Fragment>
+        <div className="title">
+            <h5>IDENTITY STATEMENT</h5>
+        </div>
+        <div className="survey-question-container">
+          <DropDown
+            compClass={this.state.metWithMentee ? 'title' : 'title required'}
+            compName="Identity_Statement_Weekly_Status__c"
+            label="Identity Statement Discussion Status"
+            value={this.state.synopsisReport && this.state.synopsisReport.Identity_Statement_Weekly_Status__c
+              ? this.state.synopsisReport.Identity_Statement_Weekly_Status__c
+              : ''}
+            onChange={ this.handleSimpleFieldChange}
+            options={
+              [
+                { value: '', label: 'Did you discuss Identity Statement questions this week?' },
+                { value: 'Yes', label: 'Yes' },
+                { value: 'No', label: 'No' },
+              ]
+            }/>
+        </div>
+        { this.state.synopsisReport && !!this.state.synopsisReport.Identity_Statement_Weekly_Status__c 
+            && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' 
+          ? <div className="survey-question-container">
+            <DropDown
+              compClass={this.state.metWithMentee ? 'title' : 'title required'}
+              compName="Identity_Statement_Prompts__c"
+              label="Identity Statement Discussion Status"
+              value={this.state.synopsisReport && this.state.synopsisReport.Identity_Statement_Prompts__c
+                ? this.state.synopsisReport.Identity_Statement_Prompts__c
+                : ''}
+              onChange={ this.handleSimpleFieldChange}
+              options={
+                [
+                  { value: '', label: 'What number did you discuss?' },
+                  { value: '1: Intro', label: '1: Intro' },
+                  { value: '2: Spaces/Places', label: '2: Spaces/Places' },
+                  { value: '3: Of My Friends', label: '3: Of My Friends' },
+                  { value: '4: Ancestors/Culture', label: '4: Ancestors/Culture' },
+                  { value: '5: Unique/ Voice', label: '5: Unique/ Voice' },
+                  { value: '6: Strength/Insecurities', label: '6: Strength/Insecurities' },
+                  { value: '7: Triggers and Anger', label: '7: Triggers and Anger' },
+                  { value: '8: De-escalate/ Appreciate', label: '8: De-escalate/ Appreciate' },
+                  { value: '9: Happy/ Peace', label: '9: Happy/ Peace' },
+                  { value: '10: Love/ Respect', label: '10: Love/ Respect' },
+                  { value: '11: Age/Gender/Sexual Preference', label: '11: Age/Gender/Sexual Preference' },
+                  { value: '12: Race/ Religion', label: '12: Race/ Religion' },
+                  { value: '13: Learning Ability/Physical Ability', label: '13: Learning Ability/Physical Ability' },
+                  { value: '14: Racial Identity', label: '14: Racial Identity' },
+                  { value: '15: Feelings about Race', label: '15: Feelings about Race' },
+                ]
+              }/>
+            </div>
+          : '' }
+        { this.state.synopsisReport && !!this.state.synopsisReport.Identity_Statement_Weekly_Status__c 
+            && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'No' 
+          ? <div className="survey-question-container">
+            <TextArea
+                compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
+                compName="Identity_Statement_Why_Not__c"
+                label="Why not? (optional)"
+                value={ this.state.synopsisReport && this.state.synopsisReport.Identity_Statement_Why_Not__c
+                  ? this.state.synopsisReport.Identity_Statement_Why_Not__c
+                  : '' }
+                onChange={ this.handleTextAreaChange }
+              />
+            </div>
+          : '' }
+        <div className="survey-question-container">
+            <TextArea
+                compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
+                compName="Identity_Statement_Why_Not__c"
+                label="Identity Statement Highlights (optional)"
+                value={ this.state.synopsisReport && this.state.synopsisReport.Identity_Statement_Highlights__c
+                  ? this.state.synopsisReport.Identity_Statement_Highlights__c
+                  : '' }
+                onChange={ this.handleTextAreaChange }
+              />
+        </div>
+      </React.Fragment>
+    );
+
     const pointSheetStatusJSX = (
       <fieldset>
         <div className="mentor-met-container">
@@ -988,26 +1071,7 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
-    const identityStatementStatusJSX = (
-      <div className="container">
-        <div className="column ms-select">
-          <div className="request-prompt-container">
-            <span >Please select where you currently are with the Identity Statement Project:</span>
-          </div>
-          <div className="request-dropdown-container">
-            <select
-              name="Identity_Statement_Status__c"
-              onChange={ this.handleSimpleFieldChange }
-              value={ this.state.synopsisReport ? this.state.synopsisReport.Identity_Statement_Status__c : '' }>
-              <option value="Tier 0: Not Started">Tier 0: Not Started</option>
-              <option value="Tier 1: Values Tables">Tier 1: Values Tables</option>
-              <option value="Tier 2: Identity Statement Questions">Tier 2: Identity Statement Questions</option>
-              <option value="Tier 3: Values and Questions Complete">Tier 3: Values and Questions Complete</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    );
+    
 
 
     const mentorSupportRequestJSX = (
@@ -1103,6 +1167,7 @@ class SynopsisReportForm extends React.Component {
                 { srHeadingJSX }
                 { mentorMadeScheduledCheckinJSX }
                 { oneTeamJSX }
+                { identityStatementJSX }
                 { pointSheetStatusJSX }
                 { playingTimeJSX }
                 { mentorGrantedPlayingTimeCommentsJSX }
@@ -1122,7 +1187,7 @@ class SynopsisReportForm extends React.Component {
                 
                 <div className="modal-footer">
                   <h5>The following items are viewed by RA Staff only:</h5>
-                  { identityStatementStatusJSX }
+                  
                   { mentorSupportRequestJSX }
                   { formButtonOrMessage() }
                 </div>
