@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
-import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
+import SynopsisReportForm from '../synopsis-report-form-2021/synopsis-report-form';
 import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
