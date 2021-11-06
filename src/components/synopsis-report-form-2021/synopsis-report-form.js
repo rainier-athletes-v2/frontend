@@ -590,7 +590,7 @@ class SynopsisReportForm extends React.Component {
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
-                      { value: '', label: '-- Select an action --'},
+                      { value: '', label: '-- Select an action --' },
                       { value: 'I communicated with the student and/or family but we weren’t able to have a check in', label: 'I communicated with the student and/or family but we weren’t able to have a check in' },
                       { value: 'I did not communicate with the student and/or family because I reached out and did not hear back', label: 'I did not communicate with the student and/or family because I reached out and did not hear back' },
                     ]
@@ -598,6 +598,90 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
+          { this.state.synopsisReport && !!this.state.synopsisReport.Did_not_meet_communication__c 
+            && this.state.synopsisReport.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in' 
+            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+            ? <div className="survey-question-container">
+                <DropDown
+                  compClass={this.state.missedCheckinReasonOK ? 'title' : 'title required'}
+                  compName="Communication_Method_No_Check_In__c"
+                  label="How did you communicate this week?"
+                  value={ this.state.synopsisReport && this.state.synopsisReport.Communication_Method_No_Check_In__c
+                    ? this.state.synopsisReport.Communication_Method_No_Check_In__c
+                    : '' }
+                  onChange={ this.handleSimpleFieldChange }
+                  options={
+                    [
+                      { value: '', label: '-- Select an action --' },
+                      { value: 'I reached out to family (Basecamp, Phone/Text)', label: 'I reached out to family (Basecamp, Phone/Text)' },
+                      { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
+                      { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
+                      { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
+                      { value: 'I did not connect with student and/or family for other reasons explained below', label: 'I did not connect with student and/or family for other reasons explained below' },
+                    ]
+                  }
+                />
+              </div>
+            : '' }
+          { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Check_In__c 
+            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below' 
+            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+            ? <div className="survey-question-container"> 
+            <TextArea
+              compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
+              compName="How_can_we_support_required__c"
+              label="Please provide any additional context to RA staff in order to help inform how we can best support"
+              value={ this.state.synopsisReport && this.state.synopsisReport.How_can_we_support_required__c
+                ? this.state.synopsisReport.How_can_we_support_required__c
+                : '' }
+              onChange={ this.handleTextAreaChange }
+              required={ this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Check_In__c 
+                && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below' }
+            />
+            </div>
+            : '' }
+          { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Check_In__c 
+            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
+            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+            ? <div className="survey-question-container">
+                <DropDown
+                  compClass={this.state.missedCheckinReasonOK ? 'title' : 'title required'}
+                  compName="Communication_Method_No_Response__c"
+                  label="What action did you take when you got no response?"
+                  value={ this.state.synopsisReport && this.state.synopsisReport.Communication_Method_No_Response__c
+                    ? this.state.synopsisReport.Communication_Method_No_Response__c
+                    : '' }
+                  onChange={ this.handleSimpleFieldChange }
+                  options={
+                    [
+                      { value: '', label: '-- Select an action --' },
+                      { value: 'I reached out to family (Basecamp, Phone/Text)', label: 'I reached out to family (Basecamp, Phone/Text)' },
+                      { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
+                      { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
+                      { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
+                      { value: 'I did not connect with student and/or family for other reasons explained below', label: 'I did not connect with student and/or family for other reasons explained below' },
+                    ]
+                  }
+                />
+            </div>
+            : '' }
+            { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Response__c 
+            && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for other reasons explained below' 
+            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              ? <div className="survey-question-container"> 
+              <TextArea
+                compClass={ this.oneTeamNotesAreValid() ? 'title' : 'title required' }
+                compName="How_can_we_support__c"
+                label="Please provide any additional context to RA staff in order to help inform how we can best support"
+                value={ this.state.synopsisReport && this.state.synopsisReport.How_can_we_support__c
+                  ? this.state.synopsisReport.How_can_we_support__c
+                  : '' }
+                onChange={ this.handleTextAreaChange }
+                required={ this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Response__c 
+                  && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for other reasons explained below' }
+              />
+              </div>
+              : '' }
       </div>
       </fieldset>
     );
