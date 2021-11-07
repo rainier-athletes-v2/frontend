@@ -167,6 +167,7 @@ class SynopsisReportForm extends React.Component {
       this.setState({ 
         synopsisReport: { ...this.props.synopsisReport },
         communications: this.initCommunicationsState(this.props.synopsisReport),
+        studentGrade: this.props.synopsisReport.Student__r.Student_Grade__c,
       });
       this.props.clearError();
       this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Email);
@@ -816,64 +817,153 @@ class SynopsisReportForm extends React.Component {
       </React.Fragment>
     );
 
+    const { studentGrade } = this.state;
+
     const pointSheetStatusJSX = (
       <fieldset>
+        <div className="title">
+          <h5>POINT SHEET AND SCHOOL UPDATE</h5>
+        </div>
         <div className="mentor-met-container">
           <DropDown
             compClass={this.state.pointSheetStatusOK ? 'title' : 'title required'}
             compName="Point_Sheet_Status__c"
             label="Point Sheet Status:"
-            value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c
+            value={this.srSafe('Point_Sheet_Status__c')
               ? this.state.synopsisReport.Point_Sheet_Status__c
-              : ''}
+              : undefined}
             onChange={ this.handleSimpleFieldChange}
             options={
               [
-                { value: '', label: '--Select Point Sheet Status--' },
+                { value: undefined, label: 'Select Point Sheet Status' },
                 { value: 'Turned in', label: 'Turned in' },
-                { value: 'Not turned in', label: 'Not turned in' },
+                { value: 'Not turned in', label: 'Not turned in (Warning: This could affect eligibility)' },
               ]
             }/>
-          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && studentGrade > 5
             ? <DropDown
                 compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
-                compName="Point_Sheet_Status_Reason__c"
-                label="The RA student did not turn in a point sheet because:"
-                value={this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Reason__c
-                  ? this.state.synopsisReport.Point_Sheet_Status_Reason__c
-                  : ''}
+                compName="Point_Sheet_MS_Self_Reflection__c"
+                label="Identity Self Reflection"
+                value={this.srSafe('Point_Sheet_MS_Self_Reflection__c')
+                  ? this.state.synopsisReport.Point_Sheet_MS_Self_Reflection__c
+                  : undefined}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
-                    { value: '', label: '--Select Reason for no point sheet--' },
-                    { value: 'It was lost', label: 'It was lost' },
-                    { value: 'Student was absent from school', label: 'Student was absent from school' },
+                    { value: undefined, label: 'Select Point Sheet Completion' },
+                    { value: '1-3 periods (Warning this could affect eligibility)', label: '1-3 periods (Warning this could affect eligibility)' },
+                    { value: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
+                    { value: '7 periods (Full eligibility)', label: '7 periods (Full eligibility)' },
+                  ]
+                }/> 
+            : ''}
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && studentGrade <= 5
+            ? <DropDown
+                compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
+                compName="Point_Sheet_ES_Self_Reflection__c"
+                label="Identity Self Reflection"
+                value={this.srSafe('Point_Sheet_ES_Self_Reflection__c')
+                  ? this.state.synopsisReport.Point_Sheet_ES_Self_Reflection__c
+                  : undefined}
+                onChange={ this.handleSimpleFieldChange}
+                options={
+                  [
+                    { value: undefined, label: 'Select Point Sheet Completion' },
+                    { value: '1-2 days (Warning this could affect eligibility)', label: '1-2 days (Warning this could affect eligibility)' },
+                    { value: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)', label: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)' },
+                    { value: '5 days (Full eligibility)', label: '5 days (Full eligibility)' },
+                  ]
+                }/> 
+            : ''}
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && studentGrade > 5
+            ? <DropDown
+                compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
+                compName="Point_Sheet_Teacher_Convo_MS__c"
+                label="Teacher Conversations"
+                value={this.srSafe('Point_Sheet_Teacher_Convo_MS__c')
+                  ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_MS__c
+                  : undefined}
+                onChange={ this.handleSimpleFieldChange}
+                options={
+                  [
+                    { value: undefined, label: 'Select Point Sheet Completion' },
+                    { value: '1-3 periods (Warning this could affect eligibility)', label: '1-3 periods (Warning this could affect eligibility)' },
+                    { value: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)', label: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)' },
+                    { value: '7 periods (Full eligibility)', label: '7 periods (Full eligibility)' },
+                  ]
+                }/> 
+            : ''}
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && studentGrade <= 5
+            ? <DropDown
+                compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
+                compName="Point_Sheet_Teacher_Convo_ES__c"
+                label="Teacher Conversations"
+                value={this.srSafe('Point_Sheet_Teacher_Convo_ES__c')
+                  ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_ES__c
+                  : undefined}
+                onChange={ this.handleSimpleFieldChange}
+                options={
+                  [
+                    { value: undefined, label: 'Select Point Sheet Completion' },
+                    { value: '1-2 days (Warning this could affect eligibility)', label: '1-2 days (Warning this could affect eligibility)' },
+                    { value: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)', label: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)' },
+                    { value: '5 days (Full eligibility)', label: '5 days (Full eligibility)' },
+                  ]
+                }/> 
+            : ''}
+          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
+            ? <DropDown
+                compClass={this.state.pointSheetMissedReasonOK ? 'title' : 'title required'}
+                compName="No_Point_Sheet__c"
+                label="The RA student did not turn in a point sheet because: (required)"
+                value={this.srSafe('No_Point_Sheet__c')
+                  ? this.state.synopsisReport.No_Point_Sheet__c
+                  : undefined}
+                onChange={ this.handleSimpleFieldChange}
+                options={
+                  [
+                    { value: undefined, label: 'Select Reason' },
+                    { value: 'The point sheet was completely blank', label: 'The point sheet was completely blank' },
+                    { value: 'It was lost', label: 'It was lost (remember, point sheets are available to be printed on each student’s Basecamp teams Docs & Files)' },
+                    { value: 'The student was absent from check in', label: 'The student was absent from check in' },
                     { value: 'Other', label: 'Other' },
                   ]
                 }/> 
             : ''}
             { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c 
               && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
-              && !!this.state.synopsisReport.Point_Sheet_Status_Reason__c 
-              && this.state.synopsisReport.Point_Sheet_Status_Reason__c === 'Other'
+              && !!this.state.synopsisReport.No_Point_Sheet__c 
+              && this.state.synopsisReport.No_Point_Sheet__c === 'Other'
               ? <div className="survey-question-container">
                   <TextArea
                     compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
-                    compName="Point_Sheet_Status_Notes__c"
+                    compName="No_Point_Sheet_What_Happened__c"
                     label="What happened?"
-                    placeholder={this.state.synopsisReport && !pl.turnedIn(this.state.synopsisReport.Point_Sheet_Status__c) 
-                      ? 'Please explain...' 
-                      : ''}
-                    value={ this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status_Notes__c
-                      ? this.state.synopsisReport.Point_Sheet_Status_Notes__c
-                      : '' }
-                    required={this.state.synopsisReport && pl.other(this.state.synopsisReport.Point_Sheet_Status__c)}
+                    value={ this.srSafe('No_Point_Sheet_What_Happened__c')
+                      ? this.state.synopsisReport.No_Point_Sheet_What_Happened__c
+                      : undefined }
+                    required={this.state.synopsisReport && this.state.synopsisReport.No_Point_Sheet__c === 'Other'}
                     onChange={ this.handleTextAreaChange }
-                    rows={ 2 }
+                    rows={ 3 }
                     cols={ 80 }
                   />
                 </div>
               : '' }
+            <div className="survey-question-container">
+                  <TextArea
+                    compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
+                    compName="Point_Sheet_and_School_Update__c"
+                    label="Point Sheet and School Update (Required)"
+                    value={ this.srSafe('Point_Sheet_and_School_Update__c')
+                      ? this.state.synopsisReport.Point_Sheet_and_School_Update__c
+                      : undefined }
+                    required={ true }
+                    onChange={ this.handleTextAreaChange }
+                    rows={ 3 }
+                    cols={ 80 }
+                  />
+                </div>
         </div>
     </fieldset>
     );

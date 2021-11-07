@@ -10,7 +10,6 @@ const mapStateToProps = state => ({
 
 function SynopsisReportsList(props) {
   if (!props.srData) return null;
-  console.log('props.srData.length', props.srData.length);
   return (
     <React.Fragment>
       <h3 className="heading">Most Recent Synopsis { props.srData.length > 1 ? 'Reports' : 'Report' }</h3>
