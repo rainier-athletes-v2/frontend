@@ -78,6 +78,12 @@ span .title {
     }
 }
 
+label {
+  padding-left: 0.3em;
+  margin: auto;
+  margin-bottom: 0.75em;
+}
+
 label.title {
   margin: 0px;
   padding: 0px;
@@ -140,12 +146,6 @@ select {
   margin-right: 8px;
 
 }
-
-// .survey-questions label {
-//   display: inline-block;
-//   margin-bottom: 0;
-//   vertical-align: middle;
-// }
 
 .points-tracker {
 
