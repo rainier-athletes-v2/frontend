@@ -9,7 +9,7 @@ import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-re
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
-import * as srPdfActions from '../../actions/synopsis-report-pdf';
+// import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_mentor.scss';
 
@@ -23,7 +23,7 @@ const mapDispatchToProps = dispatch => ({
   fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
-  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
+  // clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 
@@ -119,7 +119,7 @@ class Mentor extends React.Component {
 
   handleEditSRClick = (e) => {
     e.preventDefault();
-    this.props.clearSynopsisReportLink();
+    // this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
   }
 
@@ -194,7 +194,7 @@ Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
-  clearSynopsisReportLink: PropTypes.func,
+  // clearSynopsisReportLink: PropTypes.func,
   clearSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,

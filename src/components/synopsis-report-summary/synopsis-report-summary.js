@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as pl from '../../lib/pick-list-tests';
+// import * as pl from '../../lib/pick-list-tests';
 import * as bcActions from '../../actions/basecamp';
 import * as srActions from '../../actions/synopsis-report';
 import * as errorActions from '../../actions/error';
@@ -44,14 +44,15 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    const sr = this.props.synopsisReport;
-    const schoolName = sr.PointTrackers__r 
-      && sr.PointTrackers__r.records
-      && sr.PointTrackers__r.records[0].Class__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null;
+    // const sr = this.props.synopsisReport;
+    // const schoolName = sr.PointTrackers__r 
+    //   && sr.PointTrackers__r.records
+    //   && sr.PointTrackers__r.records[0].Class__r
+    //   && sr.PointTrackers__r.records[0].Class__r.School__r
+    //   && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null;
+    const schoolName = 'Unknown';
     this.setState({ schoolName });
-    if (this.props.messageBoardUrl && this.props.synopsisReport && pl.completed(this.props.synopsisReport.Synopsis_Report_Status__c)) {
+    if (this.props.messageBoardUrl && this.props.synopsisReport && this.props.synopsisReport.Synopsis_Report_Status__c === 'Completed') {
       this.setState({ waitingOnBasecamp: true });
       return this.postSummary();
     }
@@ -74,37 +75,27 @@ class SynopsisReportSummary extends React.Component {
     return (
       `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
 
-    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
-    ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p><br>
+    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p></br>
 
-    ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
-    ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
+    <p><strong>Identity Statement Highlights (optional): </strong>
+    ${sr.Identity_Statement_Highlights__c}${sr.Identity_Statement_Highlights__c ? sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br>
 
-    ${sr.Point_Sheet_Status__c === 'Not turned in' 
-        ? `<p>${studentName} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c !== 'Other' ? sr.Point_Sheet_Status_Reason__c : sr.Point_Sheet_Status_Notes__c}</p><br>`
-        : ''}
-    
-    <p><strong>Game Eligibility Earned:</strong> ${sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time__c : sr.Earned_Playing_Time__c}</p><br>
-    
-    ${sr.Mentor_Granted_Playing_Time_Explanation__c ? `<p>${sr.Mentor_Granted_Playing_Time_Explanation__c}</p><br>` : ''}
-    
-    <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c ? sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
-    <a href=${this.props.synopsisReportLink} target="_blank"> CLICK HERE</a><br><br>
-    
-    <p>Thanks and feel free to respond with comments or questions!</p><br>
+    <p><strong>Point Sheet and School Update: </strong>
+    ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p></br>
+    <p>${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br>
+
+    <p><strong>Sports Update (optional): </strong>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br>
+
+    <p><strong>Additional Comments (optional): </strong>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br>
+
+    ${this.props.images && this.props.images.length > 0 
+        ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}
+
+    </br>
+    <p>Thanks and feel free to respond with comments or questions!</p></br>
     
     <p>${sr.Mentor__r.Name}<br>
-    ${sr.Mentor__r.Email}<br>
-    ${this.state.schoolName ? this.state.schoolName : ''}<br><br>
-  
-    ${this.props.images && this.props.images.length > 0 
-          ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
+    ${sr.Mentor__r.Email}<br>`
     );
   };
 
@@ -123,12 +114,12 @@ class SynopsisReportSummary extends React.Component {
   }
 
   basecampResponse = () => {
-    if (pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
-      return (<React.Fragment>
-        <h5>Eligibility Recorded</h5>
-        <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
-      </React.Fragment>);
-    }
+    // if (pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
+    //   return (<React.Fragment>
+    //     <h5>Eligibility Recorded</h5>
+    //     <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
+    //   </React.Fragment>);
+    // }
     if (this.props.messageBoardUrl) {
       return (<React.Fragment>
       <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5><button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
@@ -144,16 +135,16 @@ class SynopsisReportSummary extends React.Component {
 
     const { synopsisReport } = this.props;
     const sr = synopsisReport;
-    const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
+    // const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
     const imageCount = this.props.images && this.props.images.length;
     const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
 
-    const playingTimeOnlyResponseJSX = (
-      <React.Fragment>
-        <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
-        <p className="centered">Please remember to complete their full report by Sunday Evening</p>
-      </React.Fragment>
-    );
+    // const playingTimeOnlyResponseJSX = (
+    //   <React.Fragment>
+    //     <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
+    //     <p className="centered">Please remember to complete their full report by Sunday Evening</p>
+    //   </React.Fragment>
+    // );
     
     const fullReportResponseJSX = (
       <React.Fragment>
@@ -173,14 +164,14 @@ class SynopsisReportSummary extends React.Component {
     </React.Fragment>
     {sr.Mentor_Granted_Playing_Time_Explanation__c ? <React.Fragment><p>{sr.Mentor_Granted_Playing_Time_Explanation__c}</p></React.Fragment> : null}
     
-    {sr.Student_Action_Items__c
+    {/* {sr.Student_Action_Items__c
       ? <React.Fragment>
         <br />
         <p><strong>Student Action Items</strong></p>
         <p>{sr.Student_Action_Items__c}</p>
         </React.Fragment>
       : null
-    }
+    } */}
     {sr.Sports_Update__c 
       ? <React.Fragment>
         <br />
@@ -216,7 +207,7 @@ class SynopsisReportSummary extends React.Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title title">{ playingTimeOnly ? 'Playing Time Saved' : 'Rainier Athletes Weekly Summary' }</h5>
+              <h5 className="modal-title title">Rainier Athletes Weekly Summary</h5>
               <button type="button" 
                 className="close" 
                 onClick={ this.props.onClose } 
@@ -229,10 +220,11 @@ class SynopsisReportSummary extends React.Component {
             </div>
 
             <div className="modal-body" id="body">
-              { playingTimeOnly
+              {/* { playingTimeOnly
                 ? playingTimeOnlyResponseJSX
                 : fullReportResponseJSX
-              }
+              } */}
+              { fullReportResponseJSX }
             </div>
 
             <div className="modal-footer">
