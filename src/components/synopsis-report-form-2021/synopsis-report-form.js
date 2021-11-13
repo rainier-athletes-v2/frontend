@@ -557,6 +557,7 @@ class SynopsisReportForm extends React.Component {
               options={
                 [
                   { value: undefined, label: 'What number did you discuss?' },
+                  { value: '0: Not Started', label: '0: Not Started'},
                   { value: '1: Intro', label: '1: Intro' },
                   { value: '2: Spaces/Places', label: '2: Spaces/Places' },
                   { value: '3: Of My Friends', label: '3: Of My Friends' },
@@ -572,6 +573,7 @@ class SynopsisReportForm extends React.Component {
                   { value: '13: Learning Ability/Physical Ability', label: '13: Learning Ability/Physical Ability' },
                   { value: '14: Racial Identity', label: '14: Racial Identity' },
                   { value: '15: Feelings about Race', label: '15: Feelings about Race' },
+                  { value: '16: Prompts Complete', label: '16: Prompts Complete' },
                 ]
               }/>
             </div>
@@ -783,10 +785,10 @@ class SynopsisReportForm extends React.Component {
           <div className="survey-question-container">
             <TextArea
               compClass="title"
-              compName="Weekly_Sports_Update__c"
+              compName="Sports_Update__c"
               label="Sports Update (optional):"
-              value={ this.srSafe('Weekly_Sports_Update__c')
-                ? this.state.synopsisReport.Weekly_Sports_Update__c
+              value={ this.srSafe('Sports_Update__c')
+                ? this.state.synopsisReport.Sports_Update__c
                 : undefined }
               placeholder="Explain highlights from your conversation and especially the student’s progress in achieving sports related goals discussed last week."
               onChange={ this.handleTextAreaChange }
@@ -939,7 +941,7 @@ class SynopsisReportForm extends React.Component {
 
     return (
       <div className="modal-backdrop">
-        { this.state.waitingOnSalesforce // savedToGoogleDrive
+        { this.state.savedToSalesforce // savedToGoogleDrive
           ? <SynopsisReportSummary 
             synopsisReport={this.state.synopsisReport} 
             onClose={ this.props.saveClick }/> 

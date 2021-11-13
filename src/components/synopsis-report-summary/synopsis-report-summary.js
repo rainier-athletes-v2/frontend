@@ -73,7 +73,7 @@ class SynopsisReportSummary extends React.Component {
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
     return (
-      `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
+      `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
 
     <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p></br>
 
@@ -88,6 +88,7 @@ class SynopsisReportSummary extends React.Component {
 
     <p><strong>Additional Comments (optional): </strong>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br>
 
+    <p><strong>Point Sheet</strong></p></br>
     ${this.props.images && this.props.images.length > 0 
         ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}
 
@@ -101,7 +102,7 @@ class SynopsisReportSummary extends React.Component {
 
   postSummary = () => {
     this.props.clearError();
-    this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
+    this.setState({ ...this.state, waitingOnBasecamp: true });
     const content = this.fullReportResponseRTF(this.props.synopsisReport);
     const srSummary = {
       subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
@@ -148,57 +149,23 @@ class SynopsisReportSummary extends React.Component {
     
     const fullReportResponseJSX = (
       <React.Fragment>
-        <h4>{studentName}&#39;s RA Synopsis Report for {sr.Week__c}</h4><br />
-        <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week and 
-    {sr.Point_Sheet_Status__c === 'Turned in' ? ' did ' : ' did not '} turn in a point sheet.</p>
+        <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
+        <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
-    {sr.Point_Sheet_Status__c === 'Did not meet' ? <React.Fragment><p>Explanation for not meeting: {sr.Weekly_Check_In_Missed_Reason__c}</p></React.Fragment> : null}
+        {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights (optional): </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
+        
+        <p><strong>Point Sheet and School Update: </strong>{studentName} {sr.Point_Sheet_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} a point sheet. {sr.Point_Sheet_and_School_Update__c}</p>
+    
+        {sr.Sports_Update__c ? <p><strong>Sports Update: </strong>{sr.Sports_Update__c}</p> : ''}
 
-    {sr.Point_Sheet_Status__c === 'Not turned in' 
-      ? <React.Fragment><p>{studentName} did not turn in a point sheet for reason:   
-      {sr.Point_Sheet_Status_Reason__c !== 'Other' ? <React.Fragment> {sr.Point_Sheet_Status_Reason__c}</React.Fragment> : <React.Fragment> {sr.Point_Sheet_Status_Notes__c}</React.Fragment>}</p></React.Fragment>
-      : null}
-    
-    <React.Fragment>
-    <p><strong>Game Eligibility Earned:</strong> {sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time__c : sr.Earned_Playing_Time__c}</p>
-    </React.Fragment>
-    {sr.Mentor_Granted_Playing_Time_Explanation__c ? <React.Fragment><p>{sr.Mentor_Granted_Playing_Time_Explanation__c}</p></React.Fragment> : null}
-    
-    {/* {sr.Student_Action_Items__c
-      ? <React.Fragment>
-        <br />
-        <p><strong>Student Action Items</strong></p>
-        <p>{sr.Student_Action_Items__c}</p>
-        </React.Fragment>
-      : null
-    } */}
-    {sr.Sports_Update__c 
-      ? <React.Fragment>
-        <br />
-        <p><strong>Sports Update</strong></p>
-        <p>{sr.Sports_Update__c}</p>
-        </React.Fragment>
-      : null
-    }
-    {sr.Additional_Comments__c 
-      ? <React.Fragment>
-        <br />
-        <p><strong>Additional Comments</strong></p>
-        <p>{sr.Additional_Comments__c}</p>
-        </React.Fragment>
-      : null
-    }
-    
-    <p><strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
-    <a href={this.props.synopsisReportLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a></p>
-    
-    <p>Thanks and feel free to respond with comments or questions!</p>
-    
-    <p>{sr.Mentor__r.Name}<br />
-    {sr.Mentor__r.Email}<br />
-    {this.state.schoolName ? this.state.schoolName : ''}</p>
+        {sr.Additional_Comments__c ? <p><strong>Additional Comments: </strong>{sr.Additional_Comments__c}</p> : ''}
 
-    {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
+        {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'Point Sheet image has been posted to basecamp.' } {/* eslint-disable-line */}
+    
+        <p>Thanks and feel free to respond with comments or questions!</p>
+        
+        <p>{sr.Mentor__r.Name}<br />
+        {sr.Mentor__r.Email}<br /></p>
     </React.Fragment>
     );
     
