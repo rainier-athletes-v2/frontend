@@ -20,11 +20,12 @@ export default function TextArea(props) {
       <label 
         className={ props.compClass }
         htmlFor={ props.compName }>
-        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${charsRemaining(props.value)} characters remaining)` }</span>
+        {props.label}
         { ttText[props.compName]
           ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
           : null
         }
+        &nbsp;<span style={ spanStyle }> {` (${charsRemaining(props.value)} characters remaining)` }</span>
       </label>
       <textarea
         name={ props.compName }

@@ -64,6 +64,7 @@ class SynopsisReportForm extends React.Component {
       newState.commStatusDidNotMeetOK = true;
       newState.commMethodNoCheckinOK = true;
       newState.howSupportRequiredOK = true;
+      newState.howSupportOK = true;
       newState.commNoResponseOK = true;
       newState.metWithFamilyOK = true;
       newState.metWithTeacherOK = true;
@@ -165,21 +166,27 @@ class SynopsisReportForm extends React.Component {
 
   validMentorInput = (sr) => {
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
-    const commStatusMetOK = sr.Weekly_Check_In_Status__c === 'Met'
-      && !!sr.Communication_Status_Met__c;
+    const commStatusMetOK = (sr.Weekly_Check_In_Status__c === 'Met'
+      && !!sr.Communication_Status_Met__c)
+      || sr.Weekly_Check_In_Status__c === 'Did not meet';
     const commStatusDidNotMeetOK = (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && !!sr.Did_not_meet_communication__c)
-      || commStatusMetOK; 
+      || sr.Weekly_Check_In_Status__c === 'Met'; 
     const commMethodNoCheckinOK = (sr.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in'
       && !!sr.Communication_Method_No_Check_In__c)
-      || commStatusMetOK;
+      || sr.Did_not_meet_communication__c !== 'I communicated with the student and/or family but we weren’t able to have a check in';
     const commNoResponseOK = (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff'
       && !!sr.Communication_Method_No_Response__c)
-      || commStatusMetOK;
+      || sr.Communication_Method_No_Check_In__c !== 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff';
     const howSupportRequiredOK = (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && sr.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below'
       && !!sr.How_can_we_support_required__c)
-      || commStatusMetOK;
+      || sr.Communication_Method_No_Check_In__c !== 'I did not connect with student and/or family for other reasons explained below'
+      || sr.Weekly_Check_In_Status__c === 'Met';
+    const howSupportOK = (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
+      && sr.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below'
+      && !!sr.How_can_we_support__c)
+      || sr.Communication_Method_No_Response__c !== 'I did not connect with student and/or family for reasons explained below'; 
     const metWithFamilyOK = !!sr.Family_Connection__c;
     const metWithTeacherOK = !!sr.Teacher_Connection__c;
     const metWithCoachOK = !!sr.Coach_Connection__c;
@@ -219,6 +226,7 @@ class SynopsisReportForm extends React.Component {
       commStatusDidNotMeetOK,
       commMethodNoCheckinOK,
       howSupportRequiredOK,
+      howSupportOK,
       commNoResponseOK,
       metWithFamilyOK,
       metWithTeacherOK,
@@ -243,6 +251,7 @@ class SynopsisReportForm extends React.Component {
       && commStatusDidNotMeetOK
       && commMethodNoCheckinOK
       && howSupportRequiredOK
+      && howSupportOK
       && commNoResponseOK
       && metWithFamilyOK
       && metWithTeacherOK
@@ -414,7 +423,7 @@ class SynopsisReportForm extends React.Component {
             <TextArea
               compClass={ this.state.howSupportRequiredOK ? 'title' : 'title required' }
               compName="How_can_we_support_required__c"
-              label="Please provide any additional context to RA staff in order to help inform how we can best support"
+              label="1) Please provide any additional context to RA staff in order to help inform how we can best support"
               value={ this.srSafe('How_can_we_support_required__c') ? this.state.synopsisReport.How_can_we_support_required__c : undefined }
               onChange={ this.handleTextAreaChange }
               required={ !this.state.howSupportRequiredOK }
@@ -438,20 +447,20 @@ class SynopsisReportForm extends React.Component {
                       { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
                       { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
                       { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
-                      { value: 'I did not connect with student and/or family for other reasons explained below', label: 'I did not connect with student and/or family for other reasons explained below' },
+                      { value: 'I did not connect with student and/or family for reasons explained below', label: 'I did not connect with student and/or family for reasons explained below' },
                     ]
                   }
                 />
             </div>
             : '' }
             { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Response__c 
-            && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for other reasons explained below' 
+            && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
               ? <div className="survey-question-container"> 
               <TextArea
-                compClass="title"
+                compClass={ this.state.howSupportOK ? 'title' : 'title required' }
                 compName="How_can_we_support__c"
-                label="Please provide any additional context to RA staff in order to help inform how we can best support"
+                label="2) Please provide any additional context to RA staff in order to help inform how we can best support"
                 value={ this.srSafe('How_can_we_support__c') ? this.state.synopsisReport.How_can_we_support__c : undefined }
                 onChange={ this.handleTextAreaChange }
               />
@@ -601,6 +610,7 @@ class SynopsisReportForm extends React.Component {
                   ? this.state.synopsisReport.Identity_Statement_Highlights__c
                   : '' }
                 onChange={ this.handleTextAreaChange }
+                placeholder="(Optional) Explain the student’s progress in Identity Statement questions that you and your mentee discussed at check in. If too personal please keep between you and mentee."
               />
         </div>
       </React.Fragment>
