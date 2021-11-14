@@ -4,8 +4,6 @@ import * as t from '../lib/types';
 import * as errorActions from './error';
 import * as imagePreview from './image-previews';
 
-// import { setError, clearError } from './error';
-
 export const setImageSgids = sgids => ({
   type: t.IMAGE_DATA_SET,
   payload: sgids,
