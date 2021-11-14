@@ -4,12 +4,10 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form-2021/synopsis-report-form';
-import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
-// import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_mentor.scss';
 
@@ -23,7 +21,6 @@ const mapDispatchToProps = dispatch => ({
   fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
-  // clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
 });
 

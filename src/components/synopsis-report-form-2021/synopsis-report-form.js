@@ -862,7 +862,7 @@ class SynopsisReportForm extends React.Component {
 
     const synopsisReportFormJSX = this.props.synopsisReport
       ? (
-      <div className="points-tracker panel point-tracker-modal">
+      <div className="panel sr-modal">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -886,12 +886,12 @@ class SynopsisReportForm extends React.Component {
                 { sportsUpdateJSX }
                 { additionalCommentsJSX }
                 <ImagePreviews />
+                <hr />
+                <h5>The following items are viewed by RA Staff only:</h5> 
+                { mentorSupportRequestJSX }
                 <div className="modal-footer">
-                  <h5>The following items are viewed by RA Staff only:</h5> 
-                  { mentorSupportRequestJSX }
                   { formButtonOrMessage() }
                 </div>
-
               </form>
             </div>
 

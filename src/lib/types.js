@@ -36,10 +36,6 @@ export const MY_STUDENTS_SET = 'MY_STUDENTS_SET';
 // synopsis-report-list types
 export const SYNOPSIS_LIST_SET = 'SYNOPSIS_LIST_SET';
 
-// synopsis-report-pdf types
-export const SYNOPSIS_REPORT_LINK_SET = 'SYNOPSIS_REPORT_LINK_SET';
-export const SYNOPSIS_REPORT_LINK_CLEAR = 'SYNOPSIS_REPORT_LINK_CLEAR';
-
 // synopsis-report-summary types
 export const SET_SR_SUMMARY_STATUS = 'SET_SR_SUMMARY_STATUS';
 export const CLEAR_SR_SUMMARY_STATUS = 'CLEAR_SR_SUMMARY_STATUS';
