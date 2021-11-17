@@ -6,7 +6,8 @@ import * as ttText from '../../lib/tooltip-text';
 export default function DropDown(props) {
   return (
     <React.Fragment>
-      <label className={props.compClass}
+      <label 
+        className={props.labelClass ? props.labelClass : '' }
         htmlFor={props.compName}>
         {props.label}
         { ttText[props.compName] 
@@ -14,7 +15,8 @@ export default function DropDown(props) {
           : null
         }
       </label>
-      <select value={props.value}
+      <select className={props.valueClass ? props.valueClass : '' }
+        value={props.value}
         required
         name={props.compName}
         onChange={props.onChange}>
@@ -27,7 +29,8 @@ export default function DropDown(props) {
 }
 
 DropDown.propTypes = {
-  compClass: PropTypes.string,
+  labelClass: PropTypes.string,
+  valueClass: PropTypes.string,
   compName: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,

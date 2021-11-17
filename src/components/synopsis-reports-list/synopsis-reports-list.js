@@ -34,7 +34,7 @@ function SynopsisReportsList(props) {
                       <td><button className="btn-link-1" 
                         onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'virtual' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
-                        name="SynopsisReportsTable">EDIT</button></td>
+                        name="SynopsisReportsTable">{sr.synopsisReportStatus === 'New' ? 'FILL IN' : 'EDIT'}</button></td>
                     </tr>;
                 })
                 : null
