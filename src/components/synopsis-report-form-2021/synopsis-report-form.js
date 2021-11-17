@@ -846,19 +846,21 @@ class SynopsisReportForm extends React.Component {
           <h5 className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>Point Sheet Upload</h5>
         </div>
         <ImagePreviews />
-        <div className="survey-question-container">
-            <TextArea
-              compClass={ this.state.psImageOrReasonOK ? 'title' : 'title required' }
-              compName="Additional_Comments__c"
-              label="If no point sheet image, please explain:"
-              value={ this.srSafe('Additional_Comments__c')
-                ? this.state.synopsisReport.Additional_Comments__c
-                : undefined }
-              onChange={ this.handleTextAreaChange }
-              rows={ 3 }
-              cols={ 80 }
-            />
-          </div>
+        { !this.state.psImageOrReasonOK
+          ? <div className="survey-question-container">
+              <TextArea
+                compClass={ this.state.psImageOrReasonOK ? 'title' : 'title required' }
+                compName="Additional_Comments__c"
+                label="If no point sheet image, please explain:"
+                value={ this.srSafe('Additional_Comments__c')
+                  ? this.state.synopsisReport.Additional_Comments__c
+                  : undefined }
+                onChange={ this.handleTextAreaChange }
+                rows={ 3 }
+                cols={ 80 }
+              />
+            </div>
+          : ''}
       </React.Fragment>
     );
 
