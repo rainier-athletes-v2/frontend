@@ -132,13 +132,14 @@ class SynopsisReportForm extends React.Component {
 
 
   validMentorInput = (sr) => {
-    const weeklyCheckinStatusOK = this.notEmpty('Weekly_Check_In_Status__c');
     const met = sr.Weekly_Check_In_Status__c === 'Met';
     const didNotMeet = sr.Weekly_Check_In_Status__c === 'Did not meet';
-    const checkinStatusMetOK = didNotMeet || (met && this.notEmpty('Check_in_status_met__c'));
-    const commStatusMetOK = didNotMeet || (met && this.notEmpty('Communication_Status_Met__c'));
-    const commStatusDidNotMeetOK = met || (didNotMeet && this.notEmpty('Did_not_meet_communication__c'));
-    const commMethodNoCheckinOK = met
+    const emptyCheckinStatus = !this.notEmpty('Weekly_Check_In_Status__c');
+    const weeklyCheckinStatusOK = this.notEmpty('Weekly_Check_In_Status__c');
+    const checkinStatusMetOK = emptyCheckinStatus || didNotMeet || (met && this.notEmpty('Check_in_status_met__c'));
+    const commStatusMetOK = emptyCheckinStatus || didNotMeet || (met && this.notEmpty('Communication_Status_Met__c'));
+    const commStatusDidNotMeetOK = emptyCheckinStatus || met || (didNotMeet && this.notEmpty('Did_not_meet_communication__c'));
+    const commMethodNoCheckinOK = emptyCheckinStatus || met
       || sr.Did_not_meet_communication__c !== 'I communicated with the student and/or family but we weren’t able to have a check in'
       || (sr.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in'
       && this.notEmpty('Communication_Method_No_Check_In__c'));
@@ -154,32 +155,42 @@ class SynopsisReportForm extends React.Component {
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
       && sr.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below'
       && this.notEmpty('How_can_we_support__c'));
+
     const metWithFamilyOK = this.notEmpty('Family_Connection__c');
     const metWithTeacherOK = this.notEmpty('Teacher_Connection__c');
     const metWithCoachOK = this.notEmpty('Coach_Connection__c');
+
+    const emptyIdStatement = !this.notEmpty('Identity_Statement_Weekly_Status__c');
+    const idNo = sr.Identity_Statement_Weekly_Status__c === 'No';
     const identityStatusOK = this.notEmpty('Identity_Statement_Weekly_Status__c');
-    const identityPromptOK = sr.Identity_Statement_Weekly_Status__c === 'No' || this.notEmpty('Identity_Statement_Prompts__c');
+    const identityPromptOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Prompts__c');
+
+    const emptyPsStatus = !this.notEmpty('Point_Sheet_Status__c');
+    const psTurnedIn = sr.Point_Sheet_Status__c === 'Turned in';
+    const psNotTurnedIn = sr.Point_Sheet_Status__c === 'Not turned in';
+    const psMs = this.state.studentGrade > 5;
+    const psEs = this.state.studentGrade <= 5;
     const pointSheetStatusOK = this.notEmpty('Point_Sheet_Status__c');
-    const msSelfReflectionOK = this.state.studentGrade <= 5
-      || (this.state.studentGrade > 5 && this.notEmpty('Point_Sheet_MS_Self_Reflection__c'));
-    const esSelfReflectionOK = this.state.studentGrade > 5
-      || (this.state.studentGrade <= 5 && this.notEmpty('Point_Sheet_ES_Self_Reflection__c'));
-    const msTeacherConvoOK = this.state.studentGrade <= 5 || sr.Point_Sheet_Status__c === 'Not turned in'
-      || (this.state.studentGrade > 5 && sr.Point_Sheet_Status__c === 'Turned in'
-      && this.notEmpty('Point_Sheet_Teacher_Convo_MS__c')); 
-    const esTeacherConvoOK = this.state.studentGrade > 5 || sr.Point_Sheet_Status__c === 'Not turned in'
-      || (this.state.studentGrade <= 5 && sr.Point_Sheet_Status__c === 'Turned in'
-      && this.notEmpty('Point_Sheet_Teacher_Convo_ES__c')); 
-    const pointSheetMissedReasonOK = sr.Point_Sheet_Status__c === 'Turned in'
-      || (sr.Point_Sheet_Status__c === 'Not turned in' && this.notEmpty('No_Point_Sheet__c'));
-    const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned in'
-      || (sr.Point_Sheet_Status__c === 'Not turned in' && sr.No_Point_Sheet__c !== 'Other'
-      && this.notEmpty('No_Point_Sheet_What_Happened__c'));
+    const msSelfReflectionOK = emptyPsStatus || psEs
+      || (psMs && this.notEmpty('Point_Sheet_MS_Self_Reflection__c'));
+    const esSelfReflectionOK = emptyPsStatus || psMs
+      || (psEs && this.notEmpty('Point_Sheet_ES_Self_Reflection__c'));
+    const msTeacherConvoOK = emptyPsStatus || psEs || psNotTurnedIn
+      || (psMs && psTurnedIn && this.notEmpty('Point_Sheet_Teacher_Convo_MS__c')); 
+    const esTeacherConvoOK = emptyPsStatus || psMs || psNotTurnedIn
+      || (psEs && psTurnedIn && this.notEmpty('Point_Sheet_Teacher_Convo_ES__c')); 
+    const pointSheetMissedReasonOK = emptyPsStatus || psTurnedIn
+      || (psNotTurnedIn && this.notEmpty('No_Point_Sheet__c'));
+    const pointSheetStatusNotesOK = emptyPsStatus || psTurnedIn
+      || (psNotTurnedIn && sr.No_Point_Sheet__c !== 'Other' && this.notEmpty('No_Point_Sheet_What_Happened__c'));
     const psAndSchoolUpdateOK = this.notEmpty('Point_Sheet_and_School_Update__c');
+
     const sportsUpdateOK = this.notEmpty('Weekly_Sports_Update__c');
+
     const psImageOrReasonOK = sr.Point_Sheet_Status__c === 'Not turned in'
       || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length)
       || (sr.Point_Sheet_Status__c === 'Turned in' && this.notEmpty('Missing_Point_Sheet_Image__c'));
+      
     const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
     const mentorSupportRequestNotesOK = sr.Mentor_Support_Request__c === 'No' 
       || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty('Mentor_Support_Request_Notes__c'));
