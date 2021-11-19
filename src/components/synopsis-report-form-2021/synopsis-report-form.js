@@ -126,65 +126,63 @@ class SynopsisReportForm extends React.Component {
     this.handleSimpleFieldChange(event);
   }
 
-  srSafe = (prop) => {
-    return this.state.synopsisReport && this.state.synopsisReport[prop];
-  }
+  srSafe = prop => !!(this.state.synopsisReport && this.state.synopsisReport[prop]);
 
-  notEmpty = (prop) => {
-    return this.state.synopsisReport && !!prop && prop !== 'X';
-  }
+  notEmpty = prop => this.srSafe(prop) && !!this.state.synopsisReport[prop] && this.state.synopsisReport[prop] !== 'X';
+
 
   validMentorInput = (sr) => {
-    const weeklyCheckinStatusOK = this.notEmpty(sr.Weekly_Check_In_Status__c);
+    const weeklyCheckinStatusOK = this.notEmpty('Weekly_Check_In_Status__c');
     const met = sr.Weekly_Check_In_Status__c === 'Met';
     const didNotMeet = sr.Weekly_Check_In_Status__c === 'Did not meet';
-    const checkinStatusMetOK = didNotMeet || (met && this.notEmpty(sr.Check_in_status_met__c));
-    const commStatusMetOK = didNotMeet || (met && this.notEmpty(sr.Communication_Status_Met__c));
-    const commStatusDidNotMeetOK = met || (didNotMeet && this.notEmpty(sr.Did_not_meet_communication__c));
+    const checkinStatusMetOK = didNotMeet || (met && this.notEmpty('Check_in_status_met__c'));
+    const commStatusMetOK = didNotMeet || (met && this.notEmpty('Communication_Status_Met__c'));
+    const commStatusDidNotMeetOK = met || (didNotMeet && this.notEmpty('Did_not_meet_communication__c'));
     const commMethodNoCheckinOK = met
       || sr.Did_not_meet_communication__c !== 'I communicated with the student and/or family but we weren’t able to have a check in'
       || (sr.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in'
-      && this.notEmpty(sr.Communication_Method_No_Check_In__c));
+      && this.notEmpty('Communication_Method_No_Check_In__c'));
     const commNoResponseOK = sr.Communication_Method_No_Check_In__c !== 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff'
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff'
-      && this.notEmpty(sr.Communication_Method_No_Response__c));
+      && this.notEmpty('Communication_Method_No_Response__c'));
     const howSupportRequiredOK = met
       || sr.Communication_Method_No_Check_In__c !== 'I did not connect with student and/or family for other reasons explained below'
       || (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && sr.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below'
-      && this.notEmpty(sr.How_can_we_support_required__c));
+      && this.notEmpty('How_can_we_support_required__c'));
     const howSupportOK = sr.Communication_Method_No_Response__c !== 'I did not connect with student and/or family for reasons explained below'
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
       && sr.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below'
-      && this.notEmpty(sr.How_can_we_support__c));
-    const metWithFamilyOK = this.notEmpty(sr.Family_Connection__c);
-    const metWithTeacherOK = this.notEmpty(sr.Teacher_Connection__c);
-    const metWithCoachOK = this.notEmpty(sr.Coach_Connection__c);
-    const identityStatusOK = this.notEmpty(sr.Identity_Statement_Weekly_Status__c);
-    const identityPromptOK = this.notEmpty(sr.Identity_Statement_Prompts__c);
-    const pointSheetStatusOK = this.notEmpty(sr.Point_Sheet_Status__c);
+      && this.notEmpty('How_can_we_support__c'));
+    const metWithFamilyOK = this.notEmpty('Family_Connection__c');
+    const metWithTeacherOK = this.notEmpty('Teacher_Connection__c');
+    const metWithCoachOK = this.notEmpty('Coach_Connection__c');
+    const identityStatusOK = this.notEmpty('Identity_Statement_Weekly_Status__c');
+    const identityPromptOK = sr.Identity_Statement_Weekly_Status__c === 'No' || this.notEmpty('Identity_Statement_Prompts__c');
+    const pointSheetStatusOK = this.notEmpty('Point_Sheet_Status__c');
     const msSelfReflectionOK = this.state.studentGrade <= 5
-      || (this.state.studentGrade > 5 && this.notEmpty(sr.Point_Sheet_MS_Self_Reflection__c));
+      || (this.state.studentGrade > 5 && this.notEmpty('Point_Sheet_MS_Self_Reflection__c'));
     const esSelfReflectionOK = this.state.studentGrade > 5
-      || (this.state.studentGrade <= 5 && this.notEmpty(sr.Point_Sheet_ES_Self_Reflection__c));
+      || (this.state.studentGrade <= 5 && this.notEmpty('Point_Sheet_ES_Self_Reflection__c'));
     const msTeacherConvoOK = this.state.studentGrade <= 5 || sr.Point_Sheet_Status__c === 'Not turned in'
       || (this.state.studentGrade > 5 && sr.Point_Sheet_Status__c === 'Turned in'
-      && this.notEmpty(sr.Point_Sheet_Teacher_Convo_MS__c)); 
+      && this.notEmpty('Point_Sheet_Teacher_Convo_MS__c')); 
     const esTeacherConvoOK = this.state.studentGrade > 5 || sr.Point_Sheet_Status__c === 'Not turned in'
       || (this.state.studentGrade <= 5 && sr.Point_Sheet_Status__c === 'Turned in'
-      && this.notEmpty(sr.Point_Sheet_Teacher_Convo_ES__c)); 
+      && this.notEmpty('Point_Sheet_Teacher_Convo_ES__c')); 
     const pointSheetMissedReasonOK = sr.Point_Sheet_Status__c === 'Turned in'
-      || (sr.Point_Sheet_Status__c === 'Not turned in' && this.notEmpty(sr.No_Point_Sheet__c));
+      || (sr.Point_Sheet_Status__c === 'Not turned in' && this.notEmpty('No_Point_Sheet__c'));
     const pointSheetStatusNotesOK = sr.Point_Sheet_Status__c === 'Turned in'
       || (sr.Point_Sheet_Status__c === 'Not turned in' && sr.No_Point_Sheet__c !== 'Other'
-      && this.notEmpty(sr.No_Point_Sheet_What_Happened__c));
-    const psAndSchoolUpdateOK = this.notEmpty(sr.Point_Sheet_and_School_Update__c);
-    const sportsUpdateOK = this.notEmpty(sr.Weekly_Sports_Update__c);
+      && this.notEmpty('No_Point_Sheet_What_Happened__c'));
+    const psAndSchoolUpdateOK = this.notEmpty('Point_Sheet_and_School_Update__c');
+    const sportsUpdateOK = this.notEmpty('Weekly_Sports_Update__c');
     const psImageOrReasonOK = sr.Point_Sheet_Status__c === 'Not turned in'
-      || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length);
-    const mentorSupportRequestOK = this.notEmpty(sr.Mentor_Support_Request__c);
+      || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length)
+      || (sr.Point_Sheet_Status__c === 'Turned in' && this.notEmpty('Missing_Point_Sheet_Image__c'));
+    const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
     const mentorSupportRequestNotesOK = sr.Mentor_Support_Request__c === 'No' 
-      || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty(sr.Mentor_Support_Request_Notes__c));
+      || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty('Mentor_Support_Request_Notes__c'));
 
     this.setState({
       weeklyCheckinStatusOK,
@@ -311,7 +309,7 @@ class SynopsisReportForm extends React.Component {
         <DropDown
           compName="Weekly_Check_In_Status__c"
           value={ this.srSafe('Weekly_Check_In_Status__c') ? this.state.synopsisReport.Weekly_Check_In_Status__c : undefined}
-          valueClass={this.state.weeklyCheckinStatusOK ? '' : 'required'}
+          valueClass={this.state.weeklyCheckinStatusOK || this.notEmpty('Weekly_Check_In_Status__c') ? '' : 'required'}
           onChange={ this.handleSimpleFieldChange}
           options={
             [
@@ -320,13 +318,12 @@ class SynopsisReportForm extends React.Component {
               { value: 'Did not meet', label: 'Did not meet' },
             ]
           }/>
-          { this.state.synopsisReport && this.notEmpty(this.state.synopsisReport.Weekly_Check_In_Status__c) 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' 
+          { this.notEmpty('Weekly_Check_In_Status__c') && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' 
             ? <div className="survey-question-container">
                 <DropDown
                   compName="Check_in_status_met__c"
                   value={ this.srSafe('Check_in_status_met__c') ? this.state.synopsisReport.Check_in_status_met__c : undefined }
-                  valueClass={this.state.checkinStatusMetOK ? '' : 'required'}
+                  valueClass={this.state.checkinStatusMetOK || this.notEmpty('Check_in_status_met__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
@@ -339,14 +336,14 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.state.synopsisReport && this.notEmpty(this.state.synopsisReport.Weekly_Check_In_Status__c) 
+          { this.notEmpty('Weekly_Check_In_Status__c') 
             && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met'
-            && this.notEmpty(this.state.synopsisReport.Check_in_status_met__c)
+            && this.notEmpty('Check_in_status_met__c')
             ? <div className="survey-question-container">
                 <DropDown
                   compName="Communication_Status_Met__c"
                   value={ this.srSafe('Communication_Status_Met__c') ? this.state.synopsisReport.Communication_Status_Met__c : undefined }
-                  valueClass={this.state.commStatusMetOK ? '' : 'required'}
+                  valueClass={this.state.commStatusMetOK || this.notEmpty('Communication_Status_Met__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
@@ -361,13 +358,13 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.state.synopsisReport && !!this.state.synopsisReport.Weekly_Check_In_Status__c 
+          { this.notEmpty('Weekly_Check_In_Status__c') 
             && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Did not meet' 
             ? <div className="survey-question-container">
                 <DropDown
                   compName="Did_not_meet_communication__c"
                   value={ this.srSafe('Did_not_meet_communication__c') ? this.state.synopsisReport.Did_not_meet_communication__c : undefined }
-                  valueClass={this.state.commStatusDidNotMeetOK ? '' : 'required'}
+                  valueClass={this.state.commStatusDidNotMeetOK || this.notEmpty('Did_not_meet_communication__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
@@ -379,14 +376,14 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.state.synopsisReport && !!this.state.synopsisReport.Did_not_meet_communication__c 
+          { this.notEmpty('Did_not_meet_communication__c')
             && this.state.synopsisReport.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
             ? <div className="survey-question-container">
                 <DropDown
                   compName="Communication_Method_No_Check_In__c"
                   value={ this.srSafe('Communication_Method_No_Check_In__c') ? this.state.synopsisReport.Communication_Method_No_Check_In__c : undefined }
-                  valueClass={this.state.commMethodNoCheckinOK ? '' : 'required'}
+                  valueClass={this.state.commMethodNoCheckinOK || this.notEmpty('Communication_Method_No_Check_In__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
@@ -401,12 +398,12 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Check_In__c 
+          { this.notEmpty('Communication_Method_No_Check_In__c') 
             && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
             ? <div className="survey-question-container"> 
             <TextArea
-              compClass={ this.state.howSupportRequiredOK ? 'title' : 'title required' }
+              compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_required__c') ? 'title' : 'title required' }
               compName="How_can_we_support_required__c"
               label="Please provide any additional context to RA staff in order to help inform how we can best support"
               value={ this.srSafe('How_can_we_support_required__c') ? this.state.synopsisReport.How_can_we_support_required__c : undefined }
@@ -415,14 +412,14 @@ class SynopsisReportForm extends React.Component {
             />
             </div>
             : '' }
-          { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Check_In__c 
+          { this.notEmpty('Communication_Method_No_Check_In__c') 
             && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
             ? <div className="survey-question-container">
                 <DropDown
                   compName="Communication_Method_No_Response__c"
                   value={ this.srSafe('Communication_Method_No_Response__c') ? this.state.synopsisReport.Communication_Method_No_Response__c : undefined }
-                  valueClass={this.state.commNoResponseOK ? '' : 'required'}
+                  valueClass={this.state.commNoResponseOK || this.notEmpty('Communication_Method_No_Response__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
                   options={
                     [
@@ -437,12 +434,12 @@ class SynopsisReportForm extends React.Component {
                 />
             </div>
             : '' }
-            { this.state.synopsisReport && !!this.state.synopsisReport.Communication_Method_No_Response__c 
+            { this.notEmpty('Communication_Method_No_Response__c') 
             && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
               ? <div className="survey-question-container"> 
               <TextArea
-                compClass={ this.state.howSupportOK ? 'title' : 'title required' }
+                compClass={ this.state.howSupportOK || this.notEmpty('How_can_we_support__c') ? 'title' : 'title required' }
                 compName="How_can_we_support__c"
                 label="Please provide any additional context to RA staff in order to help inform how we can best support"
                 value={ this.srSafe('How_can_we_support__c') ? this.state.synopsisReport.How_can_we_support__c : undefined }
@@ -469,7 +466,7 @@ class SynopsisReportForm extends React.Component {
           value={ this.srSafe('Family_Connection__c')
             ? this.state.synopsisReport.Family_Connection__c
             : ''}
-          valueClass={this.state.metWithFamilyOK ? '' : 'required'}
+          valueClass={this.state.metWithFamilyOK || this.notEmpty('Family_Connection__c') ? '' : 'required'}
           onChange={ this.handleSimpleFieldChange}
           options={
             [
@@ -483,7 +480,7 @@ class SynopsisReportForm extends React.Component {
           value={this.srSafe('Teacher_Connection__c')
             ? this.state.synopsisReport.Teacher_Connection__c
             : ''}
-          valueClass={this.state.metWithTeacherOK ? '' : 'required'}
+          valueClass={this.state.metWithTeacherOK || this.notEmpty('Teacher_Connection__c') ? '' : 'required'}
           onChange={ this.handleSimpleFieldChange}
           options={
             [
@@ -497,7 +494,7 @@ class SynopsisReportForm extends React.Component {
           value={this.srSafe('Coach_Connection__c')
             ? this.state.synopsisReport.Coach_Connection__c
             : ''}
-          valueClass={this.state.metWithCoachOK ? '' : 'required'}
+          valueClass={this.state.metWithCoachOK || this.notEmpty('Coach_Connection__c') ? '' : 'required'}
           onChange={ this.handleSimpleFieldChange}
           options={
             [
@@ -522,7 +519,7 @@ class SynopsisReportForm extends React.Component {
             value={this.srSafe('Identity_Statement_Weekly_Status__c')
               ? this.state.synopsisReport.Identity_Statement_Weekly_Status__c
               : ''}
-            valueClass={this.state.identityStatusOK ? '' : 'required'}
+            valueClass={this.state.identityStatusOK || this.notEmpty('Identity_Statement_Weekly_Status__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
             options={
               [
@@ -532,7 +529,7 @@ class SynopsisReportForm extends React.Component {
               ]
             }/>
         </div>
-        { this.state.synopsisReport && !!this.state.synopsisReport.Identity_Statement_Weekly_Status__c 
+        { this.notEmpty('Identity_Statement_Weekly_Status__c') 
             && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' 
           ? <div className="survey-question-container">
             <DropDown
@@ -540,7 +537,7 @@ class SynopsisReportForm extends React.Component {
               value={this.srSafe('Identity_Statement_Prompts__c')
                 ? this.state.synopsisReport.Identity_Statement_Prompts__c
                 : ''}
-              valueClass={this.state.identityPromptOK ? '' : 'required'}
+              valueClass={this.state.identityPromptOK || this.notEmpty('Identity_Statement_Prompts__c') ? '' : 'required'}
               onChange={ this.handleSimpleFieldChange}
               options={
                 [
@@ -566,7 +563,7 @@ class SynopsisReportForm extends React.Component {
               }/>
             </div>
           : '' }
-        { this.state.synopsisReport && !!this.state.synopsisReport.Identity_Statement_Weekly_Status__c 
+        { this.notEmpty('Identity_Statement_Weekly_Status__c')
             && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'No' 
           ? <div className="survey-question-container">
             <TextArea
@@ -607,7 +604,7 @@ class SynopsisReportForm extends React.Component {
             value={this.srSafe('Point_Sheet_Status__c')
               ? this.state.synopsisReport.Point_Sheet_Status__c
               : undefined}
-            valueClass={this.state.pointSheetStatusOK ? '' : 'required'}
+            valueClass={this.state.pointSheetStatusOK || this.notEmpty('Point_Sheet_Status__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
             options={
               [
@@ -616,13 +613,14 @@ class SynopsisReportForm extends React.Component {
                 { value: 'Not turned in', label: 'No (Warning: This could affect eligibility)' },
               ]
             }/>
-          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && studentGrade > 5
+          {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
+            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' 
             ? <DropDown
                 compName="Point_Sheet_MS_Self_Reflection__c"
                 value={this.srSafe('Point_Sheet_MS_Self_Reflection__c')
                   ? this.state.synopsisReport.Point_Sheet_MS_Self_Reflection__c
                   : undefined}
-                valueClass={this.state.msSelfReflectionOK ? '' : 'required'}
+                valueClass={this.state.msSelfReflectionOK || this.notEmpty('Point_Sheet_MS_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
@@ -633,13 +631,14 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-          {studentGrade <= 5 && this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
+          {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
+            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
             ? <DropDown
                 compName="Point_Sheet_ES_Self_Reflection__c"
                 value={this.srSafe('Point_Sheet_ES_Self_Reflection__c')
                   ? this.state.synopsisReport.Point_Sheet_ES_Self_Reflection__c
                   : undefined}
-                valueClass={this.state.esSelfReflectionOK ? '' : 'required'}
+                valueClass={this.state.esSelfReflectionOK || this.notEmpty('Point_Sheet_ES_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
@@ -650,13 +649,15 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-          {studentGrade > 5 && this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && this.notEmpty(this.state.synopsisReport.Point_Sheet_MS_Self_Reflection__c)
+          {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
+            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
+            && this.notEmpty('Point_Sheet_MS_Self_Reflection__c')
             ? <DropDown
                 compName="Point_Sheet_Teacher_Convo_MS__c"
                 value={this.srSafe('Point_Sheet_Teacher_Convo_MS__c')
                   ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_MS__c
                   : undefined}
-                valueClass={this.state.msTeacherConvoOK ? '' : 'required'}
+                valueClass={this.state.msTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_MS__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
@@ -667,13 +668,15 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-          {studentGrade <= 5 && this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' && this.notEmpty(this.state.synopsisReport.Point_Sheet_ES_Self_Reflection__c)
+          {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
+            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
+            && this.notEmpty('Point_Sheet_ES_Self_Reflection__c')
             ? <DropDown
                 compName="Point_Sheet_Teacher_Convo_ES__c"
                 value={this.srSafe('Point_Sheet_Teacher_Convo_ES__c')
                   ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_ES__c
                   : undefined}
-                valueClass={this.state.esTeacherConvoOK ? '' : 'required'}
+                valueClass={this.state.esTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_ES__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
@@ -684,13 +687,13 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-          {this.state.synopsisReport && !!this.state.synopsisReport.Point_Sheet_Status__c && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
+          {this.notEmpty('Point_Sheet_Status__c') && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
             ? <DropDown
                 compName="No_Point_Sheet__c"
                 value={this.srSafe('No_Point_Sheet__c')
                   ? this.state.synopsisReport.No_Point_Sheet__c
                   : undefined}
-                valueClass={this.state.pointSheetMissedReasonOK ? '' : 'required'}
+                valueClass={this.state.pointSheetMissedReasonOK || this.notEmpty('No_Point_Sheet__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
                 options={
                   [
@@ -702,13 +705,13 @@ class SynopsisReportForm extends React.Component {
                   ]
                 }/> 
             : ''}
-            { this.state.synopsisReport && this.state.synopsisReport.Point_Sheet_Status__c 
+            { this.notEmpty('Point_Sheet_Status__c') 
               && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
-              && !!this.state.synopsisReport.No_Point_Sheet__c 
+              && this.notEmpty('No_Point_Sheet__c') 
               && this.state.synopsisReport.No_Point_Sheet__c === 'Other'
               ? <div className="survey-question-container">
                   <TextArea
-                    compClass={`title ${this.state.pointSheetStatusNotesOK ? '' : 'required'}`}
+                    compClass={`title ${this.state.pointSheetStatusNotesOK || this.notEmpty('No_Point_Sheet_What_Happened__c') ? '' : 'required'}`}
                     compName="No_Point_Sheet_What_Happened__c"
                     label="What happened?"
                     value={ this.srSafe('No_Point_Sheet_What_Happened__c')
@@ -723,7 +726,7 @@ class SynopsisReportForm extends React.Component {
               : '' }
             <div className="survey-question-container">
                   <TextArea
-                    compClass={`title ${this.state.psAndSchoolUpdateOK ? '' : 'required'}`}
+                    compClass={`title ${this.state.psAndSchoolUpdateOK || this.notEmpty('Point_Sheet_and_School_Update__c') ? '' : 'required'}`}
                     compName="Point_Sheet_and_School_Update__c"
                     label="Point Sheet and School Update (Required)"
                     value={ this.srSafe('Point_Sheet_and_School_Update__c')
@@ -751,7 +754,7 @@ class SynopsisReportForm extends React.Component {
             value={this.srSafe('Weekly_Sports_Update__c')
               ? this.state.synopsisReport.Weekly_Sports_Update__c
               : undefined}
-              valueClass={this.state.sportsUpdateOK ? '' : 'required'}
+              valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_Update__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
             options={
               [
@@ -809,14 +812,14 @@ class SynopsisReportForm extends React.Component {
           <h5 className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>Point Sheet Upload</h5>
         </div>
         <ImagePreviews />
-        { !this.state.psImageOrReasonOK
+        { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
           ? <div className="survey-question-container">
               <TextArea
-                compClass={ this.state.psImageOrReasonOK ? 'title' : 'title required' }
-                compName="Additional_Comments__c"
+                compClass={ this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c') ? 'title' : 'title required' }
+                compName="Missing_Point_Sheet_Image__c"
                 label="If no point sheet image, please explain:"
-                value={ this.srSafe('Additional_Comments__c')
-                  ? this.state.synopsisReport.Additional_Comments__c
+                value={ this.srSafe('Missing_Point_Sheet_Image__c')
+                  ? this.state.synopsisReport.Missing_Point_Sheet_Image__c
                   : undefined }
                 onChange={ this.handleTextAreaChange }
                 rows={ 3 }
@@ -839,7 +842,7 @@ class SynopsisReportForm extends React.Component {
             value={this.srSafe('Mentor_Support_Request__c')
               ? this.state.synopsisReport.Mentor_Support_Request__c
               : undefined}
-            valueClass={this.state.mentorSupportRequestOK ? '' : 'required'}
+            valueClass={this.state.mentorSupportRequestOK || this.notEmpty('Mentor_Support_Request__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
             options={
               [
@@ -851,10 +854,10 @@ class SynopsisReportForm extends React.Component {
                 { value: 'Other', label: 'Other' },
               ]
             }/>
-          { this.state.synopsisReport && !!this.state.synopsisReport.Mentor_Support_Request__c && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
+          { this.notEmpty('Mentor_Support_Request__c') && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
             ? <div className="survey-question-container">
               <TextArea
-                compClass={this.state.mentorSupportRequestNotesOK ? 'title' : 'title required'}
+                compClass={this.state.mentorSupportRequestNotesOK || this.notEmpty('Mentor_Support_Request_Notes__c') ? 'title' : 'title required'}
                 compName="Mentor_Support_Request_Notes__c"
                 label="Please explain:"
                 value={ this.srSafe('Mentor_Support_Request_Notes__c')
