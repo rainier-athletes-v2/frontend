@@ -190,7 +190,7 @@ class SynopsisReportForm extends React.Component {
     const psImageOrReasonOK = sr.Point_Sheet_Status__c === 'Not turned in'
       || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length)
       || (sr.Point_Sheet_Status__c === 'Turned in' && this.notEmpty('Missing_Point_Sheet_Image__c'));
-      
+
     const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
     const mentorSupportRequestNotesOK = sr.Mentor_Support_Request__c === 'No' 
       || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty('Mentor_Support_Request_Notes__c'));
@@ -592,11 +592,12 @@ class SynopsisReportForm extends React.Component {
             <TextArea
                 compClass="title"
                 compName="Identity_Statement_Highlights__c"
-                label="Identity Statement Highlights (optional)"
+                label="Identity Statement Highlights"
                 value={ this.srSafe('Identity_Statement_Highlights__c')
                   ? this.state.synopsisReport.Identity_Statement_Highlights__c
                   : '' }
                 onChange={ this.handleTextAreaChange }
+                placeholder="Optional..."
               />
         </div>
       </React.Fragment>
@@ -781,11 +782,12 @@ class SynopsisReportForm extends React.Component {
             <TextArea
               compClass="title"
               compName="Sports_Update__c"
-              label="Sports Update (optional):"
+              label="Sports Update:"
               value={ this.srSafe('Sports_Update__c')
                 ? this.state.synopsisReport.Sports_Update__c
                 : undefined }
               onChange={ this.handleTextAreaChange }
+              placeholder="Optional..."
               rows={ 3 }
               cols={ 80 }
             />
@@ -800,31 +802,30 @@ class SynopsisReportForm extends React.Component {
           <h5>ADDITIONAL COMMENTS</h5>
         </div>
         <div className="mentor-met-container">
-          <div className="survey-question-container">
             <TextArea
               compClass="title"
               compName="Additional_Comments__c"
-              label="Additional Comments to inform the core community (optional):"
+              label="Additional Comments for the core community:"
               value={ this.srSafe('Additional_Comments__c')
                 ? this.state.synopsisReport.Additional_Comments__c
                 : undefined }
               onChange={ this.handleTextAreaChange }
+              placeholder="Optional..."
               rows={ 3 }
               cols={ 80 }
             />
-          </div>
         </div>
       </fieldset>
     );
 
     const pointSheetImageOrCommentsJSX = (
       <React.Fragment>
-        <div>
-          <h5 className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>Point Sheet Upload</h5>
+        <div className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>
+          <h5>Point Sheet Upload</h5>
         </div>
         <ImagePreviews />
         { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
-          ? <div className="survey-question-container">
+          ? <div className="mentor-met-container">
               <TextArea
                 compClass={ this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c') ? 'title' : 'title required' }
                 compName="Missing_Point_Sheet_Image__c"

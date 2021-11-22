@@ -2,6 +2,7 @@
 db/
 *.log
 temp.html
+build/
 
 # Created by https://www.gitignore.io/api/vim,node,macos,linux,windows,webstorm,visualstudiocode
 
