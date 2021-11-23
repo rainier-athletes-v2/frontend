@@ -878,12 +878,10 @@ class SynopsisReportForm extends React.Component {
         return (<h3>Saving synopsis report to Salesforce...</h3>);
       }
       if (this.state.waitingOnBasecamp) {
-        if (!this.props.error) {
-          return (<React.Fragment>
-            <h5>Waiting for Basecamp Messaging connection...</h5>
-            <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
-          </React.Fragment>);
-        }
+        return (<React.Fragment>
+          <h5>Waiting for Basecamp Messaging connection...</h5>
+          <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
+        </React.Fragment>);
       } 
       if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce) && !this.state.waitingOnBasecamp) {
         if (this.props.messageBoardUrl) {
