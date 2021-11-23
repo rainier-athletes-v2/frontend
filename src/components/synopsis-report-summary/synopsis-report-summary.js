@@ -40,8 +40,8 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    const schoolName = 'Unknown';
-    this.setState({ schoolName });
+    // const schoolName = 'Unknown';
+    // this.setState({ schoolName });
     if (this.props.messageBoardUrl && this.props.synopsisReport && this.props.synopsisReport.Synopsis_Report_Status__c === 'Completed') {
       this.setState({ waitingOnBasecamp: true });
       return this.postSummary();
@@ -63,12 +63,12 @@ class SynopsisReportSummary extends React.Component {
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
    
-    const block1 =  `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
+    const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
 
     <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
 
     const optionalBlock2 = sr.Identity_Statement_Highlights__c
-      ? `<p><strong>Identity Statement Highlights (optional): </strong>
+      ? `<p><strong>Identity Statement Highlights: </strong>
     ${sr.Identity_Statement_Highlights__c}${sr.Identity_Statement_Highlights__c ? sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
       : '';
 
@@ -77,11 +77,11 @@ class SynopsisReportSummary extends React.Component {
     ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
 
     const optionalBlock4 = sr.Sports_Update__c
-      ? `<p><strong>Sports Update (optional): </strong>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+      ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
       : '';
 
     const optionalBlock5 = sr.Additional_Comments__c
-      ? `<p><strong>Additional Comments (optional): </strong>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+      ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
       : '';
 
     const block6 = `<p><strong>Point Sheet & Images</strong></p><br>
@@ -135,7 +135,7 @@ class SynopsisReportSummary extends React.Component {
         <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
         <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
-        {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights (optional): </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
+        {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights: </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
         
         <p><strong>Point Sheet and School Update: </strong>{studentName} {sr.Point_Sheet_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} a point sheet. {sr.Point_Sheet_and_School_Update__c}</p>
     

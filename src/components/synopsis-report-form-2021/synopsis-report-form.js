@@ -171,9 +171,9 @@ class SynopsisReportForm extends React.Component {
     const psMs = this.state.studentGrade > 5;
     const psEs = this.state.studentGrade <= 5;
     const pointSheetStatusOK = this.notEmpty('Point_Sheet_Status__c');
-    const msSelfReflectionOK = emptyPsStatus || psEs
+    const msSelfReflectionOK = emptyPsStatus || psNotTurnedIn || psEs
       || (psMs && this.notEmpty('Point_Sheet_MS_Self_Reflection__c'));
-    const esSelfReflectionOK = emptyPsStatus || psMs
+    const esSelfReflectionOK = emptyPsStatus || psNotTurnedIn || psMs
       || (psEs && this.notEmpty('Point_Sheet_ES_Self_Reflection__c'));
     const msTeacherConvoOK = emptyPsStatus || psEs || psNotTurnedIn
       || (psMs && psTurnedIn && this.notEmpty('Point_Sheet_Teacher_Convo_MS__c')); 
@@ -182,7 +182,8 @@ class SynopsisReportForm extends React.Component {
     const pointSheetMissedReasonOK = emptyPsStatus || psTurnedIn
       || (psNotTurnedIn && this.notEmpty('No_Point_Sheet__c'));
     const pointSheetStatusNotesOK = emptyPsStatus || psTurnedIn
-      || (psNotTurnedIn && sr.No_Point_Sheet__c !== 'Other' && this.notEmpty('No_Point_Sheet_What_Happened__c'));
+      || (psNotTurnedIn && sr.No_Point_Sheet__c !== 'Other')
+      || (psNotTurnedIn && sr.No_Point_Sheet__c === 'Other' && this.notEmpty('No_Point_Sheet_What_Happened__c'));
     const psAndSchoolUpdateOK = this.notEmpty('Point_Sheet_and_School_Update__c');
 
     const sportsUpdateOK = this.notEmpty('Weekly_Sports_Update__c');
@@ -419,30 +420,8 @@ class SynopsisReportForm extends React.Component {
               label="Please provide any additional context to RA staff in order to help inform how we can best support"
               value={ this.srSafe('How_can_we_support_required__c') ? this.state.synopsisReport.How_can_we_support_required__c : undefined }
               onChange={ this.handleTextAreaChange }
-              required={ !this.state.howSupportRequiredOK }
+              placeholder="Required..."
             />
-            </div>
-            : '' }
-          { this.notEmpty('Communication_Method_No_Check_In__c') 
-            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-            ? <div className="survey-question-container">
-                <DropDown
-                  compName="Communication_Method_No_Response__c"
-                  value={ this.srSafe('Communication_Method_No_Response__c') ? this.state.synopsisReport.Communication_Method_No_Response__c : undefined }
-                  valueClass={this.state.commNoResponseOK || this.notEmpty('Communication_Method_No_Response__c') ? '' : 'required'}
-                  onChange={ this.handleSimpleFieldChange }
-                  options={
-                    [
-                      { value: 'X', label: 'What action did you take when you got no response?' },
-                      { value: 'I reached out to family (Basecamp, Phone/Text)', label: 'I reached out to family (Basecamp, Phone/Text)' },
-                      { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
-                      { value: 'I did not connect with student and/or family for reasons explained below', label: 'I did not connect with student and/or family for reasons explained below' },
-                    ]
-                  }
-                />
             </div>
             : '' }
             { this.notEmpty('Communication_Method_No_Response__c') 
@@ -455,6 +434,7 @@ class SynopsisReportForm extends React.Component {
                 label="Please provide any additional context to RA staff in order to help inform how we can best support"
                 value={ this.srSafe('How_can_we_support__c') ? this.state.synopsisReport.How_can_we_support__c : undefined }
                 onChange={ this.handleTextAreaChange }
+                placeholder="Required..."
               />
               </div>
               : '' }
@@ -580,11 +560,12 @@ class SynopsisReportForm extends React.Component {
             <TextArea
                 compClass="title"
                 compName="Identity_Statement_Why_Not__c"
-                label="Why not? (optional)"
+                label="Why not?"
                 value={ this.srSafe('Identity_Statement_Why_Not__c')
                   ? this.state.synopsisReport.Identity_Statement_Why_Not__c
                   : '' }
                 onChange={ this.handleTextAreaChange }
+                placeholder="Optional..."
               />
             </div>
           : '' }
@@ -637,9 +618,9 @@ class SynopsisReportForm extends React.Component {
                 options={
                   [
                     { value: 'X', label: 'How many periods did student’s Point Sheet cover?' },
-                    { value: '1-3 periods (Warning this could affect eligibility)', label: '1-3 periods (Warning this could affect eligibility)' },
-                    { value: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
-                    { value: '7 periods (Full eligibility)', label: '7 periods (Full eligibility)' },
+                    { value: '1-3 periods', label: '1-3 periods (Warning this could affect eligibility)' },
+                    { value: '4-6 periods', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
+                    { value: '7 periods', label: '7 periods (Full eligibility)' },
                   ]
                 }/> 
             : ''}
@@ -729,7 +710,7 @@ class SynopsisReportForm extends React.Component {
                     value={ this.srSafe('No_Point_Sheet_What_Happened__c')
                       ? this.state.synopsisReport.No_Point_Sheet_What_Happened__c
                       : undefined }
-                    required={this.state.synopsisReport && this.state.synopsisReport.No_Point_Sheet__c === 'Other'}
+                    placeholder="Required..."
                     onChange={ this.handleTextAreaChange }
                     rows={ 3 }
                     cols={ 80 }
@@ -744,8 +725,7 @@ class SynopsisReportForm extends React.Component {
                     value={ this.srSafe('Point_Sheet_and_School_Update__c')
                       ? this.state.synopsisReport.Point_Sheet_and_School_Update__c
                       : undefined }
-                    required={ true }
-                    placeholder="Explain the student’s progress in the classroom over the past week."
+                    placeholder="Required..."
                     onChange={ this.handleTextAreaChange }
                     rows={ 3 }
                     cols={ 80 }
@@ -834,6 +814,7 @@ class SynopsisReportForm extends React.Component {
                   ? this.state.synopsisReport.Missing_Point_Sheet_Image__c
                   : undefined }
                 onChange={ this.handleTextAreaChange }
+                placeholder="Required..."
                 rows={ 3 }
                 cols={ 80 }
               />
@@ -876,6 +857,7 @@ class SynopsisReportForm extends React.Component {
                   ? this.state.synopsisReport.Mentor_Support_Request_Notes__c
                   : undefined }
                 onChange={ this.handleTextAreaChange }
+                placeholder="Required..."
                 rows={ 3 }
                 cols={ 80 }
               />
