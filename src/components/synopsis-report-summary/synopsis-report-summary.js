@@ -65,7 +65,7 @@ class SynopsisReportSummary extends React.Component {
    
     const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
 
-    <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around their progress on and off the field.</p><br>
+    <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
 
     <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
 
@@ -135,7 +135,9 @@ class SynopsisReportSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
-        <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around their progress on and off the field.</p>
+        
+        <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p>
+
         <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
         {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights: </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
