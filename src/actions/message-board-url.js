@@ -28,6 +28,7 @@ export const getMsgBoardUrl = studentEmail => (store) => { // eslint-disable-lin
       return store.dispatch(setMsgBoardUrl(messageBoardUrl));
     })
     .catch((err) => {
+      // store.dispatch(setMsgBoardUrl('ERROR'));
       return store.dispatch(setError(err.status));
     });
 };
