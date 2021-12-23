@@ -111,7 +111,7 @@ class SynopsisReportForm extends React.Component {
       });
       this.props.clearMsgBoardUrl();
       this.props.clearError();
-      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Email);
+      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Rainier_Athletes_Email__c);
     }
     if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
       this.setState({ waitingOnBasecamp: false });

@@ -94,7 +94,7 @@ class SynopsisReportSummary extends React.Component {
     <p>Thanks and feel free to respond with comments or questions!</p></br><br>
     
     <p>${sr.Mentor__r.Name}<br>
-    ${sr.Mentor__r.Email}<br>`;
+    ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>`;
     
     return `${block1}${optionalBlock2}${block3}${optionalBlock4}${optionalBlock5}${block6}`;
   };
@@ -135,7 +135,7 @@ class SynopsisReportSummary extends React.Component {
     const fullReportResponseJSX = (
       <React.Fragment>
         <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
-        
+
         <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p>
 
         <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
@@ -153,7 +153,7 @@ class SynopsisReportSummary extends React.Component {
         <p>Thanks and feel free to respond with comments or questions!</p>
         
         <p>{sr.Mentor__r.Name}<br />
-        {sr.Mentor__r.Email}<br /></p>
+        {sr.Mentor__r.Rainier_Athletes_Email__c}<br /></p>
     </React.Fragment>
     );
     
