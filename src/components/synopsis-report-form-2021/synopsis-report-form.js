@@ -640,9 +640,9 @@ class SynopsisReportForm extends React.Component {
                 options={
                   [
                     { value: 'X', label: 'How many days did student’s Point Sheet cover?' },
-                    { value: '1-2 days (Warning this could affect eligibility)', label: '1-2 days (Warning this could affect eligibility)' },
-                    { value: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)', label: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)' },
-                    { value: '5 days (Full eligibility)', label: '5 days (Full eligibility)' },
+                    { value: '1-2 days', label: '1-2 days (Warning this could affect eligibility)' },
+                    { value: '3-4 days', label: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)' },
+                    { value: '5 days', label: '5 days (Full eligibility)' },
                   ]
                 }/> 
             : ''}
@@ -659,9 +659,9 @@ class SynopsisReportForm extends React.Component {
                 options={
                   [
                     { value: 'X', label: 'What did their teachers confirm?' },
-                    { value: '1-3 periods (Warning this could affect eligibility)', label: '1-3 periods (Warning this could affect eligibility)' },
-                    { value: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)', label: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)' },
-                    { value: '7 periods (Full eligibility)', label: '7 periods (Full eligibility)' },
+                    { value: '1-3 periods', label: '1-3 periods (Warning this could affect eligibility)' },
+                    { value: '4-6 periods', label: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)' },
+                    { value: '7 periods', label: '7 periods (Full eligibility)' },
                   ]
                 }/> 
             : ''}
@@ -678,9 +678,9 @@ class SynopsisReportForm extends React.Component {
                 options={
                   [
                     { value: 'X', label: 'What did their teacher confirm?' },
-                    { value: '1-2 days (Warning this could affect eligibility)', label: '1-2 days (Warning this could affect eligibility)' },
-                    { value: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)', label: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)' },
-                    { value: '5 days (Full eligibility)', label: '5 days (Full eligibility)' },
+                    { value: '1-2 days', label: '1-2 days (Warning this could affect eligibility)' },
+                    { value: '3-4 days', label: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)' },
+                    { value: '5 days', label: '5 days (Full eligibility)' },
                   ]
                 }/> 
             : ''}
