@@ -40,5 +40,8 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     .send(sr)
     .then((result) => {
       return store.dispatch(setError(result.status));
+    })
+    .catch((err) => {
+      return store.dispatch(setError(err.status));
     });
 };
