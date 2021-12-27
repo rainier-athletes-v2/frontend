@@ -622,9 +622,9 @@ class SynopsisReportForm extends React.Component {
                 options={
                   [
                     { value: 'X', label: 'How many periods did student’s Point Sheet cover?' },
-                    { value: '1-3 periods', label: '1-3 periods (Warning this could affect eligibility)' },
-                    { value: '4-6 periods', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
-                    { value: '7 periods', label: '7 periods (Full eligibility)' },
+                    { value: '1-3', label: '1-3 periods (Warning this could affect eligibility)' },
+                    { value: '4-6', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
+                    { value: '7', label: '7 periods (Full eligibility)' },
                   ]
                 }/> 
             : ''}
