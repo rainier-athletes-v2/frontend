@@ -19,6 +19,7 @@ const mapStateToProps = state => ({
   error: state.error,
   bcImages: state.bcImages,
   imagePreviews: state.imagePreviews,
+  pickListFieldValues: state.pickListFieldValues,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -330,13 +331,8 @@ class SynopsisReportForm extends React.Component {
           value={ this.srSafe('Weekly_Check_In_Status__c') ? this.state.synopsisReport.Weekly_Check_In_Status__c : undefined}
           valueClass={this.state.weeklyCheckinStatusOK || this.notEmpty('Weekly_Check_In_Status__c') ? '' : 'required'}
           onChange={ this.handleSimpleFieldChange}
-          options={
-            [
-              { value: 'X', label: 'Did you meet with your student?' },
-              { value: 'Met', label: 'Met' },
-              { value: 'Did not meet', label: 'Did not meet' },
-            ]
-          }/>
+          options={this.props.pickListFieldValues.Weekly_Check_In_Status__c.values}
+          />
           { this.notEmpty('Weekly_Check_In_Status__c') && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' 
             ? <div className="survey-question-container">
                 <DropDown
@@ -344,14 +340,7 @@ class SynopsisReportForm extends React.Component {
                   value={ this.srSafe('Check_in_status_met__c') ? this.state.synopsisReport.Check_in_status_met__c : undefined }
                   valueClass={this.state.checkinStatusMetOK || this.notEmpty('Check_in_status_met__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
-                  options={
-                    [
-                      { value: 'X', label: 'How did you meet?' },
-                      { value: 'Student and I met in person at school', label: 'Student and I met in person at school' },
-                      { value: 'Student and I met in person outside of school', label: 'Student and I met in person outside of school' },
-                      { value: 'Student and I checked in via video call', label: 'Student and I checked in via video call' },
-                    ]
-                  }
+                  options={this.props.pickListFieldValues.Check_in_status_met__c.values}
                 />
               </div>
             : '' }
@@ -364,16 +353,7 @@ class SynopsisReportForm extends React.Component {
                   value={ this.srSafe('Communication_Status_Met__c') ? this.state.synopsisReport.Communication_Status_Met__c : undefined }
                   valueClass={this.state.commStatusMetOK || this.notEmpty('Communication_Status_Met__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
-                  options={
-                    [
-                      { value: 'X', label: 'Great! What did you do to make this happen?' },
-                      { value: 'I reached out to family (Basecamp, Phone/Text)', label: 'I reached out to family (Basecamp, Phone/Text)' },
-                      { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
-                      { value: 'I didn’t have any additional reach outs beyond RA staff reminders to student and family', label: 'I didn’t have any additional reach outs beyond RA staff reminders to student and family' },
-                    ]
-                  }
+                  options={this.props.pickListFieldValues.Communication_Status_Met__c.values}
                 />
               </div>
             : '' }
@@ -385,13 +365,7 @@ class SynopsisReportForm extends React.Component {
                   value={ this.srSafe('Did_not_meet_communication__c') ? this.state.synopsisReport.Did_not_meet_communication__c : undefined }
                   valueClass={this.state.commStatusDidNotMeetOK || this.notEmpty('Did_not_meet_communication__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
-                  options={
-                    [
-                      { value: 'X', label: 'Were you able to communicate?' },
-                      { value: 'I communicated with the student and/or family but we weren’t able to have a check in', label: 'I communicated with the student and/or family but we weren’t able to have a check in' },
-                      { value: 'I did not communicate with the student and/or family because I reached out and did not hear back', label: 'I did not communicate with the student and/or family because I reached out and did not hear back' },
-                    ]
-                  }
+                  options={this.props.pickListFieldValues.Did_not_meet_communication__c.values}
                 />
               </div>
             : '' }
@@ -404,16 +378,7 @@ class SynopsisReportForm extends React.Component {
                   value={ this.srSafe('Communication_Method_No_Check_In__c') ? this.state.synopsisReport.Communication_Method_No_Check_In__c : undefined }
                   valueClass={this.state.commMethodNoCheckinOK || this.notEmpty('Communication_Method_No_Check_In__c') ? '' : 'required'}
                   onChange={ this.handleSimpleFieldChange }
-                  options={
-                    [
-                      { value: 'X', label: 'How did you communicate this week?' },
-                      { value: 'I reached out to family (Basecamp, Phone/Text)', label: 'I reached out to family (Basecamp, Phone/Text)' },
-                      { value: 'I reached out to student (Basecamp, Teams, Phone/Text)', label: 'I reached out to student (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I reached out to student and family (Basecamp, Teams, Phone/Text)', label: 'I reached out to student and family (Basecamp, Teams, Phone/Text)' },
-                      { value: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff', label: 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' },
-                      { value: 'I did not connect with student and/or family for other reasons explained below', label: 'I did not connect with student and/or family for other reasons explained below' },
-                    ]
-                  }
+                  options={this.props.pickListFieldValues.Communication_Method_No_Check_In__c.values}
                 />
               </div>
             : '' }
@@ -451,56 +416,41 @@ class SynopsisReportForm extends React.Component {
 
     const oneTeamJSX = (
       <React.Fragment>
-      <div className="title">
-          <h5>ONE TEAM CONNECTIONS</h5>
-      </div>
-      <div>
-          <p>(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
-      </div>
-      <fieldset>
-        <div className="mentor-met-container">
-        <DropDown
-          compName="Family_Connection__c"
-          value={ this.srSafe('Family_Connection__c')
-            ? this.state.synopsisReport.Family_Connection__c
-            : ''}
-          valueClass={this.state.metWithFamilyOK || this.notEmpty('Family_Connection__c') ? '' : 'required'}
-          onChange={ this.handleSimpleFieldChange}
-          options={
-            [
-              { value: 'X', label: 'Did you connect with your RA student’s family this week?' },
-              { value: 'Yes', label: 'Yes (met in person or over video call and/or communicated via Basecamp, email or phone)' },
-              { value: 'No', label: 'No' },
-            ]
-          }/>
-        <DropDown
-          compName="Teacher_Connection__c"
-          value={this.srSafe('Teacher_Connection__c')
-            ? this.state.synopsisReport.Teacher_Connection__c
-            : ''}
-          valueClass={this.state.metWithTeacherOK || this.notEmpty('Teacher_Connection__c') ? '' : 'required'}
-          onChange={ this.handleSimpleFieldChange}
-          options={
-            [
-              { value: 'X', label: 'Did you connect with 1 or more of your RA student’s teachers this week?' },
-              { value: 'Yes', label: 'Yes (met in person or over video call and/or communicated via Basecamp, email or phone)' },
-              { value: 'No', label: 'No' },
-            ]
-          }/>
-        <DropDown
-          compName="Coach_Connection__c"
-          value={this.srSafe('Coach_Connection__c')
-            ? this.state.synopsisReport.Coach_Connection__c
-            : ''}
-          valueClass={this.state.metWithCoachOK || this.notEmpty('Coach_Connection__c') ? '' : 'required'}
-          onChange={ this.handleSimpleFieldChange}
-          options={
-            [
-              { value: 'X', label: 'Did you connect with your RA student’s coach this week?' },
-              { value: 'Yes', label: 'Yes (attended a game or practice and/or communicated via email or phone)' },
-              { value: 'No', label: 'No' },
-            ]
-          }/>
+        <div className="title">
+            <h5>ONE TEAM CONNECTIONS</h5>
+        </div>
+        <div>
+            <p>(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
+        </div>
+        <fieldset>
+          <div className="mentor-met-container">
+            <DropDown
+              compName="Family_Connection__c"
+              value={ this.srSafe('Family_Connection__c')
+                ? this.state.synopsisReport.Family_Connection__c
+                : ''}
+              valueClass={this.state.metWithFamilyOK || this.notEmpty('Family_Connection__c') ? '' : 'required'}
+              onChange={ this.handleSimpleFieldChange}
+              options={this.props.pickListFieldValues.Family_Connection__c.values}
+            />
+            <DropDown
+              compName="Teacher_Connection__c"
+              value={this.srSafe('Teacher_Connection__c')
+                ? this.state.synopsisReport.Teacher_Connection__c
+                : ''}
+              valueClass={this.state.metWithTeacherOK || this.notEmpty('Teacher_Connection__c') ? '' : 'required'}
+              onChange={ this.handleSimpleFieldChange}
+              options={this.props.pickListFieldValues.Teacher_Connection__c.values}
+            />
+            <DropDown
+              compName="Coach_Connection__c"
+              value={this.srSafe('Coach_Connection__c')
+                ? this.state.synopsisReport.Coach_Connection__c
+                : ''}
+              valueClass={this.state.metWithCoachOK || this.notEmpty('Coach_Connection__c') ? '' : 'required'}
+              onChange={ this.handleSimpleFieldChange}
+              options={this.props.pickListFieldValues.Coach_Connection__c.values}
+            />
           </div>
         </fieldset>
       </React.Fragment>
@@ -519,13 +469,8 @@ class SynopsisReportForm extends React.Component {
               : ''}
             valueClass={this.state.identityStatusOK || this.notEmpty('Identity_Statement_Weekly_Status__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={
-              [
-                { value: 'X', label: 'Did you discuss Identity Statement questions this week?' },
-                { value: 'Yes', label: 'Yes' },
-                { value: 'No', label: 'No' },
-              ]
-            }/>
+            options={this.props.pickListFieldValues.Identity_Statement_Weekly_Status__c.values}
+          />
         </div>
         { this.notEmpty('Identity_Statement_Weekly_Status__c') 
             && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' 
@@ -537,28 +482,8 @@ class SynopsisReportForm extends React.Component {
                 : ''}
               valueClass={this.state.identityPromptOK || this.notEmpty('Identity_Statement_Prompts__c') ? '' : 'required'}
               onChange={ this.handleSimpleFieldChange}
-              options={
-                [
-                  { value: 'X', label: 'What number did you discuss?' },
-                  { value: '0: Not Started', label: '0: Not Started' },
-                  { value: '1: Intro', label: '1: Intro' },
-                  { value: '2: Spaces/Places', label: '2: Spaces/Places' },
-                  { value: '3: Of My Friends', label: '3: Of My Friends' },
-                  { value: '4: Ancestors/Culture', label: '4: Ancestors/Culture' },
-                  { value: '5: Unique/ Voice', label: '5: Unique/ Voice' },
-                  { value: '6: Strength/Insecurities', label: '6: Strength/Insecurities' },
-                  { value: '7: Triggers and Anger', label: '7: Triggers and Anger' },
-                  { value: '8: De-escalate/ Appreciate', label: '8: De-escalate/ Appreciate' },
-                  { value: '9: Happy/ Peace', label: '9: Happy/ Peace' },
-                  { value: '10: Love/ Respect', label: '10: Love/ Respect' },
-                  { value: '11: Age/Gender/Sexual Preference', label: '11: Age/Gender/Sexual Preference' },
-                  { value: '12: Race/ Religion', label: '12: Race/ Religion' },
-                  { value: '13: Learning Ability/Physical Ability', label: '13: Learning Ability/Physical Ability' },
-                  { value: '14: Racial Identity', label: '14: Racial Identity' },
-                  { value: '15: Feelings about Race', label: '15: Feelings about Race' },
-                  { value: '16: Prompts Complete', label: '16: Prompts Complete' },
-                ]
-              }/>
+              options={this.props.pickListFieldValues.Identity_Statement_Prompts__c.values}
+            />
             </div>
           : '' }
         { this.notEmpty('Identity_Statement_Weekly_Status__c')
@@ -606,13 +531,8 @@ class SynopsisReportForm extends React.Component {
               : undefined}
             valueClass={this.state.pointSheetStatusOK || this.notEmpty('Point_Sheet_Status__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={
-              [
-                { value: 'X', label: 'Did student turn in a Point Sheet?' },
-                { value: 'Turned in', label: 'Yes' },
-                { value: 'Not turned in', label: 'No (Warning: This could affect eligibility)' },
-              ]
-            }/>
+            options={this.props.pickListFieldValues.Point_Sheet_Status__c.values}
+          />
           {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
             && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' 
             ? <DropDown
@@ -622,14 +542,8 @@ class SynopsisReportForm extends React.Component {
                   : undefined}
                 valueClass={this.state.msSelfReflectionOK || this.notEmpty('Point_Sheet_MS_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={
-                  [
-                    { value: 'X', label: 'How many periods did student’s Point Sheet cover?' },
-                    { value: '1-3', label: '1-3 periods (Warning this could affect eligibility)' },
-                    { value: '4-6', label: '4-6 periods (Full eligibility, discussion opportunity with self discovery for rest of classes)' },
-                    { value: '7', label: '7 periods (Full eligibility)' },
-                  ]
-                }/> 
+                options={this.props.pickListFieldValues.Point_Sheet_MS_Self_Reflection__c.values}
+              /> 
             : ''}
           {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
             && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
@@ -640,14 +554,8 @@ class SynopsisReportForm extends React.Component {
                   : undefined}
                 valueClass={this.state.esSelfReflectionOK || this.notEmpty('Point_Sheet_ES_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={
-                  [
-                    { value: 'X', label: 'How many days did student’s Point Sheet cover?' },
-                    { value: '1-2 days', label: '1-2 days (Warning this could affect eligibility)' },
-                    { value: '3-4 days', label: '3-4 days (Full eligibility, discussion opportunity with Self Discovery for rest of classes)' },
-                    { value: '5 days', label: '5 days (Full eligibility)' },
-                  ]
-                }/> 
+                options={this.props.pickListFieldValues.Point_Sheet_ES_Self_Reflection__c.values}
+              /> 
             : ''}
           {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
             && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
@@ -659,14 +567,8 @@ class SynopsisReportForm extends React.Component {
                   : undefined}
                 valueClass={this.state.msTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_MS__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={
-                  [
-                    { value: 'X', label: 'What did their teachers confirm?' },
-                    { value: '1-3', label: '1-3 periods (Warning this could affect eligibility)' },
-                    { value: '4-6', label: '4-6 periods (Full eligibility, discuss opportunity to connect with rest of teachers)' },
-                    { value: '7', label: '7 periods (Full eligibility)' },
-                  ]
-                }/> 
+                options={this.props.pickListFieldValues.Point_Sheet_Teacher_Convo_MS__c.values}
+              /> 
             : ''}
           {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
             && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
@@ -678,14 +580,8 @@ class SynopsisReportForm extends React.Component {
                   : undefined}
                 valueClass={this.state.esTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_ES__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={
-                  [
-                    { value: 'X', label: 'What did their teacher confirm?' },
-                    { value: '1-2 days', label: '1-2 days (Warning this could affect eligibility)' },
-                    { value: '3-4 days', label: '3-4 days (Full eligibility, discuss opportunity to connect with rest of teachers)' },
-                    { value: '5 days', label: '5 days (Full eligibility)' },
-                  ]
-                }/> 
+                options={this.props.pickListFieldValues.Point_Sheet_Teacher_Convo_ES__c.values}
+              /> 
             : ''}
           {this.notEmpty('Point_Sheet_Status__c') && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
             ? <DropDown
@@ -695,15 +591,8 @@ class SynopsisReportForm extends React.Component {
                   : undefined}
                 valueClass={this.state.pointSheetMissedReasonOK || this.notEmpty('No_Point_Sheet__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={
-                  [
-                    { value: 'X', label: 'What is the reason a point sheet wasn’t turned in?' },
-                    { value: 'The point sheet was completely blank', label: 'The point sheet was completely blank' },
-                    { value: 'It was lost', label: 'It was lost (remember, point sheets are available to be printed on each student’s Basecamp teams Docs & Files)' },
-                    { value: 'The student was absent from check in', label: 'The student was absent from check in' },
-                    { value: 'Other', label: 'Other' },
-                  ]
-                }/> 
+                options={this.props.pickListFieldValues.No_Point_Sheet__c.values}
+              /> 
             : ''}
             { this.notEmpty('Point_Sheet_Status__c') 
               && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
@@ -755,16 +644,8 @@ class SynopsisReportForm extends React.Component {
               : undefined}
               valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_Update__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={
-              [
-                { value: 'X', label: 'Did your student go to their sports games and practices this week?' },
-                { value: 'Yes', label: 'Yes' },
-                { value: 'Some of them', label: 'Some of them' },
-                { value: 'None of them', label: 'None of them' },
-                { value: 'We didn’t talk about it', label: 'We didn’t talk about it' },
-                { value: 'They are not currently on a team', label: 'They are not currently on a team' },
-              ]
-            }/>
+            options={this.props.pickListFieldValues.Weekly_Sports_Update__c.values}
+          />
           <div className="survey-question-container">
             <TextArea
               compClass="title"
@@ -844,16 +725,8 @@ class SynopsisReportForm extends React.Component {
               : undefined}
             valueClass={this.state.mentorSupportRequestOK || this.notEmpty('Mentor_Support_Request__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={
-              [
-                { value: 'X', label: 'Do you need additional support?' },
-                { value: 'No', label: 'No' },
-                { value: 'Student Follow Up', label: 'Student Follow Up' },
-                { value: 'Teacher Follow Up', label: 'Teacher Follow Up' },
-                { value: 'Technical Support', label: 'Technical Support' },
-                { value: 'Other', label: 'Other' },
-              ]
-            }/>
+            options={this.props.pickListFieldValues.Mentor_Support_Request__c.values}
+          />
           { this.notEmpty('Mentor_Support_Request__c') && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
             ? <div className="survey-question-container">
               <TextArea
@@ -962,6 +835,7 @@ SynopsisReportForm.propTypes = {
   clearMsgBoardUrl: PropTypes.func,
   clearError: PropTypes.func,
   getMsgBoardUrl: PropTypes.func,
+  pickListFieldValues: PropTypes.object,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,

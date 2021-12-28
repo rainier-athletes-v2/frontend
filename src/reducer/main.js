@@ -7,6 +7,7 @@ import role from './role';
 import myProfile from './myProfile';
 import synopsisReport from './synopsis-report'; // a single student's report
 import synopsisReportList from './synopsis-report-list'; // most recent SR's for a student
+import pickListFieldValues from './pickListFieldValues';
 import synopsisReportLink from './synopsis-report-link'; // link to SF PDF on google drive
 import messageBoardUrl from './message-board-url';
 import myStudents from './myStudents';
@@ -22,6 +23,7 @@ export default combineReducers({
   synopsisReportList,
   synopsisReportLink,
   messageBoardUrl,
+  pickListFieldValues,
   synopsisReport,
   imagePreviews,
   bcImages,

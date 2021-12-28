@@ -10,3 +10,4 @@ export const SYNOPSIS_REPORT_ROUTE = '/synopsisreport'; // specific SR retrieved
 export const SYNOPSIS_SUMMARY_ROUTE = '/synopsissummary';
 export const MYSTUDENTS_ROUTE = '/profiles/myStudents';
 export const SINGLE_IMAGE_UPLOAD_ROUTE = '/image/upload';
+export const PICKLISTS_ROUTE = '/synopsisreports/pick-lists';

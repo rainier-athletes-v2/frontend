@@ -53,3 +53,6 @@ export const IMAGE_DATA_SET = 'IMAGE_DATA_SET';
 export const IMAGE_DATA_CLEAR = 'IMAGE_DATA_CLEAR';
 export const IMAGE_PREVIEW_SET = 'IMAGE_PREVIEW_SET';
 export const IMAGE_PREVIEW_CLEAR = 'IMAGE_PREVIEW_CLEAR';
+
+// picklist types
+export const PICKLIST_SET = 'PICKLIST_SET';
