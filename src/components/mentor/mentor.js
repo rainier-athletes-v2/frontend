@@ -25,7 +25,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const MODAL_REGULAR = 1;
-const MODAL_SUMMER = 2;
 const MODAL_OFF = 0;
 
 class Mentor extends React.Component {
@@ -116,13 +115,7 @@ class Mentor extends React.Component {
 
   handleEditSRClick = (e) => {
     e.preventDefault();
-    // this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-  }
-
-  handleEditSummerSRClick = (e) => {
-    this.setState({ modal: MODAL_SUMMER });
-    this.handleEditSRClick(e);
   }
 
   handleEditRegularSRClick = (e) => {
@@ -136,13 +129,6 @@ class Mentor extends React.Component {
     this.props.clearSynopsisReport();
   }
 
-  // handleRadioChange = (event) => {
-  //   event.preventDefault();
-  //   const newState = { ...this.state };
-  //   newState.synopsisReport.Summer_weekly_connection_made__c = event.target.value === 'true';
-  //   this.setState(newState);
-  // }
-
   handleSubPT = () => {
     this.setState({
       ...this.state,
@@ -150,23 +136,6 @@ class Mentor extends React.Component {
       selected: -1,
       subPT: !this.state.subPT,
     });
-  }
-
-  selectSrForm = () => {
-    switch (this.state.modal) {
-      case MODAL_SUMMER:
-        return <SynopsisReportSummerForm
-          content={ this.state.content } 
-          saveClick={ this.handleSaveButtonClick } 
-          cancelClick={this.handleCancelButton}/>;
-      case MODAL_REGULAR:
-        return <SynopsisReportForm
-          content={ this.state.content } 
-          saveClick={ this.handleSaveButtonClick } 
-          cancelClick={this.handleCancelButton}/>; 
-      default:
-        return null;
-    }
   }
 
   render() {
@@ -178,7 +147,13 @@ class Mentor extends React.Component {
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
             editRegularSrClick={this.handleEditRegularSRClick} 
             editSummerSrClick={this.handleEditSummerSRClick}>
-            { this.selectSrForm() }
+            {this.state.modal !== MODAL_OFF
+              ? <SynopsisReportForm
+                content={ this.state.content } 
+                saveClick={ this.handleSaveButtonClick } 
+                cancelClick={this.handleCancelButton}/>
+              : ''
+            }
           </ MentorContent>
           </div>
         </div>
@@ -191,12 +166,10 @@ Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
-  // clearSynopsisReportLink: PropTypes.func,
   clearSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Mentor);
