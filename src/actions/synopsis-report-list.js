@@ -14,8 +14,9 @@ export const setPicklistValues = pickListValues => ({
 
 export const fetchRecentSynopsisReports = (studentId) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
+  const state = store.getState();
 
-  if (!store.pickListFieldValues) {
+  if (!state.pickListFieldValues || Object.keys(state.pickListFieldValues).length === 0) {
     superagent.get(`${API_URL}${routes.PICKLISTS_ROUTE}`)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json')
