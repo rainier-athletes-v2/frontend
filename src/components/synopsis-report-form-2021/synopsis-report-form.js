@@ -43,6 +43,7 @@ class SynopsisReportForm extends React.Component {
     this.state.waitingOnSalesforce = false;
     this.state.salesforceErrorStatus = 0;
     this.state.waitingOnBasecamp = false;
+    this.state.basecampErrorStatus = 0;
     this.state.imageUploading = false;
     this.props.clearMsgBoardUrl();
   }
@@ -84,8 +85,11 @@ class SynopsisReportForm extends React.Component {
   componentDidUpdate = (prevProps) => {
     if (this.props.error !== prevProps.error) {
       if (this.state.waitingOnBasecamp) {
+        this.setState({
+          waitingOnBasecamp: false,
+          basecampErrorStatus: this.props.error,
+        });
         this.props.clearError();
-        this.setState({ waitingOnBasecamp: false });
       }
       if (this.state.waitingOnImages) {
         this.props.clearError();
@@ -768,7 +772,7 @@ class SynopsisReportForm extends React.Component {
         if (this.props.messageBoardUrl) {
           return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
         }
-        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.)</p></React.Fragment>);  
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info, error status {this.state.basecampErrorStatus}. Please alert an administrator.)</p></React.Fragment>);  
       }
       if (!this.state.waitingOnSalesforce && this.state.savedToSalesforce && this.state.salesforceErrorStatus > 300) {
         return (<React.Fragment><h5 className="required">{`There was an error saving to Salesforce, status ${this.state.salesforceErrorStatus}. Please contact an administrator.`}</h5><h5><button onClick={ this.props.cancelClick } className="btn btn-secondary" id="error-close">Close</button></h5></React.Fragment>);
