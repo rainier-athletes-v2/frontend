@@ -766,16 +766,18 @@ class SynopsisReportForm extends React.Component {
           <h5>Waiting for Basecamp Messaging connection...</h5>
           <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
         </React.Fragment>);
-      } 
+      }
+      const sr = this.props.synopsisReport;
+      const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
       if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce) && !this.state.waitingOnBasecamp
         && this.state.salesforceErrorStatus < 300) {
         if (this.props.messageBoardUrl) {
-          return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to Student&#39;s Core Community</h5>);
+          return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to {studentName}&#39;s Core Community</h5>);
         }
-        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info, error status {this.state.basecampErrorStatus}. Please alert an administrator.)</p></React.Fragment>);  
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p className="centered">(There&#39;s an issue retrieving Basecamp link to {studentName}&#39;s message board. Error status {this.state.basecampErrorStatus}. Please alert an administrator.)</p></React.Fragment>);  
       }
       if (!this.state.waitingOnSalesforce && this.state.savedToSalesforce && this.state.salesforceErrorStatus > 300) {
-        return (<React.Fragment><h5 className="required">{`There was an error saving to Salesforce, status ${this.state.salesforceErrorStatus}. Please contact an administrator.`}</h5><h5><button onClick={ this.props.cancelClick } className="btn btn-secondary" id="error-close">Close</button></h5></React.Fragment>);
+        return (<React.Fragment><h5 className="required centered">There was an error saving to Salesforce, error status {this.state.salesforceErrorStatus}. Please contact an administrator.</h5><h5><button onClick={ this.props.cancelClick } className="btn btn-secondary" id="error-close">Close</button></h5></React.Fragment>);
       }
       return null;
     };

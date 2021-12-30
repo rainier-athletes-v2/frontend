@@ -76,7 +76,7 @@ class SynopsisReportSummary extends React.Component {
 
     const block3 = `<p><strong>Point Sheet and School Update: </strong>
     ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet. 
-    ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+    ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
 
     const optionalBlock4 = sr.Sports_Update__c
       ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
