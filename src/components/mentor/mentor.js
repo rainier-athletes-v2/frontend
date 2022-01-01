@@ -8,6 +8,7 @@ import SynopsisReportForm from '../synopsis-report-form-2021/synopsis-report-for
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
+import * as bcActions from '../../actions/bc-projects';
 
 import './_mentor.scss';
 
@@ -22,6 +23,7 @@ const mapDispatchToProps = dispatch => ({
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
+  fetchBcProjects: () => dispatch(bcActions.fetchBcProjects()),
 });
 
 const MODAL_REGULAR = 1;
@@ -47,6 +49,7 @@ class Mentor extends React.Component {
 
   componentDidMount = () => {
     this.props.fetchMyStudents();
+    this.props.fetchBcProjects();
   }
 
   handleSidebarClick(e) {
@@ -166,6 +169,7 @@ Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
+  fetchBcProjects: PropTypes.func,
   clearSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,

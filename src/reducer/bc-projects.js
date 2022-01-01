@@ -1,10 +1,10 @@
-import { SET_MSG_BOARD_URL, CLEAR_MSG_BOARD_URL } from '../lib/types';
+import { SET_BC_PROJECTS, CLEAR_BC_PROJECTS } from '../lib/types';
 
 export default (state = null, { type, payload }) => {
   switch (type) {
-    case SET_MSG_BOARD_URL:
+    case SET_BC_PROJECTS:
       return payload;
-    case CLEAR_MSG_BOARD_URL:
+    case CLEAR_BC_PROJECTS:
       return null;
     default:
       return state;

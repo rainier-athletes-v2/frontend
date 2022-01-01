@@ -11,3 +11,5 @@ export const SYNOPSIS_SUMMARY_ROUTE = '/synopsissummary';
 export const MYSTUDENTS_ROUTE = '/profiles/myStudents';
 export const SINGLE_IMAGE_UPLOAD_ROUTE = '/image/upload';
 export const PICKLISTS_ROUTE = '/synopsisreports/pick-lists';
+export const BC_PROJECTS = '/bc-projects';
+export const BC_PROJECT_SCAN = '/bc-project-scan';
