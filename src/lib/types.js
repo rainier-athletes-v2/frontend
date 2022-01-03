@@ -45,6 +45,8 @@ export const SET_MSG_BOARD_URL = 'SET_MSG_BOARD_URL';
 export const CLEAR_MSG_BOARD_URL = 'CLEAR_MSG_BOARD_URL';
 export const CLEAR_BC_PROJECTS = 'CLEAR_BC_PROJECTS';
 export const SET_BC_PROJECTS = 'SET_BC_PROJECTS';
+export const SET_PROJECT_IDX = 'SET_PROJECT_IDX';
+export const SCAN_PROJECT = 'SCAN_PROJECT';
 
 // synopsis-report types
 export const SYNOPSIS_REPORT_SET = 'SYNOPSIS_REPORT_SET';

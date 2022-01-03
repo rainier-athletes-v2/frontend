@@ -7,6 +7,7 @@ import TextArea from '../text-area/text-area';
 import ImagePreviews from '../image-previews/image-previews';
 import * as srActions from '../../actions/synopsis-report';
 import * as msgBoardUrlActions from '../../actions/message-board-url';
+import * as bcActions from '../../actions/bc-projects';
 import * as errorActions from '../../actions/error';
 import * as imageActions from '../../actions/images';
 
@@ -20,12 +21,13 @@ const mapStateToProps = state => ({
   bcImages: state.bcImages,
   imagePreviews: state.imagePreviews,
   pickListFieldValues: state.pickListFieldValues,
+  bcProjects: state.bcProjects,
 });
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
   getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
-  clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
+  clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
   clearImages: () => dispatch(imageActions.clearImageSgids()),
@@ -842,6 +844,7 @@ SynopsisReportForm.propTypes = {
   clearError: PropTypes.func,
   getMsgBoardUrl: PropTypes.func,
   pickListFieldValues: PropTypes.object,
+  bcProjects: PropTypes.object,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,

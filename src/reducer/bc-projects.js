@@ -1,11 +1,11 @@
-import { SET_BC_PROJECTS, CLEAR_BC_PROJECTS } from '../lib/types';
+import { SET_BC_PROJECTS, SCAN_PROJECT } from '../lib/types';
 
 export default (state = null, { type, payload }) => {
   switch (type) {
     case SET_BC_PROJECTS:
       return payload;
-    case CLEAR_BC_PROJECTS:
-      return null;
+    case SCAN_PROJECT:
+      return payload;
     default:
       return state;
   }

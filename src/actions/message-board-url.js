@@ -1,34 +1,19 @@
-import superagent from 'superagent';
-import * as routes from '../lib/routes';
-import * as t from '../lib/types';
 import { setError, clearError } from './error';
-
-export const setMsgBoardUrl = url => ({
-  type: t.SET_MSG_BOARD_URL,
-  payload: url,
-});
-
-export const clearMsgBoardUrl = () => ({
-  type: t.CLEAR_MSG_BOARD_URL,
-  payload: null,
-});
+import {
+  setBcProjects, clearMsgBoardUrl, setMsgBoardUrl, scanProjectForStudent,
+} from './bc-projects';
 
 export const getMsgBoardUrl = studentEmail => (store) => { // eslint-disable-line
-  const { salesforceToken, basecampToken } = store.getState();
+  const { bcProjects } = store.getState();
 
   store.dispatch(clearError());
   store.dispatch(clearMsgBoardUrl());
+  store.dispatch(setBcProjects({ ...bcProjects, idx: 0 }));
 
-  return superagent.get(`${API_URL}${routes.SYNOPSIS_SUMMARY_ROUTE}`)
-    .set('Authorization', `Bearer ${salesforceToken}`)
-    .set('Content-Type', 'application/json')
-    .query({ studentEmail, basecampToken })
-    .then((res) => {
-      const { messageBoardUrl } = res.body;
-      return store.dispatch(setMsgBoardUrl(messageBoardUrl));
-    })
-    .catch((err) => {
-      // store.dispatch(setMsgBoardUrl('ERROR'));
-      return store.dispatch(setError(err.status));
-    });
+  if (bcProjects.projects.length === 0 && bcProjects.loadState === 'SUCCESS') {
+    store.dipatch(setMsgBoardUrl(null));
+    return store.dispatch(setError(404));
+  }
+
+  return store.dispatch(scanProjectForStudent(studentEmail));
 };

@@ -3,30 +3,71 @@ import * as routes from '../lib/routes';
 import * as t from '../lib/types';
 import { setError, clearError } from './error';
 
-export const clearBcProjects = () => ({
-  type: t.CLEAR_BC_PROJECTS,
+export const setBcProjects = payload => ({
+  type: t.SET_BC_PROJECTS,
+  payload,
+});
+
+export const setMsgBoardUrl = url => ({
+  type: t.SET_MSG_BOARD_URL,
+  payload: url,
+});
+
+export const clearMsgBoardUrl = () => ({
+  type: t.CLEAR_MSG_BOARD_URL,
   payload: null,
 });
 
-export const setBcProjects = projects => ({
-  type: t.SET_BC_PROJECTS,
-  payload: projects,
+export const setProjectIdx = idx => ({
+  type: t.SET_PROJECT_IDX,
+  payload: idx,
 });
 
 export const fetchBcProjects = () => (store) => { // eslint-disable-line
   const { basecampToken, salesforceToken } = store.getState();
 
   store.dispatch(clearError());
-  store.dispatch(clearBcProjects());
+  store.dispatch(setBcProjects({ projects: null, loadState: 'LOADING', idx: undefined }));
 
   return superagent.get(`${API_URL}${routes.BC_PROJECTS}`)
     .set('Authorization', `Bearer ${salesforceToken}`)
     .set('Content-Type', 'application/json')
     .query({ basecampToken })
     .then((res) => {
-      return store.dispatch(setBcProjects(res.body));
+      return store.dispatch(setBcProjects({ projects: res.body.projects, loadState: 'SUCCESS', idx: 0 }));
     })
     .catch((err) => {
+      store.dispatch(setBcProjects({ projects: null, loadState: 'ERROR', idx: undefined }));
+      return store.dispatch(setError(err.status));
+    });
+};
+
+export const scanProjectForStudent = studentEmail => (store) => {
+  const { basecampToken, salesforceToken, bcProjects } = store.getState();
+  const { idx, projects } = bcProjects;
+  const project = projects[idx];
+
+  store.dispatch(setBcProjects({ ...bcProjects, loadState: 'SCANNING' }));
+  return superagent.get(`${API_URL}${routes.BC_PROJECT_SCAN}`)
+    .set('Authorization', `Bearer ${salesforceToken}`)
+    .set('Content-Type', 'application/json')
+    .query({ studentEmail, project, basecampToken })
+    .then((res) => {
+      if (!res.body) {
+        const nextIdx = idx + 1;
+        if (nextIdx >= projects.length) {
+          store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));
+          return store.dispatch(setError(404));
+        }
+        store.dispatch(setBcProjects({ ...bcProjects, idx: nextIdx }));
+        return store.dispatch(scanProjectForStudent(studentEmail));
+      }
+      store.dispatch(setBcProjects({ ...bcProjects, loadState: 'SUCCESS' }));
+      console.log('res.body', res.body);
+      return store.dispatch(setMsgBoardUrl(res.body));
+    })
+    .catch((err) => {
+      store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));
       return store.dispatch(setError(err.status));
     });
 };
