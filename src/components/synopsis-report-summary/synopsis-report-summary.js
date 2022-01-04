@@ -144,15 +144,9 @@ class SynopsisReportSummary extends React.Component {
         
         <p><strong>Point Sheet and School Update: </strong>{studentName} {sr.Point_Sheet_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} a point sheet. {sr.Point_Sheet_and_School_Update__c}</p>
     
-<<<<<<< HEAD
         {sr.Sports_Update__c ? <p><strong>Sports Update: </strong>{sr.Sports_Update__c}</p> : ''}
 
         {sr.Additional_Comments__c ? <p><strong>Additional Comments: </strong>{sr.Additional_Comments__c}</p> : ''}
-=======
-    <p>{sr.Mentor__r.Name}<br />
-    {sr.Mentor__r.Rainier_Athletes_Email__c}<br />
-    {this.state.schoolName ? this.state.schoolName : ''}</p>
->>>>>>> master
 
         <p>{!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'Point Sheet image has been posted to basecamp.' }</p> {/* eslint-disable-line */}
     
