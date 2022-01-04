@@ -28,7 +28,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
+  // clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
   clearImages: () => dispatch(imageActions.clearImageSgids()),
@@ -48,7 +48,7 @@ class SynopsisReportForm extends React.Component {
     this.state.waitingOnBasecamp = false;
     this.state.basecampErrorStatus = 0;
     this.state.imageUploading = false;
-    this.props.clearMsgBoardUrl();
+    // this.props.clearMsgBoardUrl();
   }
 
   componentDidMount = () => {
@@ -838,7 +838,7 @@ SynopsisReportForm.propTypes = {
   synopsisReport: PropTypes.object,
   handleChange: PropTypes.func,
   saveSynopsisReport: PropTypes.func,
-  clearMsgBoardUrl: PropTypes.func,
+  // clearMsgBoardUrl: PropTypes.func,
   clearError: PropTypes.func,
   pickListFieldValues: PropTypes.object,
   projectCount: PropTypes.number,
