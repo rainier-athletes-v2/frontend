@@ -71,7 +71,7 @@ class SynopsisReportSummary extends React.Component {
 
     const optionalBlock2 = sr.Identity_Statement_Highlights__c
       ? `<p><strong>Identity Statement Highlights: </strong>
-    ${sr.Identity_Statement_Highlights__c}${sr.Identity_Statement_Highlights__c ? sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+        ${sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
     const block3 = `<p><strong>Point Sheet and School Update: </strong>
@@ -79,11 +79,11 @@ class SynopsisReportSummary extends React.Component {
     ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
 
     const optionalBlock4 = sr.Sports_Update__c
-      ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+      ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
     const optionalBlock5 = sr.Additional_Comments__c
-      ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`
+      ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
     const block6 = `<p><strong>Point Sheet & Images</strong></p><br>
