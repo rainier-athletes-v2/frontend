@@ -9,6 +9,7 @@ import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
 import * as bcActions from '../../actions/bc-projects';
+import { getMsgBoardUrl } from '../../actions/message-board-url';
 
 import './_mentor.scss';
 
@@ -24,6 +25,7 @@ const mapDispatchToProps = dispatch => ({
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
   fetchBcProjects: () => dispatch(bcActions.fetchBcProjects()),
+  getMsgBoardUrl: studentEmail => dispatch(getMsgBoardUrl(studentEmail)),
 });
 
 const MODAL_REGULAR = 1;
@@ -63,6 +65,7 @@ class Mentor extends React.Component {
         selected: i,
         subPT: false,
       });
+      this.props.getMsgBoardUrl(this.props.myStudents[i].email);
     }
   }
 
@@ -174,6 +177,7 @@ Mentor.propTypes = {
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,
+  getMsgBoardUrl: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Mentor);

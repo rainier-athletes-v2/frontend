@@ -51,9 +51,10 @@ export const scanProjectForStudent = studentEmail => (store) => {
   return superagent.get(`${API_URL}${routes.BC_PROJECT_SCAN}`)
     .set('Authorization', `Bearer ${salesforceToken}`)
     .set('Content-Type', 'application/json')
-    .query({ studentEmail, project, basecampToken })
+    .query({ studentEmail, project: btoa(JSON.stringify(project)), basecampToken })
     .then((res) => {
-      if (!res.body) {
+      const { messageBoardUrl } = res.body;
+      if (!messageBoardUrl) {
         const nextIdx = idx + 1;
         if (nextIdx >= projects.length) {
           store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));
@@ -63,8 +64,7 @@ export const scanProjectForStudent = studentEmail => (store) => {
         return store.dispatch(scanProjectForStudent(studentEmail));
       }
       store.dispatch(setBcProjects({ ...bcProjects, loadState: 'SUCCESS' }));
-      console.log('res.body', res.body);
-      return store.dispatch(setMsgBoardUrl(res.body));
+      return store.dispatch(setMsgBoardUrl(messageBoardUrl));
     })
     .catch((err) => {
       store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));

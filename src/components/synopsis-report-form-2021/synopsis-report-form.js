@@ -21,12 +21,13 @@ const mapStateToProps = state => ({
   bcImages: state.bcImages,
   imagePreviews: state.imagePreviews,
   pickListFieldValues: state.pickListFieldValues,
-  bcProjects: state.bcProjects,
+  projectCount: state.bcProjects.projects.length,
+  projectIdx: state.bcProjects.idx,
+  projectScanState: state.bcProjects.loadState,
 });
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
   clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
@@ -119,9 +120,6 @@ class SynopsisReportForm extends React.Component {
         studentGrade: this.props.synopsisReport.Student__r.Student_Grade__c,
         waitingOnBasecamp: true,
       });
-      this.props.clearMsgBoardUrl();
-      this.props.clearError();
-      this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Rainier_Athletes_Email__c);
     }
     if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
       this.setState({ waitingOnBasecamp: false });
@@ -765,7 +763,7 @@ class SynopsisReportForm extends React.Component {
       }
       if (this.state.waitingOnBasecamp) {
         return (<React.Fragment>
-          <h5>Waiting for Basecamp Messaging connection...</h5>
+          <h5>{`Waiting on Basecamp. Scanning project ${this.props.projectIdx} of ${this.props.projectCount}...`}</h5>
           <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
         </React.Fragment>);
       }
@@ -842,9 +840,10 @@ SynopsisReportForm.propTypes = {
   saveSynopsisReport: PropTypes.func,
   clearMsgBoardUrl: PropTypes.func,
   clearError: PropTypes.func,
-  getMsgBoardUrl: PropTypes.func,
   pickListFieldValues: PropTypes.object,
-  bcProjects: PropTypes.object,
+  projectCount: PropTypes.number,
+  projectIdx: PropTypes.number,
+  projectScanState: PropTypes.string,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,
