@@ -26,6 +26,7 @@ const mapDispatchToProps = dispatch => ({
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
   fetchBcProjects: () => dispatch(bcActions.fetchBcProjects()),
   getMsgBoardUrl: studentEmail => dispatch(getMsgBoardUrl(studentEmail)),
+  clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
 });
 
 const MODAL_REGULAR = 1;
@@ -65,6 +66,7 @@ class Mentor extends React.Component {
         selected: i,
         subPT: false,
       });
+      this.props.clearMsgBoardUrl();
       this.props.getMsgBoardUrl(this.props.myStudents[i].email);
     }
   }
@@ -178,6 +180,7 @@ Mentor.propTypes = {
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,
   getMsgBoardUrl: PropTypes.func,
+  clearMsgBoardUrl: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Mentor);

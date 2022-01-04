@@ -6,8 +6,6 @@ import DropDown from '../drop-down/drop-down';
 import TextArea from '../text-area/text-area';
 import ImagePreviews from '../image-previews/image-previews';
 import * as srActions from '../../actions/synopsis-report';
-import * as msgBoardUrlActions from '../../actions/message-board-url';
-import * as bcActions from '../../actions/bc-projects';
 import * as errorActions from '../../actions/error';
 import * as imageActions from '../../actions/images';
 
@@ -28,7 +26,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  // clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
   clearImages: () => dispatch(imageActions.clearImageSgids()),
@@ -45,10 +42,9 @@ class SynopsisReportForm extends React.Component {
     this.state.savedToSalesforce = false;
     this.state.waitingOnSalesforce = false;
     this.state.salesforceErrorStatus = 0;
-    this.state.waitingOnBasecamp = false;
+    this.state.waitingOnBasecamp = !this.props.messageBoardUrl;
     this.state.basecampErrorStatus = 0;
     this.state.imageUploading = false;
-    // this.props.clearMsgBoardUrl();
   }
 
   componentDidMount = () => {
@@ -118,11 +114,11 @@ class SynopsisReportForm extends React.Component {
       this.setState({ 
         synopsisReport: { ...this.props.synopsisReport },
         studentGrade: this.props.synopsisReport.Student__r.Student_Grade__c,
-        waitingOnBasecamp: true,
+        waitingOnBasecamp: !this.props.messageBoardUrl,
       });
     }
     if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
-      this.setState({ waitingOnBasecamp: false });
+      this.setState({ waitingOnBasecamp: !this.props.messageBoardUrl });
     }
   }
 
@@ -761,7 +757,7 @@ class SynopsisReportForm extends React.Component {
       if (this.state.waitingOnSalesforce) {
         return (<h3>Saving synopsis report to Salesforce...</h3>);
       }
-      if (this.state.waitingOnBasecamp) {
+      if (this.state.waitingOnBasecamp || !this.props.messageBoardUrl) {
         return (<React.Fragment>
           <h5>{`Waiting on Basecamp. Scanning project ${this.props.projectIdx} of ${this.props.projectCount}...`}</h5>
           <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
