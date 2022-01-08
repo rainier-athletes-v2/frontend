@@ -86,17 +86,16 @@ class SynopsisReportSummary extends React.Component {
       ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
-    const block6 = `<p><strong>Point Sheet & Images</strong></p><br>
-    ${this.props.images && this.props.images.length > 0 
-      ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`) : ''}
-
-    <br>
+    const block6 = this.props.images && this.props.images.length > 0 ? `<p><strong>Point Sheet & Images</strong></p><br>
+    ${this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`)}<br>` : '';
+    
+    const block7 = `<br>
     <p>Thanks and feel free to respond with comments or questions!</p></br><br>
     
     <p>${sr.Mentor__r.Name}<br>
     ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>`;
     
-    return `${block1}${optionalBlock2}${block3}${optionalBlock4}${optionalBlock5}${block6}`;
+    return `${block1}${optionalBlock2}${block3}${optionalBlock4}${optionalBlock5}${block6}${block7}`;
   };
 
   postSummary = () => {

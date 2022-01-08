@@ -505,7 +505,7 @@ class SynopsisReportForm extends React.Component {
             <TextArea
                 compClass="title"
                 compName="Identity_Statement_Highlights__c"
-                label="Identity Statement Highlights"
+                label="Identity Statement Highlights (Optional)"
                 value={ this.srSafe('Identity_Statement_Highlights__c')
                   ? this.state.synopsisReport.Identity_Statement_Highlights__c
                   : '' }
@@ -650,7 +650,7 @@ class SynopsisReportForm extends React.Component {
             <TextArea
               compClass="title"
               compName="Sports_Update__c"
-              label="Sports Update:"
+              label="Sports Update (Optional):"
               value={ this.srSafe('Sports_Update__c')
                 ? this.state.synopsisReport.Sports_Update__c
                 : undefined }
