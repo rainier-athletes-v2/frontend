@@ -89,8 +89,7 @@ class SynopsisReportSummary extends React.Component {
     const block6 = this.props.images && this.props.images.length > 0 ? `<p><strong>Point Sheet & Images</strong></p><br>
     ${this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`)}<br>` : '';
     
-    const block7 = `<br>
-    <p>Thanks and feel free to respond with comments or questions!</p></br><br>
+    const block7 = `<p>Thanks and feel free to respond with comments or questions!</p></br><br>
     
     <p>${sr.Mentor__r.Name}<br>
     ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>`;
