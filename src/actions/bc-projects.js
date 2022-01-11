@@ -34,6 +34,9 @@ export const fetchBcProjects = () => (store) => { // eslint-disable-line
     .set('Content-Type', 'application/json')
     .query({ basecampToken })
     .then((res) => {
+      if (res.body.projects.length === 0) {
+        store.dispatch(setError(403));
+      }
       return store.dispatch(setBcProjects({ projects: res.body.projects, loadState: 'SUCCESS', idx: 0 }));
     })
     .catch((err) => {
