@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SynopsisReportSummary from '../synopsis-report-summary/synopsis-report-summary';
 import DropDown from '../drop-down/drop-down';
-import TextArea from '../text-area/text-area';
+import { TextArea, textAreaMax } from '../text-area/text-area';
 import ImagePreviews from '../image-previews/image-previews';
 import * as srActions from '../../actions/synopsis-report';
 import * as errorActions from '../../actions/error';
@@ -122,16 +122,16 @@ class SynopsisReportForm extends React.Component {
     }
   }
 
-  handleSimpleFieldChange = (event) => {
+  handleSimpleFieldChange = (event, maxStringLength = 0) => {
     const { name, value } = event.target;
     const newState = { ...this.state };
-    newState.synopsisReport[name] = value;
+    newState.synopsisReport[name] = maxStringLength ? value.slice(0, maxStringLength) : value;
     return this.setState(newState);
   }
 
   handleTextAreaChange = (event) => {
     event.persist();
-    this.handleSimpleFieldChange(event);
+    this.handleSimpleFieldChange(event, textAreaMax);
   }
 
   srSafe = prop => !!(this.state.synopsisReport && this.state.synopsisReport[prop]);

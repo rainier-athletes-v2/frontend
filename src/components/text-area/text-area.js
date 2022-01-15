@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import TooltipItem from '../tooltip/tooltip';
 import * as ttText from '../../lib/tooltip-text';
 
-export default function TextArea(props) {
-  const textAreaMax = 1000;
+export const textAreaMax = 1000;
+
+export function TextArea(props) {
   const spanStyle = {
     fontStyle: 'italic',
     color: props.value && props.value.length > textAreaMax ? 'red' : '#A9A9A9',
