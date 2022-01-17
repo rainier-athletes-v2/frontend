@@ -757,7 +757,8 @@ class SynopsisReportForm extends React.Component {
       if (this.state.waitingOnSalesforce) {
         return (<h3>Saving synopsis report to Salesforce...</h3>);
       }
-      if (this.state.waitingOnBasecamp || !this.props.messageBoardUrl) {
+      // if (this.state.waitingOnBasecamp || !this.props.messageBoardUrl) {
+      if (!this.props.messageBoardUrl && this.state.basecampErrorStatus < 300) {
         return (<React.Fragment>
           <h5>{`Waiting on Basecamp. Scanning project ${this.props.projectIdx} of ${this.props.projectCount}...`}</h5>
           <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
