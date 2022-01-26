@@ -11,7 +11,7 @@ export const getMsgBoardUrl = studentEmail => (store) => { // eslint-disable-lin
   store.dispatch(setBcProjects({ ...bcProjects, idx: 0 }));
 
   if (bcProjects.projects.length === 0 && bcProjects.loadState === 'SUCCESS') {
-    store.dipatch(setMsgBoardUrl(null));
+    store.dispatch(setMsgBoardUrl(null));
     return store.dispatch(setError(404));
   }
 

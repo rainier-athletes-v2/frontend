@@ -269,7 +269,7 @@ class SynopsisReportForm extends React.Component {
       synopsisReport.Synopsis_Report_Status__c = 'Completed';
       if (this.props.imagePreviews) {   
         this.setState({ waitingOnImages: true });
-        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // justs end file objects
+        this.props.uploadImages(this.props.imagePreviews.map(preview => (preview.file))); // just send file objects
       } else {
         this.setState({ waitingOnSalesforce: true });
         this.props.saveSynopsisReport({ ...synopsisReport });
@@ -748,31 +748,42 @@ class SynopsisReportForm extends React.Component {
     );
 
     const formButtonOrMessage = () => { 
+      const sr = this.props.synopsisReport;
+      const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
+      console.log(this.state.waitingOnImages, this.state.waitingOnSalesforce, this.props.messageBoardUrl, this.props.projectCount, this.props.projectIdx);
       if (this.state.waitingOnImages) {
         return (<React.Fragment>
           <h3>Uploading images to Basecamp...</h3>
           <p>This may take a moment depending on image size(s).</p>
         </React.Fragment>);
       } 
+
       if (this.state.waitingOnSalesforce) {
         return (<h3>Saving synopsis report to Salesforce...</h3>);
       }
-      // if (this.state.waitingOnBasecamp || !this.props.messageBoardUrl) {
-      if (!this.props.messageBoardUrl && this.state.basecampErrorStatus < 300) {
+
+      if (!this.props.messageBoardUrl && this.props.projectCount > 0 && this.props.projectIdx < this.props.projectCount - 1) {
         return (<React.Fragment>
           <h5>{`Waiting on Basecamp. Scanning project ${this.props.projectIdx} of ${this.props.projectCount}...`}</h5>
-          <p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
         </React.Fragment>);
       }
-      const sr = this.props.synopsisReport;
-      const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
-      if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce) && !this.state.waitingOnBasecamp
-        && this.state.salesforceErrorStatus < 300) {
-        if (this.props.messageBoardUrl) {
-          return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to {studentName}&#39;s Core Community</h5>);
-        }
-        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p className="centered">(There&#39;s an issue retrieving Basecamp link to {studentName}&#39;s message board. Error status {this.state.basecampErrorStatus}. Please alert an administrator.)</p></React.Fragment>);  
+      if (!this.props.messageBoardUrl) {
+        return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p className="centered">(There&#39;s an issue retrieving Basecamp link to {studentName}&#39;s message board. Error status 404. Please alert an administrator.)</p></React.Fragment>);  
       }
+      if (this.props.messageBoardUrl) {
+        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to {studentName}&#39;s Core Community</h5>);
+      }
+      
+      // if (this.state.waitingOnBasecamp || !this.props.messageBoardUrl) {
+      
+      
+      // if (!(this.state.waitingOnSalesforce && this.state.savedToSalesforce) && !this.state.waitingOnBasecamp
+      //   && this.state.salesforceErrorStatus < 300) {
+      //   if (this.props.messageBoardUrl) {
+      //     // return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to {studentName}&#39;s Core Community</h5>);
+      //   }
+      //   // return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p className="centered">(There&#39;s an issue retrieving Basecamp link to {studentName}&#39;s message board. Error status {this.state.basecampErrorStatus}. Please alert an administrator.)</p></React.Fragment>);  
+      // }
       if (!this.state.waitingOnSalesforce && this.state.savedToSalesforce && this.state.salesforceErrorStatus > 300) {
         return (<React.Fragment><h5 className="required centered">There was an error saving to Salesforce, error status {this.state.salesforceErrorStatus}. Please contact an administrator.</h5><h5><button onClick={ this.props.cancelClick } className="btn btn-secondary" id="error-close">Close</button></h5></React.Fragment>);
       }

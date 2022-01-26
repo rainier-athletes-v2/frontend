@@ -60,8 +60,8 @@ export const scanProjectForStudent = studentEmail => (store) => {
       if (!messageBoardUrl) {
         const nextIdx = idx + 1;
         if (nextIdx >= projects.length) {
-          store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));
-          return store.dispatch(setError(404));
+          // store.dispatch(setBcProjects({ ...bcProjects, loadState: 'ERROR', idx: undefined }));
+          return store.dispatch(setMsgBoardUrl(messageBoardUrl));
         }
         store.dispatch(setBcProjects({ ...bcProjects, idx: nextIdx }));
         return store.dispatch(scanProjectForStudent(studentEmail));
