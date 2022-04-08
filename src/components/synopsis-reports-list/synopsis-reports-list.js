@@ -10,7 +10,6 @@ const mapStateToProps = state => ({
 
 function SynopsisReportsList(props) {
   if (!props.srData) return null;
-
   return (
     <React.Fragment>
       <h3 className="heading">Most Recent Synopsis { props.srData.length > 1 ? 'Reports' : 'Report' }</h3>
@@ -21,7 +20,6 @@ function SynopsisReportsList(props) {
               <th>Name</th>
               <th>Check in Date</th>
               <th>SR Status</th>
-              <th>Point Sheet Status</th>
               <th></th>
             </tr>
           </thead>
@@ -33,11 +31,10 @@ function SynopsisReportsList(props) {
                       <td>{sr.srName}</td>
                       <td>{sr.title}</td>
                       <td>{sr.synopsisReportStatus}</td>
-                      <td>{sr.pointSheetStatus}</td>
                       <td><button className="btn-link-1" 
                         onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'virtual' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
-                        name="SynopsisReportsTable">EDIT</button></td>
+                        name="SynopsisReportsTable">{sr.synopsisReportStatus === 'New' ? 'FILL IN' : 'EDIT'}</button></td>
                     </tr>;
                 })
                 : null

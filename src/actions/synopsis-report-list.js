@@ -1,14 +1,29 @@
 import superagent from 'superagent';
 import * as routes from '../lib/routes';
-import { SYNOPSIS_LIST_SET } from '../lib/types';
+import { SYNOPSIS_LIST_SET, PICKLIST_SET } from '../lib/types';
 
 export const setSynopsisReports = srList => ({
   type: SYNOPSIS_LIST_SET,
   payload: srList,
 });
 
+export const setPicklistValues = pickListValues => ({
+  type: PICKLIST_SET,
+  payload: pickListValues,
+});
+
 export const fetchRecentSynopsisReports = (studentId) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
+  const state = store.getState();
+
+  if (!state.pickListFieldValues || Object.keys(state.pickListFieldValues).length === 0) {
+    superagent.get(`${API_URL}${routes.PICKLISTS_ROUTE}`)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        return store.dispatch(setPicklistValues(res.body.picklistFieldValues));
+      });
+  }
 
   return superagent.get(`${API_URL}${routes.SYNOPSIS_LIST_ROUTE}/${studentId}`)
     .set('Authorization', `Bearer ${token}`)

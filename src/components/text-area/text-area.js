@@ -3,11 +3,17 @@ import PropTypes from 'prop-types';
 import TooltipItem from '../tooltip/tooltip';
 import * as ttText from '../../lib/tooltip-text';
 
-export default function TextArea(props) {
-  const textAreaMax = 1000;
+export const textAreaMax = 1000;
+
+export function TextArea(props) {
   const spanStyle = {
     fontStyle: 'italic',
-    color: props.value.length > textAreaMax ? 'red' : '#A9A9A9',
+    color: props.value && props.value.length > textAreaMax ? 'red' : '#A9A9A9',
+  };
+
+  const charsRemaining = (value) => {
+    const charsUsed = value ? value.length : 0;
+    return textAreaMax - charsUsed;
   };
 
   return (
@@ -15,11 +21,12 @@ export default function TextArea(props) {
       <label 
         className={ props.compClass }
         htmlFor={ props.compName }>
-        { `${props.label}` }&nbsp;<span style={ spanStyle }> {` (${props.value.length} characters entered)` }</span>
+        {props.label}
         { ttText[props.compName]
           ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
           : null
         }
+        &nbsp;<span style={ spanStyle }> {` (${charsRemaining(props.value)} characters remaining)` }</span>
       </label>
       <textarea
         name={ props.compName }

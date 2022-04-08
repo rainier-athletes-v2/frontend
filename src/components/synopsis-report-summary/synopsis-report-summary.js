@@ -1,19 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as pl from '../../lib/pick-list-tests';
 import * as bcActions from '../../actions/basecamp';
 import * as srActions from '../../actions/synopsis-report';
 import * as errorActions from '../../actions/error';
-// import * as srPdfActions from '../../actions/synopsis-report-pdf';
 
 import './_synopsis-report-summary.scss';
 
 const mapStateToProps = state => ({
   synopsisReportLink: state.synopsisReportLink,
   basecampToken: state.basecampToken,
-  // srSummaryStatus: state.srSummaryStatus,
   messageBoardUrl: state.messageBoardUrl,
   error: state.error,
   images: state.bcImages,
@@ -44,14 +40,9 @@ class SynopsisReportSummary extends React.Component {
   }
 
   componentDidMount = () => {
-    const sr = this.props.synopsisReport;
-    const schoolName = sr.PointTrackers__r 
-      && sr.PointTrackers__r.records
-      && sr.PointTrackers__r.records[0].Class__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r
-      && sr.PointTrackers__r.records[0].Class__r.School__r.Name ? sr.PointTrackers__r.records[0].Class__r.School__r.Name : null;
-    this.setState({ schoolName });
-    if (this.props.messageBoardUrl && this.props.synopsisReport && pl.completed(this.props.synopsisReport.Synopsis_Report_Status__c)) {
+    // const schoolName = 'Unknown';
+    // this.setState({ schoolName });
+    if (this.props.messageBoardUrl && this.props.synopsisReport && this.props.synopsisReport.Synopsis_Report_Status__c === 'Completed') {
       this.setState({ waitingOnBasecamp: true });
       return this.postSummary();
     }
@@ -71,46 +62,44 @@ class SynopsisReportSummary extends React.Component {
 
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
-    return (
-      `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
+   
+    const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
 
-    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week and 
-    ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet.</p><br>
+    <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
 
-    ${sr.Point_Sheet_Status__c === 'Did not meet' ? '<p>Explanation for not meeting: ' : ''}
-    ${sr.Weekly_Check_In_Status__c === 'Did not meet' ? `${sr.Weekly_Check_In_Missed_Reason__c}</p><br>` : ''}
+    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
 
-    ${sr.Point_Sheet_Status__c === 'Not turned in' 
-        ? `<p>${studentName} did not turn in a point sheet for reason: ${sr.Point_Sheet_Status_Reason__c !== 'Other' ? sr.Point_Sheet_Status_Reason__c : sr.Point_Sheet_Status_Notes__c}</p><br>`
-        : ''}
+    const optionalBlock2 = sr.Identity_Statement_Highlights__c
+      ? `<p><strong>Identity Statement Highlights: </strong>
+        ${sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
+      : '';
+
+    const block3 = `<p><strong>Point Sheet and School Update: </strong>
+    ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet. 
+    ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
+
+    const optionalBlock4 = sr.Sports_Update__c
+      ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
+      : '';
+
+    const optionalBlock5 = sr.Additional_Comments__c
+      ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
+      : '';
+
+    const block6 = this.props.images && this.props.images.length > 0 ? `<p><strong>Point Sheet & Images</strong></p><br>
+    ${this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`)}<br>` : '';
     
-    <p><strong>Game Eligibility Earned:</strong> ${sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time__c : sr.Earned_Playing_Time__c}</p><br>
-    
-    ${sr.Mentor_Granted_Playing_Time_Explanation__c ? `<p>${sr.Mentor_Granted_Playing_Time_Explanation__c}</p><br>` : ''}
-    
-    <p><strong>Student Action Items</strong><br><br>${sr.Student_Action_Items__c ? sr.Student_Action_Items__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <p><strong>Sports Update</strong><br><br>${sr.Sports_Update__c ? sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <p><strong>Additional Comments</strong><br><br>${sr.Additional_Comments__c ? sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p><br>
-    
-    <strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
-    <a href=${this.props.synopsisReportLink} target="_blank"> CLICK HERE</a><br><br>
-    
-    <p>Thanks and feel free to respond with comments or questions!</p><br>
+    const block7 = `<p>Thanks and feel free to respond with comments or questions!</p></br><br>
     
     <p>${sr.Mentor__r.Name}<br>
-    ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>
-    ${this.state.schoolName ? this.state.schoolName : ''}<br><br>
-  
-    ${this.props.images && this.props.images.length > 0 
-          ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
-    );
+    ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>`;
+    
+    return `${block1}${optionalBlock2}${block3}${optionalBlock4}${optionalBlock5}${block6}${block7}`;
   };
 
   postSummary = () => {
     this.props.clearError();
-    this.setState({ ...this.state, summarySaved: false, waitingForSave: true });
+    this.setState({ ...this.state, waitingOnBasecamp: true });
     const content = this.fullReportResponseRTF(this.props.synopsisReport);
     const srSummary = {
       subject: `Synopsis Report Summary for ${this.props.synopsisReport.Week__c}`,
@@ -123,12 +112,6 @@ class SynopsisReportSummary extends React.Component {
   }
 
   basecampResponse = () => {
-    if (pl.playingTimeOnly(this.props.synopsisReport.Synopsis_Report_Status__c)) {
-      return (<React.Fragment>
-        <h5>Eligibility Recorded</h5>
-        <button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
-      </React.Fragment>);
-    }
     if (this.props.messageBoardUrl) {
       return (<React.Fragment>
       <h5>{this.props.error < 300 ? 'Summary posted to Basecamp.' : 'Error posting summary to Basecamp. Contact an Adminstrator.'}</h5><button onClick={ this.props.onClose } className="btn btn-secondary" type="reset">Close</button>
@@ -144,70 +127,31 @@ class SynopsisReportSummary extends React.Component {
 
     const { synopsisReport } = this.props;
     const sr = synopsisReport;
-    const playingTimeOnly = pl.playingTimeOnly(synopsisReport.Synopsis_Report_Status__c);
     const imageCount = this.props.images && this.props.images.length;
     const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
-
-    const playingTimeOnlyResponseJSX = (
-      <React.Fragment>
-        <p className="centered">Thank you for submitting your mentee&#39;s playing time.</p>
-        <p className="centered">Please remember to complete their full report by Sunday Evening</p>
-      </React.Fragment>
-    );
-    
+ 
     const fullReportResponseJSX = (
       <React.Fragment>
-        <h4>{studentName}&#39;s RA Synopsis Report for {sr.Week__c}</h4><br />
-        <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week and 
-    {sr.Point_Sheet_Status__c === 'Turned in' ? ' did ' : ' did not '} turn in a point sheet.</p>
+        <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
 
-    {sr.Point_Sheet_Status__c === 'Did not meet' ? <React.Fragment><p>Explanation for not meeting: {sr.Weekly_Check_In_Missed_Reason__c}</p></React.Fragment> : null}
+        <p>Hello Team {studentName} - please see {studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around {studentName}&#39;s progress on and off the field.</p>
 
-    {sr.Point_Sheet_Status__c === 'Not turned in' 
-      ? <React.Fragment><p>{studentName} did not turn in a point sheet for reason:   
-      {sr.Point_Sheet_Status_Reason__c !== 'Other' ? <React.Fragment> {sr.Point_Sheet_Status_Reason__c}</React.Fragment> : <React.Fragment> {sr.Point_Sheet_Status_Notes__c}</React.Fragment>}</p></React.Fragment>
-      : null}
-    
-    <React.Fragment>
-    <p><strong>Game Eligibility Earned:</strong> {sr.Mentor_Granted_Playing_Time__c ? sr.Mentor_Granted_Playing_Time__c : sr.Earned_Playing_Time__c}</p>
-    </React.Fragment>
-    {sr.Mentor_Granted_Playing_Time_Explanation__c ? <React.Fragment><p>{sr.Mentor_Granted_Playing_Time_Explanation__c}</p></React.Fragment> : null}
-    
-    {sr.Student_Action_Items__c
-      ? <React.Fragment>
-        <br />
-        <p><strong>Student Action Items</strong></p>
-        <p>{sr.Student_Action_Items__c}</p>
-        </React.Fragment>
-      : null
-    }
-    {sr.Sports_Update__c 
-      ? <React.Fragment>
-        <br />
-        <p><strong>Sports Update</strong></p>
-        <p>{sr.Sports_Update__c}</p>
-        </React.Fragment>
-      : null
-    }
-    {sr.Additional_Comments__c 
-      ? <React.Fragment>
-        <br />
-        <p><strong>Additional Comments</strong></p>
-        <p>{sr.Additional_Comments__c}</p>
-        </React.Fragment>
-      : null
-    }
-    
-    <p><strong>Link To Full Synopsis Report</strong> (RA Points, Grades, Mentor Comments, etc): 
-    <a href={this.props.synopsisReportLink} target="_blank" rel="noopener noreferrer"> CLICK HERE</a></p>
-    
-    <p>Thanks and feel free to respond with comments or questions!</p>
-    
-    <p>{sr.Mentor__r.Name}<br />
-    {sr.Mentor__r.Rainier_Athletes_Email__c}<br />
-    {this.state.schoolName ? this.state.schoolName : ''}</p>
+        <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
-    {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' }` {/* eslint-disable-line */}
+        {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights: </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
+        
+        <p><strong>Point Sheet and School Update: </strong>{studentName} {sr.Point_Sheet_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} a point sheet. {sr.Point_Sheet_and_School_Update__c}</p>
+    
+        {sr.Sports_Update__c ? <p><strong>Sports Update: </strong>{sr.Sports_Update__c}</p> : ''}
+
+        {sr.Additional_Comments__c ? <p><strong>Additional Comments: </strong>{sr.Additional_Comments__c}</p> : ''}
+
+        <p>{!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'Point Sheet image has been posted to basecamp.' }</p> {/* eslint-disable-line */}
+    
+        <p>Thanks and feel free to respond with comments or questions!</p>
+        
+        <p>{sr.Mentor__r.Name}<br />
+        {sr.Mentor__r.Rainier_Athletes_Email__c}<br /></p>
     </React.Fragment>
     );
     
@@ -216,7 +160,7 @@ class SynopsisReportSummary extends React.Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title title">{ playingTimeOnly ? 'Playing Time Saved' : 'Rainier Athletes Weekly Summary' }</h5>
+              <h5 className="modal-title title">Rainier Athletes Weekly Summary</h5>
               <button type="button" 
                 className="close" 
                 onClick={ this.props.onClose } 
@@ -229,10 +173,7 @@ class SynopsisReportSummary extends React.Component {
             </div>
 
             <div className="modal-body" id="body">
-              { playingTimeOnly
-                ? playingTimeOnlyResponseJSX
-                : fullReportResponseJSX
-              }
+              { fullReportResponseJSX }
             </div>
 
             <div className="modal-footer">

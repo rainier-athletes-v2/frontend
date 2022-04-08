@@ -36,15 +36,17 @@ export const MY_STUDENTS_SET = 'MY_STUDENTS_SET';
 // synopsis-report-list types
 export const SYNOPSIS_LIST_SET = 'SYNOPSIS_LIST_SET';
 
-// synopsis-report-pdf types
-export const SYNOPSIS_REPORT_LINK_SET = 'SYNOPSIS_REPORT_LINK_SET';
-export const SYNOPSIS_REPORT_LINK_CLEAR = 'SYNOPSIS_REPORT_LINK_CLEAR';
-
 // synopsis-report-summary types
 export const SET_SR_SUMMARY_STATUS = 'SET_SR_SUMMARY_STATUS';
 export const CLEAR_SR_SUMMARY_STATUS = 'CLEAR_SR_SUMMARY_STATUS';
+
+// message-board-url types
 export const SET_MSG_BOARD_URL = 'SET_MSG_BOARD_URL';
 export const CLEAR_MSG_BOARD_URL = 'CLEAR_MSG_BOARD_URL';
+export const CLEAR_BC_PROJECTS = 'CLEAR_BC_PROJECTS';
+export const SET_BC_PROJECTS = 'SET_BC_PROJECTS';
+export const SET_PROJECT_IDX = 'SET_PROJECT_IDX';
+export const SCAN_PROJECT = 'SCAN_PROJECT';
 
 // synopsis-report types
 export const SYNOPSIS_REPORT_SET = 'SYNOPSIS_REPORT_SET';
@@ -57,3 +59,6 @@ export const IMAGE_DATA_SET = 'IMAGE_DATA_SET';
 export const IMAGE_DATA_CLEAR = 'IMAGE_DATA_CLEAR';
 export const IMAGE_PREVIEW_SET = 'IMAGE_PREVIEW_SET';
 export const IMAGE_PREVIEW_CLEAR = 'IMAGE_PREVIEW_CLEAR';
+
+// picklist types
+export const PICKLIST_SET = 'PICKLIST_SET';

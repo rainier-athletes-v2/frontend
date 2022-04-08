@@ -13,13 +13,6 @@ export const clearSynopsisReport = () => ({
   payload: null,
 });
 
-const translateGradeNulltoNA = (subjects) => {
-  return subjects.map((subject) => {
-    subject.Grade__c = subject.Grade__c === null ? 'N/A' : subject.Grade__c;
-    return { ...subject };
-  });
-};
-
 export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
 
@@ -31,31 +24,15 @@ export const fetchSynopsisReport = (srId) => (store) => { // eslint-disable-line
     .send('Content-Type', 'application/json')
     .then((res) => {
       const sr = res.body;
-      if (sr.records[0].PointTrackers__r) {
-        sr.records[0].PointTrackers__r.records = translateGradeNulltoNA(sr.records[0].PointTrackers__r.records);
-        sr.records[0].summer_SR = false;
-      } else {
-        sr.records[0].summer_SR = true;
-      }
       return store.dispatch(setSynopsisReport(sr));
     });
 };
-
-// const translateGradeNAtoNull = (subjects) => {
-//   return subjects.map((subject) => {
-//     subject.Grade__c = subject.Grade__c === 'N/A' ? null : subject.Grade__c;
-//     return { ...subject };
-//   });
-// };
 
 export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
   const token = store.getState().salesforceToken;
 
   store.dispatch(clearError());
 
-  if (!orgSr.summer_SR) {
-    // orgSr.PointTrackers__r.records = translateGradeNAtoNull(orgSr.PointTrackers__r.records);
-  }
   const sr = JSON.parse(JSON.stringify(orgSr)); // create deep copy of SR being saved
 
   return superagent.put(`${API_URL}${routes.SYNOPSIS_REPORT_ROUTE}`)
@@ -63,5 +40,8 @@ export const saveSynopsisReport = (orgSr) => (store) => { // eslint-disable-line
     .send(sr)
     .then((result) => {
       return store.dispatch(setError(result.status));
+    })
+    .catch((err) => {
+      return store.dispatch(setError(err.status));
     });
 };

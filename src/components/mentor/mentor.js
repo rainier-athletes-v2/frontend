@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
-import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
 import * as srActions from '../../actions/synopsis-report';
-import * as srPdfActions from '../../actions/synopsis-report-pdf';
+import * as bcActions from '../../actions/bc-projects';
+import { getMsgBoardUrl } from '../../actions/message-board-url';
 
 import './_mentor.scss';
 
@@ -23,12 +23,13 @@ const mapDispatchToProps = dispatch => ({
   fetchMyStudents: mentorId => dispatch(profileActions.fetchMyStudentsReq(mentorId)),
   fetchRecentSynopsisReports: studentId => dispatch(srListActions.fetchRecentSynopsisReports(studentId)),
   fetchSynopsisReport: reportId => dispatch(srActions.fetchSynopsisReport(reportId)),
-  clearSynopsisReportLink: () => dispatch(srPdfActions.clearSynopsisReportLink()),
   clearSynopsisReport: () => dispatch(srActions.clearSynopsisReport()),
+  fetchBcProjects: () => dispatch(bcActions.fetchBcProjects()),
+  getMsgBoardUrl: studentEmail => dispatch(getMsgBoardUrl(studentEmail)),
+  clearMsgBoardUrl: () => dispatch(bcActions.clearMsgBoardUrl()),
 });
 
 const MODAL_REGULAR = 1;
-const MODAL_SUMMER = 2;
 const MODAL_OFF = 0;
 
 class Mentor extends React.Component {
@@ -51,6 +52,7 @@ class Mentor extends React.Component {
 
   componentDidMount = () => {
     this.props.fetchMyStudents();
+    this.props.fetchBcProjects();
   }
 
   handleSidebarClick(e) {
@@ -64,6 +66,8 @@ class Mentor extends React.Component {
         selected: i,
         subPT: false,
       });
+      this.props.clearMsgBoardUrl();
+      this.props.getMsgBoardUrl(this.props.myStudents[i].email);
     }
   }
 
@@ -119,13 +123,7 @@ class Mentor extends React.Component {
 
   handleEditSRClick = (e) => {
     e.preventDefault();
-    this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
-  }
-
-  handleEditSummerSRClick = (e) => {
-    this.setState({ modal: MODAL_SUMMER });
-    this.handleEditSRClick(e);
   }
 
   handleEditRegularSRClick = (e) => {
@@ -139,13 +137,6 @@ class Mentor extends React.Component {
     this.props.clearSynopsisReport();
   }
 
-  // handleRadioChange = (event) => {
-  //   event.preventDefault();
-  //   const newState = { ...this.state };
-  //   newState.synopsisReport.Summer_weekly_connection_made__c = event.target.value === 'true';
-  //   this.setState(newState);
-  // }
-
   handleSubPT = () => {
     this.setState({
       ...this.state,
@@ -153,23 +144,6 @@ class Mentor extends React.Component {
       selected: -1,
       subPT: !this.state.subPT,
     });
-  }
-
-  selectSrForm = () => {
-    switch (this.state.modal) {
-      case MODAL_SUMMER:
-        return <SynopsisReportSummerForm
-          content={ this.state.content } 
-          saveClick={ this.handleSaveButtonClick } 
-          cancelClick={this.handleCancelButton}/>;
-      case MODAL_REGULAR:
-        return <SynopsisReportForm
-          content={ this.state.content } 
-          saveClick={ this.handleSaveButtonClick } 
-          cancelClick={this.handleCancelButton}/>; 
-      default:
-        return null;
-    }
   }
 
   render() {
@@ -181,7 +155,13 @@ class Mentor extends React.Component {
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
             editRegularSrClick={this.handleEditRegularSRClick} 
             editSummerSrClick={this.handleEditSummerSRClick}>
-            { this.selectSrForm() }
+            {this.state.modal !== MODAL_OFF
+              ? <SynopsisReportForm
+                content={ this.state.content } 
+                saveClick={ this.handleSaveButtonClick } 
+                cancelClick={this.handleCancelButton}/>
+              : ''
+            }
           </ MentorContent>
           </div>
         </div>
@@ -194,12 +174,13 @@ Mentor.propTypes = {
   fetchMyStudents: PropTypes.func,
   fetchRecentSynopsisReports: PropTypes.func,
   fetchSynopsisReport: PropTypes.func,
-  clearSynopsisReportLink: PropTypes.func,
+  fetchBcProjects: PropTypes.func,
   clearSynopsisReport: PropTypes.func,
   myStudents: PropTypes.array,
   myProfile: PropTypes.object,
   synopsisReport: PropTypes.object,
+  getMsgBoardUrl: PropTypes.func,
+  clearMsgBoardUrl: PropTypes.func,
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Mentor);

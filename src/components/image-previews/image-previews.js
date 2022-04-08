@@ -54,7 +54,7 @@ class ImagePreviews extends React.Component {
               <img className="preview-image" src={image.url}/>
             </div>) 
           : null }
-        <ImageButton onChange={this.handleChange} labelText="OPTIONAL: Add Images" />
+        <ImageButton onChange={this.handleChange} labelText="Upload Point Sheet Image" />
       </div>
     );
   }

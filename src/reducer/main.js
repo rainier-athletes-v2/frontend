@@ -7,12 +7,13 @@ import role from './role';
 import myProfile from './myProfile';
 import synopsisReport from './synopsis-report'; // a single student's report
 import synopsisReportList from './synopsis-report-list'; // most recent SR's for a student
-import synopsisReportLink from './synopsis-report-link'; // link to SF PDF on google drive
+import pickListFieldValues from './pickListFieldValues';
 import messageBoardUrl from './message-board-url';
 import myStudents from './myStudents';
 import error from './error';
 import bcImages from './images';
 import imagePreviews from './image-previews';
+import bcProjects from './bc-projects';
 
 export default combineReducers({
   error,
@@ -20,8 +21,9 @@ export default combineReducers({
   myProfile,
   myStudents,
   synopsisReportList,
-  synopsisReportLink,
   messageBoardUrl,
+  bcProjects,
+  pickListFieldValues,
   synopsisReport,
   imagePreviews,
   bcImages,
