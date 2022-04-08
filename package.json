@@ -4,7 +4,8 @@
   "description": "<!-- YOUR TRAVIS CI BADGE HERE -->",
   "main": "index.js",
   "engines": {
-    "node": "12.x"
+    "node": "12.x",
+    "npm": "6.x"
   },
   "scripts": {
     "test": "eslint --fix . && jest --coverage",
