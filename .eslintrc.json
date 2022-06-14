@@ -8,7 +8,9 @@
   "globals": {
     "API_URL": true,
     "SF_OAUTH_ID": true,
-    "SF_OAUTH_AUTHORIZE_URL": true
+    "SF_OAUTH_AUTHORIZE_URL": true,
+    "SUMMER_START": true,
+    "SUMMER_END": true
   },
   "rules": {
     "arrow-body-style": "off",

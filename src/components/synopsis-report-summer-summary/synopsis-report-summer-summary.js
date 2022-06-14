@@ -52,37 +52,39 @@ class SynopsisReportSummerSummary extends React.Component {
 
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
-    return (
-      `<strong>${studentName}&#39;s RA Synopsis Report for ${sr.Week__c}</strong><br><br>
+    const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
 
-    <p>${sr.Weekly_Check_In_Status__c === 'Met' ? 'Weekly Connection Status:' : 'Reason for missed weekly connection:'}
-    ${sr.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : ''}
+    <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
+
+    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
+
+    const block2 = `${sr.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : ''}
     ${sr.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : ''}
     ${sr.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : ''}
     ${sr.Summer_conn_basecamp__c ? 'Mentor and student connected via Basecamp. ' : ''}
     ${sr.Summer_conn_no_answer__c ? 'Mentor was unable to reach out this week. ' : ''}
     ${sr.Summer_conn_no_show__c ? 'Mentor tried reaching out but had trouble connecting. ' : ''}
     ${sr.Summer_conn_missed_other__c ? `${sr.Summer_weekly_connection_other_notes__c}` : ''}
-    </p><br />
+    </p><br /><br />`;
 
-    ${sr.Whats_been_happening__c ? '<strong>What&#39;s Been Happening?</strong>' : ''}
+    const block3 = `${sr.Whats_been_happening__c ? '<strong>What&#39;s Been Happening?</strong>' : ''}
     ${sr.Whats_been_happening__c ? `<p>${sr.Whats_been_happening__c}</p><br>` : ''}
     
     ${sr.Online_School_Update__c ? '<strong>Online School Update</strong>' : ''}
     ${sr.Online_School_Update__c ? `<p>${sr.Online_School_Update__c}</p><br>` : ''}
 
     ${sr.Summer_additional_team_comments__c ? '<strong>Additional Team Comments</strong>' : ''}
-    ${sr.Summer_additional_team_comments__c ? `<p>${sr.Summer_additional_team_comments__c}</p><br>` : ''}
+    ${sr.Summer_additional_team_comments__c ? `<p>${sr.Summer_additional_team_comments__c}</p><br>` : ''}`;
     
-    <p>Thanks and feel free to respond with comments or questions!</p><br>
+    const block4 = this.props.images && this.props.images.length > 0 ? `<p><strong>Attached Images</strong></p><br>
+    ${this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`)}<br>` : '';
     
+    const block5 = `<p>Thanks and feel free to respond with comments or questions!</p></br><br>
+
     <p>${sr.Mentor__r.Name}<br>
-    ${sr.Mentor__r.Email}<br>
-    ${this.state.schoolName ? this.state.schoolName : ''}<br><br>
-  
-    ${this.props.images && this.props.images.length > 0 
-        ? this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment>`) : ''}`
-    );
+    ${sr.Mentor__r.Rainier_Athletes_Email__c}<br>`;
+    
+    return `${block1}${block2}${block3}${block4}${block5}`;
   };
 
   postSummary = () => {
@@ -145,8 +147,7 @@ class SynopsisReportSummerSummary extends React.Component {
         <p>Thanks and feel free to respond with comments or questions!</p>
     
         <p>{synopsisReport.Mentor__r.Name}<br />
-        {synopsisReport.Mentor__r.Email}<br />
-        {this.state.schoolName ? this.state.schoolName : ''}</p>
+        {synopsisReport.Mentor__r.Rainier_Athletes_Email__c}<br /></p>
 
         {!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'An image has been posted to basecamp.' } {/* eslint-disable-line */}
       </React.Fragment>

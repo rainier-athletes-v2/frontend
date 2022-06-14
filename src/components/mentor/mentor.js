@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
+import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
@@ -158,6 +159,31 @@ class Mentor extends React.Component {
     });
   }
 
+  selectSrForm = () => {
+    console.log('summer_start', SUMMER_START, 'summer_end', SUMMER_END);
+    const summerStart = new Date(SUMMER_START);
+    const summerEnd = new Date(SUMMER_END);
+    const now = Date.now();
+    console.log('dates start:, ', summerStart.toString(), 'end:', summerEnd.toString(), 'now:', now);
+    console.log('is now in summer range?:', now >= summerStart && now < summerEnd);
+    
+    if (this.state.modal === MODAL_OFF) {
+      return null;
+    }
+
+    if (now >= summerStart && now < summerEnd) {
+      return <SynopsisReportSummerForm
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/>;
+    }
+
+    return <SynopsisReportForm
+      content={ this.state.content } 
+      saveClick={ this.handleSaveButtonClick } 
+      cancelClick={this.handleCancelButton}/>; 
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -167,13 +193,7 @@ class Mentor extends React.Component {
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
             editRegularSrClick={this.handleEditRegularSRClick} 
             editSummerSrClick={this.handleEditSummerSRClick}>
-            {this.state.modal !== MODAL_OFF
-              ? <SynopsisReportForm
-                content={ this.state.content } 
-                saveClick={ this.handleSaveButtonClick } 
-                cancelClick={this.handleCancelButton}/>
-              : ''
-            }
+            { this.selectSrForm() }
           </ MentorContent>
           </div>
         </div>
