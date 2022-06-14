@@ -30,6 +30,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const MODAL_REGULAR = 1;
+const MODAL_SUMMER = 2;
 const MODAL_OFF = 0;
 
 class Mentor extends React.Component {
@@ -121,9 +122,20 @@ class Mentor extends React.Component {
     this.setState({ modal: MODAL_OFF });
   }
 
+  // handleEditSRClick = (e) => {
+  //   e.preventDefault();
+  //   this.props.fetchSynopsisReport(e.target.value);
+  // }
+
   handleEditSRClick = (e) => {
     e.preventDefault();
+    // this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
+  }
+
+  handleEditSummerSRClick = (e) => {
+    this.setState({ modal: MODAL_SUMMER });
+    this.handleEditSRClick(e);
   }
 
   handleEditRegularSRClick = (e) => {
