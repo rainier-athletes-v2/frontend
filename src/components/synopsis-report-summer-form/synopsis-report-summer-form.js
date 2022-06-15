@@ -68,6 +68,7 @@ class SynopsisReportSummerForm extends React.Component {
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Weekly_Check_In_Status__c');
+      newState.identityStatusOK = true;
       return newState;
     });
   }
@@ -182,6 +183,7 @@ class SynopsisReportSummerForm extends React.Component {
     const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
+    const identityStatusOK = this.notEmpty('Identity_Statement_Status__c');
 
     this.setState({
       metWithMentee,
@@ -192,6 +194,7 @@ class SynopsisReportSummerForm extends React.Component {
       familyConnectionNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
+      identityStatusOK,
     });
 
     return metWithMentee 
@@ -201,7 +204,8 @@ class SynopsisReportSummerForm extends React.Component {
       && familyConnectionStatusOK
       && familyConnectionNotesOK
       && mentorSupportRequestOK
-      && mentorSupportRequestNotesOK;
+      && mentorSupportRequestNotesOK
+      && identityStatusOK;
   }
 
   handleFullReportSubmit = (event) => {
@@ -474,25 +478,64 @@ class SynopsisReportSummerForm extends React.Component {
         </div>
     );
 
+    // const identityStatementStatusJSX = (
+    //   <div className="survey-question-container">
+    //     <div className="column ms-select">
+    //       <div className="request-prompt-container">
+    //         <span >Please select where you currently are with the Identity Statement Project:</span>
+    //       </div>
+    //       <div className="request-dropdown-container">
+    //         <select
+    //           name="Identity_Statement_Status__c"
+    //           onChange={ this.handleSimpleFieldChange }
+    //           value={ this.state.synopsisReport ? this.state.synopsisReport.Identity_Statement_Status__c : '' }>
+    //           <option value="Tier 0: Not Started">Tier 0: Not Started</option>
+    //           <option value="Tier 1: Values Tables">Tier 1: Values Tables</option>
+    //           <option value="Tier 2: Identity Statement Questions">Tier 2: Identity Statement Questions</option>
+    //           <option value="Tier 3: Values and Questions Complete">Tier 3: Values and Questions Complete</option>
+    //         </select>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
     const identityStatementStatusJSX = (
-      <div className="container">
-        <div className="column ms-select">
-          <div className="request-prompt-container">
-            <span >Please select where you currently are with the Identity Statement Project:</span>
-          </div>
-          <div className="request-dropdown-container">
-            <select
-              name="Identity_Statement_Status__c"
-              onChange={ this.handleSimpleFieldChange }
-              value={ this.state.synopsisReport ? this.state.synopsisReport.Identity_Statement_Status__c : '' }>
-              <option value="Tier 0: Not Started">Tier 0: Not Started</option>
-              <option value="Tier 1: Values Tables">Tier 1: Values Tables</option>
-              <option value="Tier 2: Identity Statement Questions">Tier 2: Identity Statement Questions</option>
-              <option value="Tier 3: Values and Questions Complete">Tier 3: Values and Questions Complete</option>
-            </select>
-          </div>
+      <React.Fragment>
+        <div className="title">
+            <h5>IDENTITY STATEMENT STATUS</h5>
         </div>
-      </div>
+        <div className="survey-question-container">
+          <DropDown
+            compName="Identity_Statement_Status__c"
+            value={this.srSafe('Identity_Statement_Status__c')
+              ? this.state.synopsisReport.Identity_Statement_Status__c
+              : ''}
+            valueClass={this.state.identityStatusOK || this.notEmpty('Identity_Statement_Status__c') ? '' : 'required'}
+            onChange={ this.handleSimpleFieldChange}
+            options={[
+              {
+                value: '',
+                label: 'Select Identity Statement Status:'
+              },
+              {
+                value: 'Tier 0: Not Started',
+                label: 'Tier 0: Not Started',
+              },
+              {
+                value: 'Tier 1: Values Tables',
+                label: 'Tier 1: Values Tables',
+              },
+              {
+                value: 'Tier 2: Identity Statement Questions',
+                label: 'Tier 2: Identity Statement Questions',
+              },
+              {
+                value: 'Tier 3: Values and Questions Complete',
+                label: 'Tier 3: Values and Questions Complete',
+              },
+            ]}
+          />
+        </div>
+      </React.Fragment>
     );
 
     const mentorSupportRequestJSX = (
@@ -555,7 +598,7 @@ class SynopsisReportSummerForm extends React.Component {
         return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p className="centered">(There&#39;s an issue retrieving Basecamp link to {studentName}&#39;s message board. Error status 404. Please alert an administrator.)</p></React.Fragment>);  
       }
       if (this.props.messageBoardUrl) {
-        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Full Report</button>  to {studentName}&#39;s Core Community</h5>);
+        return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Summer Report</button>  to {studentName}&#39;s Core Community</h5>);
       }
       
       if (!this.state.waitingOnSalesforce && this.state.savedToSalesforce && this.state.salesforceErrorStatus > 300) {
@@ -588,13 +631,15 @@ class SynopsisReportSummerForm extends React.Component {
                 { familyConnectionJSX }
                 { whatsBeenHappeningJSX }
                 <ImagePreviews labelText="Attach Optional Images"/>
-                <div className="modal-footer">
+                {/* <div className="modal-footer"> */}
+                <br /><hr /><br />
                 <h5>The following items are viewed by RA Staff only:</h5>
                 { identityStatementStatusJSX }
                 { mentorSupportRequestJSX }
+                <br /><br />
+                <div className="centered">
                 { formButtonOrMessage() }
                 </div>
-
               </form>
             </div>
 
