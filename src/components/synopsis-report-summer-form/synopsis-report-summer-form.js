@@ -8,7 +8,6 @@ import ImagePreviews from '../image-previews/image-previews';
 import TooltipItem from '../tooltip/tooltip';
 import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
-// import * as msgBoardUrlActions from '../../actions/message-board-url';
 import * as pl from '../../lib/pick-list-tests';
 import * as errorActions from '../../actions/error';
 import * as imageActions from '../../actions/images';
@@ -30,9 +29,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   saveSynopsisReport: synopsisReport => dispatch(srActions.saveSynopsisReport(synopsisReport)),
-  // getMsgBoardUrl: studentEmail => dispatch(msgBoardUrlActions.getMsgBoardUrl(studentEmail)),
-  // clearMsgBoardUrl: () => dispatch(msgBoardUrlActions.clearMsgBoardUrl()),
-  // saveSummaryToBasecamp: srSummary => dispatch(basecampActions.postSummaryToBasecamp(srSummary)),
   clearError: () => dispatch(errorActions.clearError()),
   uploadImages: imageData => dispatch(imageActions.uploadImages(imageData)),
   clearImages: () => dispatch(imageActions.clearImageSgids()),
@@ -65,8 +61,6 @@ class SynopsisReportSummerForm extends React.Component {
       newState.metWithMentee = true;
       newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
-      // newState.lastSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attended_last_camp__c');
-      // newState.nextSummerCamp = this.initRadioButtons(newState.SynopsisReport, 'Summer_attend_next_camp__c');
       newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
       newState.familyConnectionOK = true;
       newState.familyConnectionStatusOK = true;
@@ -74,7 +68,6 @@ class SynopsisReportSummerForm extends React.Component {
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Weekly_Check_In_Status__c');
-      // newState.questionOfTheWeek = this.initRadioButtons(newState.SynopsisReport, 'Summer_question_of_the_week_answered__c');
       return newState;
     });
   }
@@ -119,36 +112,6 @@ class SynopsisReportSummerForm extends React.Component {
       this.setState({ waitingOnBasecamp: !this.props.messageBoardUrl });
     }
   }
-  // componentDidUpdate = (prevProps) => {
-  //   if (this.props.error !== prevProps.error) {
-  //     if (this.state.waitingOnImages) {
-  //       this.props.clearError();
-  //       const { synopsisReport } = this.state;
-  //       this.setState({
-  //         waitingOnImages: false,
-  //         imagesSaved: true,
-  //         waitingOnSalesforce: true,
-  //       });
-  //       this.props.saveSynopsisReport({ ...synopsisReport });
-  //     }
-  //     if (this.state.waitingOnSalesforce) {
-  //       this.setState({
-  //         waitingOnSalesfore: false,
-  //         savedToSalesforce: true,
-  //       });
-  //     }
-  //   }
-  //   if (this.props.synopsisReport !== prevProps.synopsisReport) {
-  //     const sr = this.props.synopsisReport;
-  //     this.setState({ 
-  //       synopsisReport: sr,
-  //       mentorMadeScheduledCheckin: this.initRadioButtons(this.props.synopsisReport, 'Weekly_Check_In_Status__c'),
-  //       familyConnectionMade: this.initRadioButtons(this.props.synopsisReport, 'Summer_family_connection_made__c'),
-  //     });
-  //     this.props.clearError();
-  //     this.props.getMsgBoardUrl(this.props.synopsisReport.Student__r.Email);
-  //   }
-  // }
 
   initMultiSelectArray = (sr, fieldName) => {
     if (!sr) return [];
@@ -564,43 +527,6 @@ class SynopsisReportSummerForm extends React.Component {
         </div>
       </fieldset>
     );
-    // const mentorSupportRequestJSX = (
-    //   <div className="container">
-    //     <div className="column ms-select">
-    //       <div className="request-prompt-container">
-    //         <span className={ this.state.mentorSupportRequestOK ? '' : 'required'}>
-    //         Do you need additional support?
-    //         </span>
-    //       </div>
-    //       <div className="request-dropdown-container">
-    //         <select
-    //           className="request-select"
-    //           name="Mentor_Support_Request__c"
-    //           onChange={ this.handleSimpleFieldChange }
-    //           value={ this.state.synopsisReport ? this.state.synopsisReport.Mentor_Support_Request__c : '' }>
-    //           <option value="">Pick One...</option>
-    //           <option value="No">No</option>
-    //           <option value="Student Follow Up">Student Follow Up</option>
-    //           <option value="Technical Support">Technical Support</option>
-    //           <option value="Other">Other</option>
-    //         </select>
-    //       </div>
-    //     </div>
-    //     <div className="support-request-notes">
-    //     { this.state.synopsisReport && !!this.state.synopsisReport.Mentor_Support_Request__c && this.state.synopsisReport.Mentor_Support_Request__c !== 'No'
-    //       ? <TextArea
-    //           compClass={ this.state.mentorSupportRequestNotesOK ? 'title' : 'title required' }
-    //           compName="Mentor_Support_Request_Notes__c"
-    //           label="Please explain:"
-    //           value={ (this.state.synopsisReport && this.state.synopsisReport.Mentor_Support_Request_Notes__c) || ''}
-    //           onChange={ this.handleTextAreaChange }
-    //           rows={ 2 }
-    //           cols={ 80 } />
-    //       : null
-    //     }
-    //     </div>
-    //   </div>
-    // );
 
     const formButtonOrMessage = () => { 
       const sr = this.props.synopsisReport;
@@ -634,17 +560,6 @@ class SynopsisReportSummerForm extends React.Component {
       }
       return null;
     };
-    // const formButtonOrMessage = () => {
-    //   if (this.props.messageBoardUrl) {
-    //     return (<h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Submit Report</button>  to Student&#39;s Core Community</h5>);
-    //   }
-    //   if (this.props.error) {
-    //     return (<React.Fragment><h5><button onClick={ this.handleFullReportSubmit } className="btn btn-secondary" id="full-report" type="submit">Save to Salesforce</button></h5><p>(There&#39;s an issue retrieving Basecamp info. Please alert an administrator.</p></React.Fragment>);
-    //   }
-    //   return (<React.Fragment>
-    //   <h5>Waiting on Basecamp connection...</h5><p>If the submit button doesn&#39;t appear soon contact an administrator.</p>
-    //   </React.Fragment>);
-    // };
 
     const synopsisReportForm = this.props.synopsisReport
       ? (
@@ -699,19 +614,13 @@ class SynopsisReportSummerForm extends React.Component {
 }
 
 SynopsisReportSummerForm.propTypes = {
-  // synopsisReportLink: PropTypes.string,
   synopsisReport: PropTypes.object,
-  // pointTrackers: PropTypes.object,
   handleChange: PropTypes.func,
   saveSynopsisReport: PropTypes.func,
-  // createSynopsisReportPdf: PropTypes.func,
-  // setSynopsisReportLink: PropTypes.func,
-  // clearMsgBoardUrl: PropTypes.func,
   clearError: PropTypes.func,
   projectCount: PropTypes.number,
   projectIdx: PropTypes.number,
   projectScanState: PropTypes.string,
-  // getMsgBoardUrl: PropTypes.func,
   saveClick: PropTypes.func,
   cancelClick: PropTypes.func,
   content: PropTypes.object,
@@ -721,7 +630,6 @@ SynopsisReportSummerForm.propTypes = {
   clearImages: PropTypes.func,
   uploadImages: PropTypes.func,
   imagePreviews: PropTypes.any,
-  // imagePreviews: PropTypes.any,
   bcImages: PropTypes.any,
   pickListFieldValues: PropTypes.object,
 };

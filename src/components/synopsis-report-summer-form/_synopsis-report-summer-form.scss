@@ -7,16 +7,11 @@ span .title {
 
 .required {
   color: red !important;
-
-  // @media only screen and (max-width: 768px) {
-  //   color: white;
-  // }
 }
 
 .point-tracker-modal {
   display: block;
   width: 600px;
-  // max-width: 100%;
   height: 85vh;
   position: fixed;
   z-index: 100;
@@ -24,12 +19,6 @@ span .title {
   top: 45%;
   -webkit-transform: translateX(-50%);
   transform: translate(-50%, -50%);
-    // position: fixed;
-    // height: 77vh;
-    // overflow: scroll;
-    // left: 45%;
-    // -webkit-transform: translateX(-45%);
-    // transform: translateX(-45%);
   box-shadow: 0 0 12px rgba(0,0,0, 0.3);
   overflow: hidden;
 
@@ -68,7 +57,6 @@ span .title {
     }
 
     .modal-header {
-      // outline: 1px solid red;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -81,7 +69,6 @@ span .title {
       }
 
       .modal-title {
-        // outline: 1px solid red;
         padding: 0px;
         margin: 0px;
       }
@@ -114,8 +101,6 @@ label {
   padding-left: 0.3em;
   margin: auto;
   margin-bottom: 0.75em;
-  // text-indent: -.7em;
-  // margin-left: 1.5em;
 }
 
 label.title {
@@ -124,9 +109,7 @@ label.title {
 }
 
 span.title {
-  // margin: 0px;
   margin-top: 2px;
-  // padding: 0px;
 }
 
 .select-student, .select-date {
@@ -142,7 +125,6 @@ select {
   background-color: $gray;
   display: block;
   width: 100%;
-  // height: 2em;
   padding: 10px;
 }
 
@@ -157,9 +139,6 @@ select {
 }
 
 .mentor-met-container {
-  // outline: 1px solid red;
-  // overflow-wrap: break-word;
-  // display: inline-block;
   width: 100%;
   clear: both;
   line-height: 18px;
@@ -172,7 +151,6 @@ select {
 }
 
 .survey-question-container {
-  // overflow-wrap: break-word;
   display: inline-block;
   width: 100%;
   clear: both;
@@ -181,10 +159,6 @@ select {
   .inline {
     margin-left: 12px;
   }
-
-  // .text-align {
-  //   margin-right: 5px;
-  // }
 }
 
 .survey-questions {
@@ -199,9 +173,7 @@ select {
 }
 
 .survey-questions label {
-  // display: inline;
   margin-bottom: 0;
-  // vertical-align: middle;
 }
 
 @media screen and (min-width: 768px) {
@@ -321,17 +293,9 @@ h5 {
   padding-top: 0 !important;
 }
 
-// .request-dropdown-container {
-//   outline: 1px solid blue;
-// }
-
 .support-request-notes {
   .title {
     padding-top: 0px !important;
     margin-top: 0px !important;
   }
 }
-
-// .gpa-display-container {
-  
-// }
