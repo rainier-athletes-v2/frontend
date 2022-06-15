@@ -160,18 +160,17 @@ class Mentor extends React.Component {
   }
 
   selectSrForm = () => {
-    console.log('summer_start', SUMMER_START, 'summer_end', SUMMER_END);
     const summerStart = new Date(SUMMER_START);
     const summerEnd = new Date(SUMMER_END);
     const now = Date.now();
-    console.log('dates start:, ', summerStart.toString(), 'end:', summerEnd.toString(), 'now:', now);
-    console.log('is now in summer range?:', now >= summerStart && now < summerEnd);
     
+    const itsSummer = now >= summerStart && now < summerEnd;
+
     if (this.state.modal === MODAL_OFF) {
       return null;
     }
 
-    if (now >= summerStart && now < summerEnd) {
+    if (itsSummer) {
       return <SynopsisReportSummerForm
           content={ this.state.content } 
           saveClick={ this.handleSaveButtonClick } 
