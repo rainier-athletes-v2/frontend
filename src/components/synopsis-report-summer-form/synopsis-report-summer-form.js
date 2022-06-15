@@ -283,6 +283,9 @@ class SynopsisReportSummerForm extends React.Component {
           <span className="title">Reporting Period</span>
           <span className="name">{`${this.state.synopsisReport && this.state.synopsisReport.Week__c}`}</span>
         </div>
+        <div className="title">
+          <h5>WEEKLY CHECK IN AND COMMUNICATION</h5>
+        </div>
       </div>
     );
 
@@ -563,7 +566,7 @@ class SynopsisReportSummerForm extends React.Component {
 
     const synopsisReportForm = this.props.synopsisReport
       ? (
-      <div className="points-tracker panel point-tracker-modal">
+      <div className="panel sr-modal">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -584,7 +587,7 @@ class SynopsisReportSummerForm extends React.Component {
                 { weeklyConnectionStatusJSX() }
                 { familyConnectionJSX }
                 { whatsBeenHappeningJSX }
-                <ImagePreviews />
+                <ImagePreviews labelText="Attach Optional Images"/>
                 <div className="modal-footer">
                 <h5>The following items are viewed by RA Staff only:</h5>
                 { identityStatementStatusJSX }

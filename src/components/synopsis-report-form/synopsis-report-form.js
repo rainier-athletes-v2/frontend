@@ -691,7 +691,7 @@ class SynopsisReportForm extends React.Component {
         <div className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>
           <h5>Point Sheet Upload</h5>
         </div>
-        <ImagePreviews />
+        <ImagePreviews labelText="Upload Point Sheet Image" />
         { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
           ? <div className="mentor-met-container">
               <TextArea
