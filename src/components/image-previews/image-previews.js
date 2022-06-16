@@ -54,7 +54,7 @@ class ImagePreviews extends React.Component {
               <img className="preview-image" src={image.url}/>
             </div>) 
           : null }
-        <ImageButton onChange={this.handleChange} labelText="Upload Point Sheet Image" />
+        <ImageButton onChange={this.handleChange} labelText={this.props.labelText} />
       </div>
     );
   }
@@ -62,6 +62,7 @@ class ImagePreviews extends React.Component {
 
 ImagePreviews.propTypes = {
   setImagePreviews: PropTypes.func,
+  labelText: PropTypes.string,
 };
 
 export default connect(null, mapDispatchToProps)(ImagePreviews);

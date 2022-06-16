@@ -691,7 +691,7 @@ class SynopsisReportForm extends React.Component {
         <div className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>
           <h5>Point Sheet Upload</h5>
         </div>
-        <ImagePreviews />
+        <ImagePreviews labelText="Upload Point Sheet Image" />
         { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
           ? <div className="mentor-met-container">
               <TextArea
@@ -750,7 +750,7 @@ class SynopsisReportForm extends React.Component {
     const formButtonOrMessage = () => { 
       const sr = this.props.synopsisReport;
       const studentName = sr.Student__r.Name.substr(0, sr.Student__r.Name.indexOf(' '));
-      console.log(this.state.waitingOnImages, this.state.waitingOnSalesforce, this.props.messageBoardUrl, this.props.projectCount, this.props.projectIdx);
+
       if (this.state.waitingOnImages) {
         return (<React.Fragment>
           <h3>Uploading images to Basecamp...</h3>
@@ -836,7 +836,6 @@ SynopsisReportForm.propTypes = {
   synopsisReport: PropTypes.object,
   handleChange: PropTypes.func,
   saveSynopsisReport: PropTypes.func,
-  // clearMsgBoardUrl: PropTypes.func,
   clearError: PropTypes.func,
   pickListFieldValues: PropTypes.object,
   projectCount: PropTypes.number,

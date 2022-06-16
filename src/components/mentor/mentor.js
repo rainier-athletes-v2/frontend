@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Sidebar from '../side-bar/side-bar';
 import MentorContent from '../mentor-content/mentor-content';
 import SynopsisReportForm from '../synopsis-report-form/synopsis-report-form';
+import SynopsisReportSummerForm from '../synopsis-report-summer-form/synopsis-report-summer-form';
 
 import * as profileActions from '../../actions/profile';
 import * as srListActions from '../../actions/synopsis-report-list';
@@ -30,6 +31,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const MODAL_REGULAR = 1;
+const MODAL_SUMMER = 2;
 const MODAL_OFF = 0;
 
 class Mentor extends React.Component {
@@ -121,9 +123,20 @@ class Mentor extends React.Component {
     this.setState({ modal: MODAL_OFF });
   }
 
+  // handleEditSRClick = (e) => {
+  //   e.preventDefault();
+  //   this.props.fetchSynopsisReport(e.target.value);
+  // }
+
   handleEditSRClick = (e) => {
     e.preventDefault();
+    // this.props.clearSynopsisReportLink();
     this.props.fetchSynopsisReport(e.target.value);
+  }
+
+  handleEditSummerSRClick = (e) => {
+    this.setState({ modal: MODAL_SUMMER });
+    this.handleEditSRClick(e);
   }
 
   handleEditRegularSRClick = (e) => {
@@ -146,6 +159,30 @@ class Mentor extends React.Component {
     });
   }
 
+  selectSrForm = () => {
+    const summerStart = new Date(SUMMER_START);
+    const summerEnd = new Date(SUMMER_END);
+    const now = Date.now();
+    
+    const itsSummer = now >= summerStart && now < summerEnd;
+
+    if (this.state.modal === MODAL_OFF) {
+      return null;
+    }
+
+    if (itsSummer) {
+      return <SynopsisReportSummerForm
+          content={ this.state.content } 
+          saveClick={ this.handleSaveButtonClick } 
+          cancelClick={this.handleCancelButton}/>;
+    }
+
+    return <SynopsisReportForm
+      content={ this.state.content } 
+      saveClick={ this.handleSaveButtonClick } 
+      cancelClick={this.handleCancelButton}/>; 
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -155,13 +192,7 @@ class Mentor extends React.Component {
           <MentorContent content={ this.state.content } subPT={ this.state.subPT } 
             editRegularSrClick={this.handleEditRegularSRClick} 
             editSummerSrClick={this.handleEditSummerSRClick}>
-            {this.state.modal !== MODAL_OFF
-              ? <SynopsisReportForm
-                content={ this.state.content } 
-                saveClick={ this.handleSaveButtonClick } 
-                cancelClick={this.handleCancelButton}/>
-              : ''
-            }
+            { this.selectSrForm() }
           </ MentorContent>
           </div>
         </div>

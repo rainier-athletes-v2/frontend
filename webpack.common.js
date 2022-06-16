@@ -26,6 +26,8 @@ webpackConfig.plugins = [
     SF_SESSION_TIMEOUT_MINUTES: JSON.stringify(process.env.SF_SESSION_TIMEOUT_MINUTES),
     BC_OAUTH_ID: JSON.stringify(process.env.BC_OAUTH_ID),
     BC_OAUTH_AUTHORIZE_URL: JSON.stringify(process.env.BC_OAUTH_AUTHORIZE_URL),
+    SUMMER_START: JSON.stringify(process.env.SUMMER_START),
+    SUMMER_END: JSON.stringify(process.env.SUMMER_END),
   }),
   new ProvidePlugin({
     jQuery: 'jquery',
