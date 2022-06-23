@@ -415,7 +415,7 @@ class SynopsisReportSummerForm extends React.Component {
             className="inline"
             checked={this.state.familyConnectionMade === 1 ? 'checked' : ''}
             required="required"
-            onChange={this.handleFamilyConnectionChange}/> Yes (+1 Character Capital)
+            onChange={this.handleFamilyConnectionChange}/> Yes
           <input
             type="radio"
             name="familyConn"
@@ -634,7 +634,7 @@ class SynopsisReportSummerForm extends React.Component {
                 {/* <div className="modal-footer"> */}
                 <br /><hr /><br />
                 <h5>The following items are viewed by RA Staff only:</h5>
-                { identityStatementStatusJSX }
+                {/* { identityStatementStatusJSX } */}
                 { mentorSupportRequestJSX }
                 <br /><br />
                 <div className="centered">
