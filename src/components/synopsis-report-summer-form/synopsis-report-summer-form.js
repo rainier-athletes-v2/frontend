@@ -71,7 +71,6 @@ class SynopsisReportSummerForm extends React.Component {
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       newState.mentorMadeScheduledCheckin = this.initRadioButtons(prevState.synopsisReport, 'Summer_weekly_connection_made__c');
-      console.log('mentorMadeScheduledCheckin', newState.mentorMadeScheduledCheckin);
       return newState;
     });
   }
@@ -133,14 +132,11 @@ class SynopsisReportSummerForm extends React.Component {
     switch (sr[fieldName]) {
       case 'Yes':
       case 'Met':
-        console.log('initRB', fieldName, 1);
         return 1;
       case 'No':
       case 'Did not meet':
-        console.log('initRB', fieldName, 0);
         return 0;
       default:
-        console.log('initRB default -1');
         return -1;
     }
   }
@@ -344,8 +340,6 @@ class SynopsisReportSummerForm extends React.Component {
     ];
 
     const weeklyConnectionStatusJSX = () => {
-      
-      console.log('mentorMadeScheduledCheckin', this.state.mentorMadeScheduledCheckin);
       if (this.state.mentorMadeScheduledCheckin !== -1) {
         return (
           <fieldset>
