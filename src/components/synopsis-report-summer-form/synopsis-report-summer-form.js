@@ -55,20 +55,23 @@ class SynopsisReportSummerForm extends React.Component {
 
   componentDidMount = () => {
     this.props.clearImages();
+  }
+
+  setAppStateOnSrChange() {
     this.setState((prevState) => {
       const newState = { ...prevState };
       newState.savedToSalesforce = false;
       newState.metWithMentee = true;
       newState.weeklyConnectionStatusOK = true;
       newState.studentConnectionNotesOK = true;
-      newState.familyConnectionMade = this.initRadioButtons(newState.SynopsisReport, 'Summer_family_connection_made__c');
+      newState.familyConnectionMade = this.initRadioButtons(prevState.synopsisReport, 'Summer_family_connection_made__c');
       newState.familyConnectionOK = true;
       newState.familyConnectionStatusOK = true;
       newState.familyConnectionNotesOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
-      newState.mentorMadeScheduledCheckin = this.initRadioButtons(newState.SynopsisReport, 'Weekly_Check_In_Status__c');
-      newState.identityStatusOK = true;
+      newState.mentorMadeScheduledCheckin = this.initRadioButtons(prevState.synopsisReport, 'Summer_weekly_connection_made__c');
+      console.log('mentorMadeScheduledCheckin', newState.mentorMadeScheduledCheckin);
       return newState;
     });
   }
@@ -108,6 +111,7 @@ class SynopsisReportSummerForm extends React.Component {
         studentGrade: this.props.synopsisReport.Student__r.Student_Grade__c,
         waitingOnBasecamp: !this.props.messageBoardUrl,
       });
+      this.setAppStateOnSrChange();
     }
     if (this.props.messageBoardUrl !== prevProps.messageBoardUrl) {
       this.setState({ waitingOnBasecamp: !this.props.messageBoardUrl });
@@ -129,11 +133,14 @@ class SynopsisReportSummerForm extends React.Component {
     switch (sr[fieldName]) {
       case 'Yes':
       case 'Met':
+        console.log('initRB', fieldName, 1);
         return 1;
       case 'No':
       case 'Did not meet':
+        console.log('initRB', fieldName, 0);
         return 0;
       default:
+        console.log('initRB default -1');
         return -1;
     }
   }
@@ -165,11 +172,11 @@ class SynopsisReportSummerForm extends React.Component {
 
   validMentorInput = (sr) => {
     const metWithMentee = !!sr.Weekly_Check_In_Status__c;
-    const weeklyConnectionStatusOK = (sr.Weekly_Check_In_Status__c === 'Met'
+    const weeklyConnectionStatusOK = (sr.Summer_weekly_connection_made__c === 'Yes'
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
-      || (sr.Weekly_Check_In_Status__c === 'Did not meet'
+      || (sr.Summer_weekly_connection_made__c === 'No'
       && (sr.Summer_conn_no_answer__c || sr.Summer_conn_no_show__c || sr.Summer_conn_missed_other__c));
-    const studentConnectionNotesOK = sr.Weekly_Check_In_Status__c === 'Met'
+    const studentConnectionNotesOK = sr.Summer_weekly_connection_made__c === 'Yes'
       || !sr.Summer_conn_missed_other__c
       || (sr.Summer_conn_missed_other__c && !!sr.Summer_weekly_connection_other_notes__c);
     const familyConnectionOK = !!sr.Summer_family_connection_made__c;
@@ -183,7 +190,6 @@ class SynopsisReportSummerForm extends React.Component {
     const mentorSupportRequestOK = !!sr.Mentor_Support_Request__c;
     const mentorSupportRequestNotesOK = !pl.yes(sr.Mentor_Support_Request__c)
       || (pl.yes(sr.Mentor_Support_Request__c) && !!sr.Mentor_Support_Request_Notes__c);
-    const identityStatusOK = this.notEmpty('Identity_Statement_Status__c');
 
     this.setState({
       metWithMentee,
@@ -194,7 +200,6 @@ class SynopsisReportSummerForm extends React.Component {
       familyConnectionNotesOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
-      identityStatusOK,
     });
 
     return metWithMentee 
@@ -204,8 +209,7 @@ class SynopsisReportSummerForm extends React.Component {
       && familyConnectionStatusOK
       && familyConnectionNotesOK
       && mentorSupportRequestOK
-      && mentorSupportRequestNotesOK
-      && identityStatusOK;
+      && mentorSupportRequestNotesOK;
   }
 
   handleFullReportSubmit = (event) => {
@@ -232,15 +236,15 @@ class SynopsisReportSummerForm extends React.Component {
 
   handleMentorMadeScheduledCheckinChange = (event) => {
     const newState = Object.assign({}, this.state);
-    newState.mentorMadeScheduledCheckin = parseInt(event.target.value, 10);
+    newState.mentorMadeScheduledCheckin = event.target.value === 'Yes' ? 1 : 0;
     if (newState.mentorMadeScheduledCheckin === 1) {
-      newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
+      newState.synopsisReport.Summer_weekly_connection_made__c = 'Yes';
       newState.synopsisReport.Summer_conn_no_answer__c = false;
       newState.synopsisReport.Summer_conn_no_show__c = false;
       newState.synopsisReport.Summer_conn_missed_other__c = false;
       newState.synopsisReport.Summer_weekly_connection_other_notes__c = '';
     } else {
-      newState.synopsisReport.Weekly_Check_In_Status__c = 'Did not meet';
+      newState.synopsisReport.Summer_weekly_connection_made__c = 'No';
       newState.synopsisReport.Summer_conn_met__c = false;
       newState.synopsisReport.Summer_conn_called__c = false;
       newState.synopsisReport.Summer_conn_late_call__c = false;
@@ -251,7 +255,7 @@ class SynopsisReportSummerForm extends React.Component {
 
   handleFamilyConnectionChange = (event) => {
     const newState = Object.assign({}, this.state);
-    newState.familyConnectionMade = parseInt(event.target.value, 10);
+    newState.familyConnectionMade = event.target.value === 'Yes' ? 1 : 0;
     if (newState.familyConnectionMade === 1) {
       newState.synopsisReport.Summer_family_connection_made__c = 'Yes';
     } else {
@@ -277,6 +281,10 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   render() {
+    if (!this.state.synopsisReport) {
+      return null;
+    }
+    
     const srHeadingJSX = (
       <div className="row">
         <div className="col-md-6">
@@ -304,17 +312,17 @@ class SynopsisReportSummerForm extends React.Component {
           <input
             type="radio"
             name="made-meeting"
-            value="1"
+            value="Yes"
             className="inline"
-            checked={this.state.mentorMadeScheduledCheckin === 1 ? 'checked' : ''}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'checked' : ''}
             required="required"
             onChange={this.handleMentorMadeScheduledCheckinChange}/> Yes
           <input
             type="radio"
             name="made-meeting"
-            value="0"
+            value="No"
             className="inline"
-            checked={this.state.mentorMadeScheduledCheckin === 0 ? 'checked' : ''}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Summer_weekly_connection_made__c === 'No' ? 'checked' : ''}
             requried="required"
             onChange={this.handleMentorMadeScheduledCheckinChange}/> No
       </div>
@@ -336,8 +344,8 @@ class SynopsisReportSummerForm extends React.Component {
     ];
 
     const weeklyConnectionStatusJSX = () => {
-      if (!this.state.synopsisReport) return null;
       
+      console.log('mentorMadeScheduledCheckin', this.state.mentorMadeScheduledCheckin);
       if (this.state.mentorMadeScheduledCheckin !== -1) {
         return (
           <fieldset>
@@ -413,7 +421,7 @@ class SynopsisReportSummerForm extends React.Component {
             name="familyConn"
             value="1"
             className="inline"
-            checked={this.state.familyConnectionMade === 1 ? 'checked' : ''}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'Yes' ? 'checked' : ''}
             required="required"
             onChange={this.handleFamilyConnectionChange}/> Yes
           <input
@@ -421,7 +429,7 @@ class SynopsisReportSummerForm extends React.Component {
             name="familyConn"
             value="0"
             className="inline"
-            checked={this.state.familyConnectionMade === 0 ? 'checked' : ''}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'No' ? 'checked' : ''}
             required="required"
             onChange={this.handleFamilyConnectionChange}/> No
       </div>
@@ -476,66 +484,6 @@ class SynopsisReportSummerForm extends React.Component {
                   />
           </div>
         </div>
-    );
-
-    // const identityStatementStatusJSX = (
-    //   <div className="survey-question-container">
-    //     <div className="column ms-select">
-    //       <div className="request-prompt-container">
-    //         <span >Please select where you currently are with the Identity Statement Project:</span>
-    //       </div>
-    //       <div className="request-dropdown-container">
-    //         <select
-    //           name="Identity_Statement_Status__c"
-    //           onChange={ this.handleSimpleFieldChange }
-    //           value={ this.state.synopsisReport ? this.state.synopsisReport.Identity_Statement_Status__c : '' }>
-    //           <option value="Tier 0: Not Started">Tier 0: Not Started</option>
-    //           <option value="Tier 1: Values Tables">Tier 1: Values Tables</option>
-    //           <option value="Tier 2: Identity Statement Questions">Tier 2: Identity Statement Questions</option>
-    //           <option value="Tier 3: Values and Questions Complete">Tier 3: Values and Questions Complete</option>
-    //         </select>
-    //       </div>
-    //     </div>
-    //   </div>
-    // );
-    const identityStatementStatusJSX = (
-      <React.Fragment>
-        <div className="title">
-            <h5>IDENTITY STATEMENT STATUS</h5>
-        </div>
-        <div className="survey-question-container">
-          <DropDown
-            compName="Identity_Statement_Status__c"
-            value={this.srSafe('Identity_Statement_Status__c')
-              ? this.state.synopsisReport.Identity_Statement_Status__c
-              : ''}
-            valueClass={this.state.identityStatusOK || this.notEmpty('Identity_Statement_Status__c') ? '' : 'required'}
-            onChange={ this.handleSimpleFieldChange}
-            options={[
-              {
-                value: '',
-                label: 'Select Identity Statement Status:'
-              },
-              {
-                value: 'Tier 0: Not Started',
-                label: 'Tier 0: Not Started',
-              },
-              {
-                value: 'Tier 1: Values Tables',
-                label: 'Tier 1: Values Tables',
-              },
-              {
-                value: 'Tier 2: Identity Statement Questions',
-                label: 'Tier 2: Identity Statement Questions',
-              },
-              {
-                value: 'Tier 3: Values and Questions Complete',
-                label: 'Tier 3: Values and Questions Complete',
-              },
-            ]}
-          />
-        </div>
-      </React.Fragment>
     );
 
     const mentorSupportRequestJSX = (
@@ -634,7 +582,6 @@ class SynopsisReportSummerForm extends React.Component {
                 {/* <div className="modal-footer"> */}
                 <br /><hr /><br />
                 <h5>The following items are viewed by RA Staff only:</h5>
-                {/* { identityStatementStatusJSX } */}
                 { mentorSupportRequestJSX }
                 <br /><br />
                 <div className="centered">
