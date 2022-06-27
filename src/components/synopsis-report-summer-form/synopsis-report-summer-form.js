@@ -167,7 +167,7 @@ class SynopsisReportSummerForm extends React.Component {
   }
 
   validMentorInput = (sr) => {
-    const metWithMentee = !!sr.Weekly_Check_In_Status__c;
+    const metWithMentee = !!sr.Summer_weekly_connection_made__c;
     const weeklyConnectionStatusOK = (sr.Summer_weekly_connection_made__c === 'Yes'
       && (sr.Summer_conn_met__c || sr.Summer_conn_called__c || sr.Summer_conn_late_call__c || sr.Summer_conn_basecamp__c))
       || (sr.Summer_weekly_connection_made__c === 'No'
@@ -252,10 +252,8 @@ class SynopsisReportSummerForm extends React.Component {
   handleFamilyConnectionChange = (event) => {
     const newState = Object.assign({}, this.state);
     newState.familyConnectionMade = event.target.value === 'Yes' ? 1 : 0;
-    if (newState.familyConnectionMade === 1) {
-      newState.synopsisReport.Summer_family_connection_made__c = 'Yes';
-    } else {
-      newState.synopsisReport.Summer_family_connection_made__c = 'No';
+    newState.synopsisReport.Summer_family_connection_made__c = event.target.value;
+    if (newState.synopsisReport.Summer_family_connection_made__c === 'No') {
       newState.synopsisReport.Summer_family_conn_phone__c = false;
       newState.synopsisReport.Summer_family_conn_camp__c = false;
       newState.synopsisReport.Summer_family_conn_meal__c = false;
@@ -413,7 +411,7 @@ class SynopsisReportSummerForm extends React.Component {
           <input
             type="radio"
             name="familyConn"
-            value="1"
+            value="Yes"
             className="inline"
             checked={this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'Yes' ? 'checked' : ''}
             required="required"
@@ -421,7 +419,7 @@ class SynopsisReportSummerForm extends React.Component {
           <input
             type="radio"
             name="familyConn"
-            value="0"
+            value="No"
             className="inline"
             checked={this.state.synopsisReport && this.state.synopsisReport.Summer_family_connection_made__c === 'No' ? 'checked' : ''}
             required="required"
