@@ -56,7 +56,7 @@ class SynopsisReportSummerSummary extends React.Component {
 
     <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
 
-    <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
+    <p>${studentName} ${sr.Summer_weekly_connection_made__c === 'Yes' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
 
     const block2 = `${sr.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : ''}
     ${sr.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : ''}
@@ -122,7 +122,7 @@ class SynopsisReportSummerSummary extends React.Component {
       <React.Fragment>
         <h4>{synopsisReport.Week__c}</h4>
         <br />
-        <p><strong>{ synopsisReport.Weekly_Check_In_Status__c === 'Met' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
+        <p><strong>{ synopsisReport.Summer_weekly_connection_made__c === 'Yes' ? 'Weekly Connection Status' : 'Reason for missed weekly connection' }</strong></p>
         { synopsisReport.Summer_conn_met__c ? 'Mentor met with student social-distancing in-person. ' : '' }
         { synopsisReport.Summer_conn_called__c ? 'Mentor checked in with student via video call. ' : '' }
         { synopsisReport.Summer_conn_late_call__c ? 'Mentor checked in with student via phone call. ' : '' }
