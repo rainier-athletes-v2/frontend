@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TooltipItem from '../tooltip/tooltip';
-import * as ttText from '../../lib/tooltip-text';
 
 export const textAreaMax = 1000;
 
@@ -22,10 +20,6 @@ export function TextArea(props) {
         className={ props.compClass }
         htmlFor={ props.compName }>
         {props.label}
-        { ttText[props.compName]
-          ? <TooltipItem id={ props.compName } text={ttText[props.compName]} />
-          : null
-        }
         &nbsp;<span style={ spanStyle }> {` (${charsRemaining(props.value)} characters remaining)` }</span>
       </label>
       <textarea

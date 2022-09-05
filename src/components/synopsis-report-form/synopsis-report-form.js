@@ -65,7 +65,8 @@ class SynopsisReportForm extends React.Component {
       newState.metWithTeacherOK = true;
       newState.metWithCoachOK = true;
       newState.identityStatusOK = true;
-      newState.identityPromptOK = true;
+      newState.identityTopicOK = true;
+      newState.identityHighlightsOK = true;
       newState.pointSheetStatusOK = true;
       newState.msSelfReflectionOK = true;
       newState.esSelfReflectionOK = true;
@@ -173,7 +174,8 @@ class SynopsisReportForm extends React.Component {
     const emptyIdStatement = !this.notEmpty('Identity_Statement_Weekly_Status__c');
     const idNo = sr.Identity_Statement_Weekly_Status__c === 'No';
     const identityStatusOK = this.notEmpty('Identity_Statement_Weekly_Status__c');
-    const identityPromptOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Prompts__c');
+    const identityTopicOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Topic__c');
+    const identityHighlightsOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Highlights__c');
 
     const emptyPsStatus = !this.notEmpty('Point_Sheet_Status__c');
     const psTurnedIn = sr.Point_Sheet_Status__c === 'Turned in';
@@ -220,7 +222,8 @@ class SynopsisReportForm extends React.Component {
       metWithTeacherOK,
       metWithCoachOK,
       identityStatusOK,
-      identityPromptOK,
+      identityTopicOK,
+      identityHighlightsOK,
       pointSheetStatusOK,
       msSelfReflectionOK,
       esSelfReflectionOK,
@@ -248,7 +251,8 @@ class SynopsisReportForm extends React.Component {
       && metWithTeacherOK
       && metWithCoachOK
       && identityStatusOK
-      && identityPromptOK
+      && identityTopicOK
+      && identityHighlightsOK
       && pointSheetStatusOK
       && msSelfReflectionOK
       && esSelfReflectionOK
@@ -509,7 +513,10 @@ class SynopsisReportForm extends React.Component {
     const identityStatementJSX = (
       <React.Fragment>
         <div className="title">
-            <h5>IDENTITY STATEMENT</h5>
+            <h5>IDENTITY STATEMENT EXPLORATION</h5>
+        </div>
+        <div>
+          <p>Identity Statement Exploration is Self-Discovery in action! Statements will be added throughout the school year onto the top of each student&apos;s Identity Journal based on your discussions. The statements will change over the year as your topics of conversation change, focusing at first on the Introduction &amp; Values topic, then changing to the Community topic, then Race &amp; Ethnicity and so on.</p>
         </div>
         <div className="survey-question-container">
           <DropDown
@@ -526,13 +533,13 @@ class SynopsisReportForm extends React.Component {
             && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' 
           ? <div className="survey-question-container">
             <DropDown
-              compName="Identity_Statement_Prompts__c"
-              value={this.srSafe('Identity_Statement_Prompts__c')
-                ? this.state.synopsisReport.Identity_Statement_Prompts__c
+              compName="Identity_Statement_Topic__c"
+              value={this.srSafe('Identity_Statement_Topic__c')
+                ? this.state.synopsisReport.Identity_Statement_Topic__c
                 : ''}
-              valueClass={this.state.identityPromptOK || this.notEmpty('Identity_Statement_Prompts__c') ? '' : 'required'}
+              valueClass={this.state.identityTopicOK || this.notEmpty('Identity_Statement_Topic__c') ? '' : 'required'}
               onChange={ this.handleSimpleFieldChange}
-              options={this.props.pickListFieldValues.Identity_Statement_Prompts__c.values}
+              options={this.props.pickListFieldValues.Identity_Statement_Topic__c.values}
             />
             </div>
           : '' }
@@ -551,18 +558,37 @@ class SynopsisReportForm extends React.Component {
               />
             </div>
           : '' }
-        <div className="survey-question-container">
+        { this.notEmpty('Identity_Statement_Weekly_Status__c')
+          && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes'
+          ? <div className="survey-question-container">
             <TextArea
-                compClass="title"
+                compClass={this.state.identityHighlightsOK
+                && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' ? 'title' : 'title required'}
                 compName="Identity_Statement_Highlights__c"
-                label="Identity Statement Highlights (Optional)"
+                label="Identity Statement Highlights (Required)"
                 value={ this.srSafe('Identity_Statement_Highlights__c')
                   ? this.state.synopsisReport.Identity_Statement_Highlights__c
                   : '' }
                 onChange={ this.handleTextAreaChange }
-                placeholder="Optional..."
+                placeholder="What did your mentee share on this topic that they are open to sharing with their core community on their Identity Journal and over Basecamp?"
               />
-        </div>
+          </div>
+          : '' }
+          { this.notEmpty('Identity_Statement_Weekly_Status__c')
+          && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes'
+            ? <div className="survey-question-container">
+            <TextArea
+                compClass='title'
+                compName="Identity_Statement_Notes__c"
+                label="Identity Statement Notes (Optional)"
+                value={ this.srSafe('Identity_Statement_Notes__c')
+                  ? this.state.synopsisReport.Identity_Statement_Notes__c
+                  : '' }
+                onChange={ this.handleTextAreaChange }
+                placeholder="Please add any other notes that your mentee is not yet open to sharing with their core community."
+              />
+            </div>
+            : '' }
       </React.Fragment>
     );
 

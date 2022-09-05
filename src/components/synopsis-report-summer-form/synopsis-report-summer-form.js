@@ -5,8 +5,6 @@ import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synop
 import { TextArea, textAreaMax } from '../text-area/text-area';
 import DropDown from '../drop-down/drop-down';
 import ImagePreviews from '../image-previews/image-previews';
-import TooltipItem from '../tooltip/tooltip';
-import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as pl from '../../lib/pick-list-tests';
 import * as errorActions from '../../actions/error';
@@ -343,7 +341,7 @@ class SynopsisReportSummerForm extends React.Component {
           <fieldset>
             <div className="mentor-met-container" key='connectionStatus'>
               <div className="mentor-met-container">
-                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status<TooltipItem id={'tooltip-weeklyConnection'} text={ttText.weeklyConnection}/></label>
+                <label className={ this.state.weeklyConnectionStatusOK ? 'title' : 'title required' }>Weekly Connection Status</label>
                 {this.state.mentorMadeScheduledCheckin === 1
                   ? madeCheckinValues.map((value, i) => {
                     return (<div className="survey-question-container" key={ i }>

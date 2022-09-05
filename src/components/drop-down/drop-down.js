@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TooltipItem from '../tooltip/tooltip';
-import * as ttText from '../../lib/tooltip-text';
 
 export default function DropDown(props) {
   return (
@@ -10,10 +8,6 @@ export default function DropDown(props) {
         className={props.labelClass ? props.labelClass : '' }
         htmlFor={props.compName}>
         {props.label}
-        { ttText[props.compName] 
-          ? <TooltipItem id={props.compName} text={ttText[props.compName]}/>
-          : null
-        }
       </label>
       <select className={props.valueClass ? props.valueClass : '' }
         value={props.value}
