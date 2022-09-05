@@ -53,6 +53,7 @@ class SynopsisReportForm extends React.Component {
       const newState = { ...prevState };
       newState.synopsisSaved = false;
       newState.weeklyCheckinStatusOK = true;
+      newState.metWithMentee = true;
       newState.checkinStatusMetOK = true;
       newState.commStatusMetOK = true;
       newState.commStatusDidNotMeetOK = true;
@@ -141,6 +142,7 @@ class SynopsisReportForm extends React.Component {
 
   validMentorInput = (sr) => {
     const met = sr.Weekly_Check_In_Status__c === 'Met';
+    const metWithMentee = !!sr.Weekly_Check_In_Status__c;
     const didNotMeet = sr.Weekly_Check_In_Status__c === 'Did not meet';
     const emptyCheckinStatus = !this.notEmpty('Weekly_Check_In_Status__c');
     const weeklyCheckinStatusOK = this.notEmpty('Weekly_Check_In_Status__c');
@@ -155,10 +157,10 @@ class SynopsisReportForm extends React.Component {
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff'
       && this.notEmpty('Communication_Method_No_Response__c'));
     const howSupportRequiredOK = met
-      || sr.Communication_Method_No_Check_In__c !== 'I did not connect with student and/or family for other reasons explained below'
+      || sr.Did_not_meet_communication__c !== 'I did not connect with student and/or family for other reasons explained below'
       || (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && sr.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below'
-      && this.notEmpty('How_can_we_support_required__c'));
+      && this.notEmpty('How_can_we_support_comm_required__c'));
     const howSupportOK = sr.Communication_Method_No_Response__c !== 'I did not connect with student and/or family for reasons explained below'
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
       && sr.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below'
@@ -205,6 +207,7 @@ class SynopsisReportForm extends React.Component {
       || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty('Mentor_Support_Request_Notes__c'));
 
     this.setState({
+      metWithMentee,
       weeklyCheckinStatusOK,
       checkinStatusMetOK,
       commStatusMetOK,
@@ -232,7 +235,8 @@ class SynopsisReportForm extends React.Component {
       mentorSupportRequestNotesOK,
     });
 
-    return weeklyCheckinStatusOK 
+    return metWithMentee
+      && weeklyCheckinStatusOK 
       && checkinStatusMetOK
       && commStatusMetOK 
       && commStatusDidNotMeetOK
@@ -306,6 +310,24 @@ class SynopsisReportForm extends React.Component {
     return 1;
   }
 
+  handleMentorMadeScheduledCheckinChange = (event) => {
+    const newState = Object.assign({}, this.state);
+    newState.mentorMadeScheduledCheckin = event.target.value === 'Met' ? 1 : 0;
+    if (newState.mentorMadeScheduledCheckin === 1) {
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
+      newState.synopsisReport.Did_not_meet_communication__c = false;
+      newState.synopsisReport.How_can_we_support_comm__c = '';
+      newState.synopsisReport.How_can_we_support_comm_required__c = '';
+      newState.synopsisReport.Communication_Method_No_Check_In__c = false;
+      newState.synopsisReport.Communication_Method_No_Response__c = false;
+    } else {
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Did not meet';
+      newState.synopsisReport.Check_in_status_met__c = false;
+      newState.synopsisReport.Communication_Status_Met__c = false;
+    }
+    this.setState(newState);
+  }
+
   render() {
     const headerJSX = (
       <div className="row">
@@ -326,13 +348,28 @@ class SynopsisReportForm extends React.Component {
     const mentorMadeScheduledCheckinJSX = (
       <fieldset>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <DropDown
-          compName="Weekly_Check_In_Status__c"
-          value={ this.srSafe('Weekly_Check_In_Status__c') ? this.state.synopsisReport.Weekly_Check_In_Status__c : undefined}
-          valueClass={this.state.weeklyCheckinStatusOK || this.notEmpty('Weekly_Check_In_Status__c') ? '' : 'required'}
-          onChange={ this.handleSimpleFieldChange}
-          options={this.props.pickListFieldValues.Weekly_Check_In_Status__c.values}
-          />
+        <React.Fragment>
+          <div className="mentor-met-container" key='mentorMadeCheckin'>
+          <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you meet with your student?</label><br className="rwd-break" />
+          <input
+            type="radio"
+            name="made-meeting"
+            value="Met"
+            className={this.state.weeklyCheckinStatusOK ? 'inline' : 'inline required'}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' ? 'checked' : ''}
+            required="required"
+            onChange={this.handleMentorMadeScheduledCheckinChange}/> Yes
+          <input
+            type="radio"
+            name="made-meeting"
+            value="Did not meet"
+            className={this.state.weeklyCheckinStatusOK
+              || this.notEmpty('Weekly_Check_In_status__c') ? 'inline' : 'inline required'}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Did not meet' ? 'checked' : ''}
+            requried="required"
+            onChange={this.handleMentorMadeScheduledCheckinChange}/> No
+          </div>
+        </React.Fragment>
           { this.notEmpty('Weekly_Check_In_Status__c') && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' 
             ? <div className="survey-question-container">
                 <DropDown
@@ -369,6 +406,33 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
+            { this.notEmpty('Did_not_meet_communication__c') 
+              && this.state.synopsisReport.Did_not_meet_communication__c === 'I did not connect with student and/or family for other reasons explained below' 
+               && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              ? <div className="survey-question-container"> 
+                <TextArea
+                  compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_comm_required__c') ? 'title' : 'title required' }
+                  compName="How_can_we_support_comm_required__c"
+                  label="Additional Notes (Required)"
+                  value={ this.srSafe('How_can_we_support_comm_required__c') ? this.state.synopsisReport.How_can_we_support_comm_required__c : undefined }
+                  onChange={ this.handleTextAreaChange }
+                  placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
+                />
+                </div>
+              : '' }
+            { this.notEmpty('Did_not_meet_communication__c')  
+              && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              ? <div className="survey-question-container"> 
+              <TextArea
+                compClass="title"
+                compName="How_can_we_support_communication__c"
+                label="Additional Notes (Optional)"
+                value={ this.srSafe('How_can_we_support_communication__c') ? this.state.synopsisReport.How_can_we_support_communication__c : undefined }
+                onChange={ this.handleTextAreaChange }
+                placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
+              />
+              </div>
+              : '' }
           { this.notEmpty('Did_not_meet_communication__c')
             && this.state.synopsisReport.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
@@ -382,34 +446,20 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.notEmpty('Communication_Method_No_Check_In__c') 
-            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below' 
+          { this.notEmpty('Communication_Method_No_Check_In__c')
+            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-            ? <div className="survey-question-container"> 
-            <TextArea
-              compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_required__c') ? 'title' : 'title required' }
-              compName="How_can_we_support_required__c"
-              label="Please provide any additional context to RA staff in order to help inform how we can best support"
-              value={ this.srSafe('How_can_we_support_required__c') ? this.state.synopsisReport.How_can_we_support_required__c : undefined }
-              onChange={ this.handleTextAreaChange }
-              placeholder="Required..."
-            />
-            </div>
-            : '' }
-            { this.notEmpty('Communication_Method_No_Response__c') 
-            && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below' 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-              ? <div className="survey-question-container"> 
-              <TextArea
-                compClass={ this.state.howSupportOK || this.notEmpty('How_can_we_support__c') ? 'title' : 'title required' }
-                compName="How_can_we_support__c"
-                label="Please provide any additional context to RA staff in order to help inform how we can best support"
-                value={ this.srSafe('How_can_we_support__c') ? this.state.synopsisReport.How_can_we_support__c : undefined }
-                onChange={ this.handleTextAreaChange }
-                placeholder="Required..."
-              />
+            ? <div className="survey-question-container">
+                <DropDown
+                  compName="Communication_Method_No_Response__c"
+                  value={ this.srSafe('Communication_Method_No_Response__c') ? this.state.synopsisReport.Communication_Method_No_Response__c : undefined }
+                  valueClass={this.state.commMethodNoCheckinOK || this.notEmpty('Communication_Method_No_Response__c') ? '' : 'required'}
+                  onChange={ this.handleSimpleFieldChange }
+                  options={this.props.pickListFieldValues.Communication_Method_No_Response__c.values}
+                />
               </div>
-              : '' }
+            : '' }
+          
       </div>
       </fieldset>
     );
