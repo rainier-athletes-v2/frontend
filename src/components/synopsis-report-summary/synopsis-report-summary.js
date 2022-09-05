@@ -63,9 +63,9 @@ class SynopsisReportSummary extends React.Component {
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
    
-    const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
+    const block1 = `<strong>${studentName}&apos;s Update for ${sr.Week__c}</strong><br><br>
 
-    <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
+    <p>Hello Team ${studentName} - please see ${studentName}&apos;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&apos;s progress.</p><br>
 
     <p>${studentName} ${sr.Weekly_Check_In_Status__c === 'Met' ? 'met' : 'did not meet'} for check-in this week.</p><br>`;
 
@@ -74,19 +74,19 @@ class SynopsisReportSummary extends React.Component {
         ${sr.Identity_Statement_Highlights__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
-    const block3 = `<p><strong>Point Sheet and School Update: </strong>
-    ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in a point sheet. 
-    ${sr.Point_Sheet_and_School_Update__c ? sr.Point_Sheet_and_School_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
+    const block3 = `<p><strong>Identity Journal and Teacher Conversations: </strong>
+    ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in an Identity Journal. 
+    ${sr.Identity_Journal_and_Teacher_Convo__c ? sr.Identity_Journal_and_Teacher_Convo__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
 
-    const optionalBlock4 = sr.Sports_Update__c
-      ? `<p><strong>Sports Update: </strong>${sr.Sports_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
+    const optionalBlock4 = sr.Sports_and_Activities_Update__c
+      ? `<p><strong>Sports & Activities Update: </strong>${sr.Sports_and_Activities_Update__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
     const optionalBlock5 = sr.Additional_Comments__c
       ? `<p><strong>Additional Comments: </strong>${sr.Additional_Comments__c.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p></br><br>`
       : '';
 
-    const block6 = this.props.images && this.props.images.length > 0 ? `<p><strong>Point Sheet & Images</strong></p><br>
+    const block6 = this.props.images && this.props.images.length > 0 ? `<p><strong>Identity Journal & Other Images</strong></p><br>
     ${this.props.images.map(sgid => `<bc-attachment sgid="${sgid.attachable_sgid}"></bc-attachment><br>`)}<br>` : '';
     
     const block7 = `<p>Thanks and feel free to respond with comments or questions!</p></br><br>
@@ -134,19 +134,19 @@ class SynopsisReportSummary extends React.Component {
       <React.Fragment>
         <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
 
-        <p>Hello Team {studentName} - please see {studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around {studentName}&#39;s progress on and off the field.</p>
+        <p>Hello Team {studentName} - please see {studentName}&apos;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around {studentName}&apos;s progress on.</p>
 
         <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
         {sr.Identity_Statement_Highlights__c ? <p><strong>Identity Statement Highlights: </strong>{sr.Identity_Statement_Highlights__c}</p> : '' }
         
-        <p><strong>Point Sheet and School Update: </strong>{studentName} {sr.Point_Sheet_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} a point sheet. {sr.Point_Sheet_and_School_Update__c}</p>
+        <p><strong>Identity Journal and Teacher Conversations: </strong>{studentName} {sr.Identity_Journal_Status__c === 'Turned in' ? ' turned in' : ' did not turn in'} an Identity Journal. {sr.Identity_Journal_and_Teacher_Convo__c}</p>
     
-        {sr.Sports_Update__c ? <p><strong>Sports Update: </strong>{sr.Sports_Update__c}</p> : ''}
+        {sr.Sports_and_Activities_Update__c ? <p><strong>Sports &amp; Activities Update: </strong>{sr.Sports_and_Activities_Update__c}</p> : ''}
 
         {sr.Additional_Comments__c ? <p><strong>Additional Comments: </strong>{sr.Additional_Comments__c}</p> : ''}
 
-        <p>{!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'Point Sheet image has been posted to basecamp.' }</p> {/* eslint-disable-line */}
+        <p>{!imageCount ? null : imageCount > 1 ? 'Multiple images have been posted to Basecamp.' : 'Identity Journal image has been posted to basecamp.' }</p> {/* eslint-disable-line */}
     
         <p>Thanks and feel free to respond with comments or questions!</p>
         

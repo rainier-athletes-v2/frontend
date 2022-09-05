@@ -76,7 +76,7 @@ class SynopsisReportForm extends React.Component {
       newState.identityJournalStatusNotesOK = true;
       newState.ijAndTeacherConvoOK = true;
       newState.sportsUpdateOK = true;
-      newState.psImageOrReasonOK = true;
+      newState.ijImageOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       return newState;
@@ -198,11 +198,11 @@ class SynopsisReportForm extends React.Component {
       || (ijNotTurnedIn && sr.No_Identity_Journal__c === 'Other' && this.notEmpty('No_Identity_Journal_What_Happened__c'));
     const ijAndTeacherConvoOK = this.notEmpty('Identity_Journal_and_Teacher_Convo__c');
 
-    const sportsUpdateOK = this.notEmpty('Weekly_Sports_Update__c');
+    const sportsUpdateOK = this.notEmpty('Weekly_Sports_and_Activities_Update__c');
 
-    const psImageOrReasonOK = sr.Point_Sheet_Status__c === 'Not turned in'
-      || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length)
-      || (sr.Point_Sheet_Status__c === 'Turned in' && this.notEmpty('Missing_Point_Sheet_Image__c'));
+    const ijImageOK = sr.Identity_Journal_Status__c === 'Not turned in'
+      || (sr.Identity_Journal_Status__c === 'Turned in' && !!(this.props.imagePreviews && this.props.imagePreviews.length));
+      // || (sr.Identity_Journal_Status__c === 'Turned in' && this.notEmpty('Missing_Identity_Journal_Image__c'));
 
     const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
     const mentorSupportRequestNotesOK = sr.Mentor_Support_Request__c === 'No' 
@@ -233,7 +233,7 @@ class SynopsisReportForm extends React.Component {
       identityJournalStatusNotesOK,
       ijAndTeacherConvoOK,
       sportsUpdateOK,
-      psImageOrReasonOK,
+      ijImageOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
     });
@@ -262,7 +262,7 @@ class SynopsisReportForm extends React.Component {
       && identityJournalStatusNotesOK
       && ijAndTeacherConvoOK
       && sportsUpdateOK
-      && psImageOrReasonOK
+      && ijImageOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
   }
@@ -719,28 +719,28 @@ class SynopsisReportForm extends React.Component {
     const sportsUpdateJSX = (
       <fieldset>
         <div className="title">
-          <h5>SPORTS UPDATE</h5>
+          <h5>SPORTS &amp; ACTIVITIES UPDATE</h5>
         </div>
         <div className="mentor-met-container">
           <DropDown
-            compName="Weekly_Sports_Update__c"
-            value={this.srSafe('Weekly_Sports_Update__c')
+            compName="Weekly_Sports_and_Activities_Update__c"
+            value={this.srSafe('Weekly_Sports_and_Activities_Update__c')
               ? this.state.synopsisReport.Weekly_Sports_Update__c
               : undefined}
-              valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_Update__c') ? '' : 'required'}
+              valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_and_Activities_Update__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={this.props.pickListFieldValues.Weekly_Sports_Update__c.values}
+            options={this.props.pickListFieldValues.Weekly_Sports_and_Activities_Update__c.values}
           />
           <div className="survey-question-container">
             <TextArea
               compClass="title"
-              compName="Sports_Update__c"
-              label="Sports Update (Optional):"
-              value={ this.srSafe('Sports_Update__c')
-                ? this.state.synopsisReport.Sports_Update__c
+              compName="Sports_and_Activities_Update__c"
+              label="Sports &amp; Activities Update (Optional):"
+              value={ this.srSafe('Sports_and_Activities_Update__c')
+                ? this.state.synopsisReport.Sports_and_Activities_Update__c
                 : undefined }
               onChange={ this.handleTextAreaChange }
-              placeholder="Optional..."
+              placeholder="Explain highlights from your conversation and especially the student&apos;s progress in sports and activities related goals discussed last week."
               rows={ 3 }
               cols={ 80 }
             />
@@ -752,18 +752,18 @@ class SynopsisReportForm extends React.Component {
     const additionalCommentsJSX = (
       <fieldset>
         <div className="title">
-          <h5>ADDITIONAL COMMENTS</h5>
+          <h5>ADDITIONAL COMMENTS AND SUPPORT</h5>
         </div>
         <div className="mentor-met-container">
             <TextArea
               compClass="title"
               compName="Additional_Comments__c"
-              label="Additional Comments for the core community:"
+              label="Additional Comments to inform the core community (Optional)"
               value={ this.srSafe('Additional_Comments__c')
                 ? this.state.synopsisReport.Additional_Comments__c
                 : undefined }
               onChange={ this.handleTextAreaChange }
-              placeholder="Optional..."
+              placeholder="Explain highlights from your conversation and especially the student&apos;s progress in non-school related goals discussed last week."
               rows={ 3 }
               cols={ 80 }
             />
@@ -771,13 +771,14 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
-    const pointSheetImageOrCommentsJSX = (
+    const imageUploadJSX = (
       <React.Fragment>
-        <div className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>
-          <h5>Point Sheet Upload</h5>
+        <div>
+          <h5 className={ this.state.ijImageOK ? '' : 'required' }>IDENTITY JOURNAL AND IMAGE UPLOAD</h5>
+          <p>Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
         </div>
-        <ImagePreviews labelText="Upload Point Sheet Image" />
-        { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
+        <ImagePreviews labelText="Upload Images" />
+        {/* { !this.state.ijImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
           ? <div className="mentor-met-container">
               <TextArea
                 compClass={ this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c') ? 'title' : 'title required' }
@@ -792,7 +793,7 @@ class SynopsisReportForm extends React.Component {
                 cols={ 80 }
               />
             </div>
-          : ''}
+          : ''} */}
       </React.Fragment>
     );
 
@@ -890,7 +891,7 @@ class SynopsisReportForm extends React.Component {
                 { identityJournalJSX }
                 { sportsUpdateJSX }
                 { additionalCommentsJSX }
-                { pointSheetImageOrCommentsJSX }
+                { imageUploadJSX }
                 <hr />
                 { mentorSupportRequestJSX }
                 <div className="modal-footer">
