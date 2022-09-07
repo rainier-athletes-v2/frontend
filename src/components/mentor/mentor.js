@@ -93,27 +93,6 @@ class Mentor extends React.Component {
     return 'Loading...';
   }
 
-  checkRole() {
-    if (this.props.myProfile) {
-      if (this.props.myProfile.role === 'admin') {
-        return (
-          <React.Fragment>
-            <hr />
-            <li
-              className={ this.state.selected === 0 ? 'nav-item selected' : 'nav-item' }
-              onClick={ this.handleSubPT }>
-              <a className="nav-link">
-                Fill Point Tracker as Substitute
-              </a>
-            </li>
-          </React.Fragment>
-        );
-      }
-    }
-
-    return null;
-  }
-
   handleSaveButtonClick = (e) => {
     if (e) {
       e.preventDefault();

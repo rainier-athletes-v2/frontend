@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPhone, faAt, faUser, faKey, faBirthdayCake, faSchool, faSpinner, faCopy, faInfoCircle} from '@fortawesome/free-solid-svg-icons'; //eslint-disable-line
 
@@ -16,7 +16,7 @@ import './_app.scss';
 
 library.add(faPhone, faAt, faUser, faKey, faBirthdayCake, faSchool, faSpinner, faCopy, faInfoCircle);
 
-const MentorUser = Auth(['mentor', 'admin']);
+const MentorUser = Auth(Mentor, ['mentor', 'admin']);
 
 const Footer = () => (
   <footer className="footer">
@@ -25,9 +25,11 @@ const Footer = () => (
 );
 
 export default class App extends React.Component {
+  // {AuthRedirect} />
+  // // { MentorUser(Mentor) } />
   render() {
     return (
-      <div className="app">
+      <div className="app" id="root">
         <Helmet>
           <meta charSet="utf-8"/>
           <title>Rainier Athletes Mentor Portal</title>
@@ -40,8 +42,10 @@ export default class App extends React.Component {
           <div>
             <Navbar />
             <Dashboard />
-            <Route exact path="*" component={AuthRedirect} />
-            <Route exact path={routes.MENTOR_ROUTE} component={ MentorUser(Mentor) } />
+            <Routes>
+              <Route exact path="*" element={ <AuthRedirect /> } />
+              <Route path={routes.MENTOR_ROUTE} element={MentorUser(Mentor)} />  
+            </Routes>
           </div>
         </BrowserRouter>
         <Footer />

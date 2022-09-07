@@ -5,8 +5,6 @@ import SynopsisReportSummerSummary from '../synopsis-report-summer-summary/synop
 import { TextArea, textAreaMax } from '../text-area/text-area';
 import DropDown from '../drop-down/drop-down';
 import ImagePreviews from '../image-previews/image-previews';
-import TooltipItem from '../tooltip/tooltip';
-import * as ttText from '../../lib/tooltip-text';
 import * as srActions from '../../actions/synopsis-report';
 import * as pl from '../../lib/pick-list-tests';
 import * as errorActions from '../../actions/error';

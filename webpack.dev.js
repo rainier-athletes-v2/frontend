@@ -1,7 +1,7 @@
 'use strict';
 
 const { HotModuleReplacementPlugin } = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge')
 const commonConfig = require('./webpack.common');
 
 
@@ -11,7 +11,7 @@ webpackDevConfig.mode = 'development';
 webpackDevConfig.devtool = 'inline-source-map';
 
 webpackDevConfig.devServer = {
-  contentBase: './build',
+  static: './build',
   open: true, // opens a new tab in our default browser
   hot: true, // hot reloads our changes every time we save
   historyApiFallback: true,

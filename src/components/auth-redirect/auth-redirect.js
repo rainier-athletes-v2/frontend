@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import * as routes from '../../lib/routes';
 
 const mapStateToProps = state => ({
@@ -9,29 +9,20 @@ const mapStateToProps = state => ({
 });
 
 class AuthRedirect extends React.Component {
-  renderFinalDestination = (pathname, token) => {
-    const isRegisteredRoute = pathname === routes.MENTOR_ROUTE || pathname === routes.ROOT_ROUTE;
-    
-    if (isRegisteredRoute) {
+  renderFinalDestination = (token) => {
       if (token) {
-        return <Redirect to={routes.MENTOR_ROUTE} />;
+        console.log('AuthRedirect returning navigate to mentor route');
+        return <Navigate to={routes.MENTOR_ROUTE} />;
       }
-      return <Redirect to={routes.ROOT_ROUTE} />;
-    } 
-
-    if (!token) {
-      return <Redirect to={routes.ROOT_ROUTE} />;
-    }
-
-    return null;
+      return <Navigate to={routes.ROOT_ROUTE} />;
   }
 
   render() {
-    const { location, token } = this.props;
-    const { pathname } = location;
+    const { token } = this.props;
+    console.log('AuthRedirect', this.props);
     return (
       <div className="auth-redirect">
-        { this.renderFinalDestination(pathname, token) }
+        { this.renderFinalDestination(token) }
       </div>
     );
   }

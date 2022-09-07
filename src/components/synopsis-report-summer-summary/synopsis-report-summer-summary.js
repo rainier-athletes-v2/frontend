@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import clearSynopsisReport from '../../actions/synopsis-report';
+import { clearSynopsisReport } from '../../actions/synopsis-report';
 import * as errorActions from '../../actions/error';
 import * as bcActions from '../../actions/basecamp';
 
@@ -52,7 +52,7 @@ class SynopsisReportSummerSummary extends React.Component {
 
     const studentName = sr.Student__r.Name.substring(0, sr.Student__r.Name.indexOf(' '));
 
-    const block1 = `<strong>${studentName}&#39;s Update for ${sr.Week__c}</strong><br><br>
+    const block1 = `<strong>${studentName}&apos;s Update for ${sr.Week__c}</strong><br><br>
 
     <p>Hello Team ${studentName} - please see ${studentName}&#39;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around ${studentName}&#39;s progress on and off the field.</p><br>
 
@@ -198,10 +198,7 @@ SynopsisReportSummerSummary.propTypes = {
   images: PropTypes.array,
   onClose: PropTypes.func,
   postSummaryToBasecamp: PropTypes.func,
-  // clearBasecampStatus: PropTypes.func,
   clearSynopsisReport: PropTypes.func,
-  // setSynopsisReportLink: PropTypes.func,
-  // basecampStatus: PropTypes.number,
   clearError: PropTypes.func,
 };
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { render as renderDOM } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
 
 import reducer from './reducer/main';
 import App from './components/app/app';
@@ -11,6 +11,7 @@ import './style/main.scss';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// import { store } from './store';
 
 import thunk from './lib/middleware/redux-thunk';
 import refreshSf from './lib/middleware/redux-refresh-sf';
@@ -23,10 +24,18 @@ store.subscribe(() => {
   localStorage.setItem('BC_REFRESH', store.getState().basecampRefresh);
 });
 
-const root = document.createElement('div');
-document.body.appendChild(root);
+const container = document.createElement('div');
+const rootContainer = document.body.appendChild(container);
+// const root = createRoot(rootContainer);
 
 store.dispatch({ type: 'ON_INIT_SF' }); // attemp use of refresh tokens
 store.dispatch({ type: 'ON_INIT_BC' });
 
-renderDOM(<Provider store={store}><App /></Provider>, root);
+// root.render(<Provider store={store}><App /></Provider>);
+
+const root = createRoot(rootContainer);
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);

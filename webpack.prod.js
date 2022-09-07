@@ -8,7 +8,7 @@ webpackProdConfig.mode = 'production';
 
 webpackProdConfig.plugins = [
   new MiniCssPlugin({
-    filename: '[name].[hash].css',
+    filename: '[name].[fullhash].css',
   }),
 ];
 

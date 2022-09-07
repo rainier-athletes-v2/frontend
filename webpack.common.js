@@ -10,7 +10,7 @@ const webpackConfig = module.exports = {};
 webpackConfig.entry = `${__dirname}/src/main.js`;
 
 webpackConfig.output = {
-  filename: '[name].[hash].js',
+  filename: '[name].[fullhash].js',
   path: `${__dirname}/build`,
   publicPath: process.env.CDN_URL,
 };
@@ -41,7 +41,15 @@ webpackConfig.module = {};
 webpackConfig.module.rules = [
   {
     test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-    loader: 'url-loader?limit=10000&mimetype=application/font-woff',
+    use: [
+      {
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'font/woff2',
+        }
+      }
+    ]
   },
   {
     test: /\.(png|svg|jpg|gif|ico)$/i,
@@ -53,8 +61,7 @@ webpackConfig.module.rules = [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['env', 'stage-0', 'react'],
-        plugins: ['transform-react-jsx-source'],
+        presets: ['@babel/preset-env', '@babel/preset-react'],
         cacheDirectory: true,
       },
     },
