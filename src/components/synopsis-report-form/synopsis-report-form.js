@@ -669,8 +669,6 @@ class SynopsisReportForm extends React.Component {
               /> 
             : ''}
             { this.notEmpty('Identity_Journal_Status__c')
-            && (this.notEmpty('Identity_Journal_ES_Self_Reflection__c') || this.notEmpty('Identity_Journal_MS_Self_Reflection__c'))
-            && (this.notEmpty('Identity_Journal_Teacher_Convo_ES__c') || this.notEmpty('Identity_Journal_Teacher_Convo_MS__c')) 
               ? <div className="survey-question-container">
                   <TextArea
                     compClass={`title ${this.state.ijAndTeacherConvoOK || this.notEmpty('Identity_Journal_and_Teacher_Convo__c') ? '' : 'required'}`}
