@@ -319,15 +319,15 @@ class SynopsisReportForm extends React.Component {
     newState.mentorMadeScheduledCheckin = event.target.value === 'Met' ? 1 : 0;
     if (newState.mentorMadeScheduledCheckin === 1) {
       newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
-      newState.synopsisReport.Did_not_meet_communication__c = false;
+      newState.synopsisReport.Did_not_meet_communication__c = null;
       newState.synopsisReport.How_can_we_support_communication__c = '';
       newState.synopsisReport.How_can_we_support_comm_required__c = '';
-      newState.synopsisReport.Communication_Method_No_Check_In__c = false;
-      newState.synopsisReport.Communication_Method_No_Response__c = false;
+      newState.synopsisReport.Communication_Method_No_Check_In__c = null;
+      newState.synopsisReport.Communication_Method_No_Response__c = null;
     } else {
       newState.synopsisReport.Weekly_Check_In_Status__c = 'Did not meet';
-      newState.synopsisReport.Check_in_status_met__c = false;
-      newState.synopsisReport.Communication_Status_Met__c = false;
+      newState.synopsisReport.Check_in_status_met__c = null;
+      newState.synopsisReport.Communication_Status_Met__c = null;
     }
     this.setState(newState);
   }
@@ -418,7 +418,7 @@ class SynopsisReportForm extends React.Component {
                   compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_comm_required__c') ? 'title' : 'title required' }
                   compName="How_can_we_support_comm_required__c"
                   label="Additional Notes (Required)"
-                  value={ this.srSafe('How_can_we_support_comm_required__c') ? this.state.synopsisReport.How_can_we_support_comm_required__c : undefined }
+                  value={ this.srSafe('How_can_we_support_comm_required__c') ? this.state.synopsisReport.How_can_we_support_comm_required__c : '' }
                   onChange={ this.handleTextAreaChange }
                   placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
                 />
@@ -432,7 +432,7 @@ class SynopsisReportForm extends React.Component {
                 compClass="title"
                 compName="How_can_we_support_communication__c"
                 label="Additional Notes (Optional)"
-                value={ this.srSafe('How_can_we_support_communication__c') ? this.state.synopsisReport.How_can_we_support_communication__c : undefined }
+                value={ this.srSafe('How_can_we_support_communication__c') ? this.state.synopsisReport.How_can_we_support_communication__c : '' }
                 onChange={ this.handleTextAreaChange }
                 placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
               />
@@ -676,7 +676,7 @@ class SynopsisReportForm extends React.Component {
                     label="Identity Journal and Teacher Conversations Update (Required)"
                     value={ this.srSafe('Identity_Journal_and_Teacher_Convo__c')
                       ? this.state.synopsisReport.Identity_Journal_and_Teacher_Convo__c
-                      : undefined }
+                      : '' }
                     placeholder="Explain highlights from your discussion and especially regarding Identity Journal self-reflection and teacher conversations"
                     onChange={ this.handleTextAreaChange }
                     rows={ 3 }
@@ -698,7 +698,7 @@ class SynopsisReportForm extends React.Component {
             compName="Weekly_Sports_and_Activities_Update__c"
             value={this.srSafe('Weekly_Sports_and_Activities_Update__c')
               ? this.state.synopsisReport.Weekly_Sports_Update__c
-              : undefined}
+              : 'X'}
               valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_and_Activities_Update__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
             options={this.props.pickListFieldValues.Weekly_Sports_and_Activities_Update__c.values}
@@ -710,7 +710,7 @@ class SynopsisReportForm extends React.Component {
               label="Sports &amp; Activities Update (Optional):"
               value={ this.srSafe('Sports_and_Activities_Update__c')
                 ? this.state.synopsisReport.Sports_and_Activities_Update__c
-                : undefined }
+                : '' }
               onChange={ this.handleTextAreaChange }
               placeholder="Explain highlights from your conversation and especially the student&apos;s progress in sports and activities related goals discussed last week."
               rows={ 3 }
@@ -733,7 +733,7 @@ class SynopsisReportForm extends React.Component {
               label="Additional Comments to inform the core community (Optional)"
               value={ this.srSafe('Additional_Comments__c')
                 ? this.state.synopsisReport.Additional_Comments__c
-                : undefined }
+                : '' }
               onChange={ this.handleTextAreaChange }
               placeholder="Explain highlights from your conversation and especially the student&apos;s progress in non-school related goals discussed last week."
               rows={ 3 }
@@ -750,22 +750,6 @@ class SynopsisReportForm extends React.Component {
           <p>Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
         </div>
         <ImagePreviews labelText="Upload Images" />
-        {/* { !this.state.ijImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
-          ? <div className="mentor-met-container">
-              <TextArea
-                compClass={ this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c') ? 'title' : 'title required' }
-                compName="Missing_Point_Sheet_Image__c"
-                label="If no point sheet image, please explain:"
-                value={ this.srSafe('Missing_Point_Sheet_Image__c')
-                  ? this.state.synopsisReport.Missing_Point_Sheet_Image__c
-                  : undefined }
-                onChange={ this.handleTextAreaChange }
-                placeholder="Required..."
-                rows={ 3 }
-                cols={ 80 }
-              />
-            </div>
-          : ''} */}
       </React.Fragment>
     );
 
@@ -793,7 +777,7 @@ class SynopsisReportForm extends React.Component {
                 label="Please explain:"
                 value={ this.srSafe('Mentor_Support_Request_Notes__c')
                   ? this.state.synopsisReport.Mentor_Support_Request_Notes__c
-                  : undefined }
+                  : '' }
                 onChange={ this.handleTextAreaChange }
                 placeholder="Required..."
                 rows={ 3 }

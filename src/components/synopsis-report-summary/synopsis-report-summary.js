@@ -134,7 +134,7 @@ class SynopsisReportSummary extends React.Component {
       <React.Fragment>
         <h4>{studentName}&#39;s Update for {sr.Week__c}</h4>
 
-        <p>Hello Team {studentName} - please see {studentName}&apos;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around {studentName}&apos;s progress on.</p>
+        <p>Hello Team {studentName} - please see {studentName}&apos;s Rainier Athletes update over the past week to ensure everyone is aligned and up to date around {studentName}&apos;s progress.</p>
 
         <p>{studentName} {sr.Weekly_Check_In_Status__c === 'Met' ? 'met ' : 'did not meet '} for check-in this week.</p>
 
