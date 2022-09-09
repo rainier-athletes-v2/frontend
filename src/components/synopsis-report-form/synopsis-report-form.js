@@ -320,7 +320,7 @@ class SynopsisReportForm extends React.Component {
     if (newState.mentorMadeScheduledCheckin === 1) {
       newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
       newState.synopsisReport.Did_not_meet_communication__c = false;
-      newState.synopsisReport.How_can_we_support_comm__c = '';
+      newState.synopsisReport.How_can_we_support_communication__c = '';
       newState.synopsisReport.How_can_we_support_comm_required__c = '';
       newState.synopsisReport.Communication_Method_No_Check_In__c = false;
       newState.synopsisReport.Communication_Method_No_Response__c = false;
