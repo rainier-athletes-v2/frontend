@@ -426,6 +426,7 @@ class SynopsisReportForm extends React.Component {
               : '' }
             { this.notEmpty('Did_not_meet_communication__c')  
               && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              && this.state.synopsisReport.Did_not_meet_communication__c !== 'I did not connect with student and/or family for other reasons explained below'
               ? <div className="survey-question-container"> 
               <TextArea
                 compClass="title"
