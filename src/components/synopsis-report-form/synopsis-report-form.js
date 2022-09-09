@@ -451,20 +451,6 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.notEmpty('Communication_Method_No_Check_In__c')
-            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-            ? <div className="survey-question-container">
-                <DropDown
-                  compName="Communication_Method_No_Response__c"
-                  value={ this.srSafe('Communication_Method_No_Response__c') ? this.state.synopsisReport.Communication_Method_No_Response__c : undefined }
-                  valueClass={this.state.commMethodNoCheckinOK || this.notEmpty('Communication_Method_No_Response__c') ? '' : 'required'}
-                  onChange={ this.handleSimpleFieldChange }
-                  options={this.props.pickListFieldValues.Communication_Method_No_Response__c.values}
-                />
-              </div>
-            : '' }
-          
       </div>
       </fieldset>
     );
