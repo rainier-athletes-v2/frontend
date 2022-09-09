@@ -467,6 +467,7 @@ class SynopsisReportForm extends React.Component {
           <div className="mentor-met-container">
             <DropDown
               compName="Family_Connection__c"
+              label="Family Connection"
               value={ this.srSafe('Family_Connection__c')
                 ? this.state.synopsisReport.Family_Connection__c
                 : ''}
@@ -476,6 +477,7 @@ class SynopsisReportForm extends React.Component {
             />
             <DropDown
               compName="Teacher_Connection__c"
+              label="Teacher Connection"
               value={this.srSafe('Teacher_Connection__c')
                 ? this.state.synopsisReport.Teacher_Connection__c
                 : ''}
@@ -485,6 +487,7 @@ class SynopsisReportForm extends React.Component {
             />
             <DropDown
               compName="Coach_Connection__c"
+              label="Coach Connection"
               value={this.srSafe('Coach_Connection__c')
                 ? this.state.synopsisReport.Coach_Connection__c
                 : ''}
