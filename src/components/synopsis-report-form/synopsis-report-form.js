@@ -195,7 +195,7 @@ class SynopsisReportForm extends React.Component {
       || (ijNotTurnedIn && this.notEmpty('No_Identity_Journal__c'));
     const identityJournalStatusNotesOK = emptyIJStatus || ijTurnedIn
       || (ijNotTurnedIn && sr.No_Identity_Journal__c !== 'Other')
-      || (ijNotTurnedIn && sr.No_Identity_Journal__c === 'Other' && this.notEmpty('No_Identity_Journal_What_Happened__c'));
+      || (ijNotTurnedIn && sr.No_Identity_Journal__c === 'Other' && this.notEmpty('Identity_Journal_and_Teacher_Convo__c'));
     const ijAndTeacherConvoOK = this.notEmpty('Identity_Journal_and_Teacher_Convo__c');
 
     const sportsUpdateOK = this.notEmpty('Weekly_Sports_and_Activities_Update__c');
@@ -597,6 +597,7 @@ class SynopsisReportForm extends React.Component {
         <div className="mentor-met-container">
           <DropDown
             compName="Identity_Journal_Status__c"
+            label="Identity Journal Status"
             value={this.srSafe('Identity_Journal_Status__c')
               ? this.state.synopsisReport.Identity_Journal_Status__c
               : undefined}
@@ -608,6 +609,7 @@ class SynopsisReportForm extends React.Component {
             && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in' 
             ? <DropDown
                 compName="Identity_Journal_MS_Self_Reflection__c"
+                label="Self Reflection"
                 value={this.srSafe('Identity_Journal_MS_Self_Reflection__c')
                   ? this.state.synopsisReport.Identity_Journal_MS_Self_Reflection__c
                   : undefined}
@@ -620,6 +622,7 @@ class SynopsisReportForm extends React.Component {
             && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
             ? <DropDown
                 compName="Identity_Journal_ES_Self_Reflection__c"
+                label="Self Reflection"
                 value={this.srSafe('Identity_Journal_ES_Self_Reflection__c')
                   ? this.state.synopsisReport.Identity_Journal_ES_Self_Reflection__c
                   : undefined}
@@ -630,9 +633,9 @@ class SynopsisReportForm extends React.Component {
             : ''}
           {studentGrade > 5 && this.notEmpty('Identity_Journal_Status__c')
             && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
-            && this.notEmpty('Identity_Journal_MS_Self_Reflection__c')
             ? <DropDown
                 compName="Identity_Journal_Teacher_Convo_MS__c"
+                label="Teacher Conversation"
                 value={this.srSafe('Identity_Journal_Teacher_Convo_MS__c')
                   ? this.state.synopsisReport.Identity_Journal_Teacher_Convo_MS__c
                   : undefined}
@@ -643,9 +646,9 @@ class SynopsisReportForm extends React.Component {
             : ''}
           {studentGrade <= 5 && this.notEmpty('Identity_Journal_Status__c')
             && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
-            && this.notEmpty('Identity_Journal_ES_Self_Reflection__c')
             ? <DropDown
                 compName="Identity_Journal_Teacher_Convo_ES__c"
+                label="Teacher Conversation"
                 value={this.srSafe('Identity_Journal_Teacher_Convo_ES__c')
                   ? this.state.synopsisReport.Identity_Journal_Teacher_Convo_ES__c
                   : undefined}
@@ -665,25 +668,6 @@ class SynopsisReportForm extends React.Component {
                 options={this.props.pickListFieldValues.No_Identity_Journal__c.values}
               /> 
             : ''}
-            { this.notEmpty('Identity_Journal_Status__c') 
-              && this.state.synopsisReport.Identity_Journal_Status__c === 'Not turned in' 
-              && this.notEmpty('No_Identity_Journal__c') 
-              && this.state.synopsisReport.No_Identity_Journal__c === 'Other'
-              ? <div className="survey-question-container">
-                  <TextArea
-                    compClass={`title ${this.state.identityJournalStatusNotesOK || this.notEmpty('No_Identity_Journal_What_Happened__c') ? '' : 'required'}`}
-                    compName="No_Identity_Journal_What_Happened__c"
-                    label="What happened?"
-                    value={ this.srSafe('No_Identity_Journal_What_Happened__c')
-                      ? this.state.synopsisReport.No_Identity_Journal_What_Happened__c
-                      : undefined }
-                    placeholder="Required..."
-                    onChange={ this.handleTextAreaChange }
-                    rows={ 3 }
-                    cols={ 80 }
-                  />
-                </div>
-              : '' }
             { this.notEmpty('Identity_Journal_Status__c')
             && (this.notEmpty('Identity_Journal_ES_Self_Reflection__c') || this.notEmpty('Identity_Journal_MS_Self_Reflection__c'))
             && (this.notEmpty('Identity_Journal_Teacher_Convo_ES__c') || this.notEmpty('Identity_Journal_Teacher_Convo_MS__c')) 
