@@ -53,6 +53,7 @@ class SynopsisReportForm extends React.Component {
       const newState = { ...prevState };
       newState.synopsisSaved = false;
       newState.weeklyCheckinStatusOK = true;
+      newState.metWithMentee = true;
       newState.checkinStatusMetOK = true;
       newState.commStatusMetOK = true;
       newState.commStatusDidNotMeetOK = true;
@@ -64,17 +65,18 @@ class SynopsisReportForm extends React.Component {
       newState.metWithTeacherOK = true;
       newState.metWithCoachOK = true;
       newState.identityStatusOK = true;
-      newState.identityPromptOK = true;
-      newState.pointSheetStatusOK = true;
+      newState.identityTopicOK = true;
+      newState.identityHighlightsOK = true;
+      newState.identityJournalStatusOK = true;
       newState.msSelfReflectionOK = true;
       newState.esSelfReflectionOK = true;
       newState.msTeacherConvoOK = true;
       newState.esTeacherConvoOK = true;
-      newState.pointSheetMissedReasonOK = true;
-      newState.pointSheetStatusNotesOK = true;
-      newState.psAndSchoolUpdateOK = true;
+      newState.identityJournaltMissedReasonOK = true;
+      newState.identityJournalStatusNotesOK = true;
+      newState.ijAndTeacherConvoOK = true;
       newState.sportsUpdateOK = true;
-      newState.psImageOrReasonOK = true;
+      newState.ijImageOK = true;
       newState.mentorSupportRequestOK = true;
       newState.mentorSupportRequestNotesOK = true;
       return newState;
@@ -141,6 +143,7 @@ class SynopsisReportForm extends React.Component {
 
   validMentorInput = (sr) => {
     const met = sr.Weekly_Check_In_Status__c === 'Met';
+    const metWithMentee = !!sr.Weekly_Check_In_Status__c;
     const didNotMeet = sr.Weekly_Check_In_Status__c === 'Did not meet';
     const emptyCheckinStatus = !this.notEmpty('Weekly_Check_In_Status__c');
     const weeklyCheckinStatusOK = this.notEmpty('Weekly_Check_In_Status__c');
@@ -155,10 +158,10 @@ class SynopsisReportForm extends React.Component {
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff'
       && this.notEmpty('Communication_Method_No_Response__c'));
     const howSupportRequiredOK = met
-      || sr.Communication_Method_No_Check_In__c !== 'I did not connect with student and/or family for other reasons explained below'
+      || sr.Did_not_meet_communication__c !== 'I did not connect with student and/or family for other reasons explained below'
       || (sr.Weekly_Check_In_Status__c === 'Did not meet'
       && sr.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below'
-      && this.notEmpty('How_can_we_support_required__c'));
+      && this.notEmpty('How_can_we_support_comm_required__c'));
     const howSupportOK = sr.Communication_Method_No_Response__c !== 'I did not connect with student and/or family for reasons explained below'
       || (sr.Communication_Method_No_Check_In__c === 'I tried reaching out to student and family and did not hear back, and then I reached out to RA Staff' 
       && sr.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below'
@@ -171,40 +174,42 @@ class SynopsisReportForm extends React.Component {
     const emptyIdStatement = !this.notEmpty('Identity_Statement_Weekly_Status__c');
     const idNo = sr.Identity_Statement_Weekly_Status__c === 'No';
     const identityStatusOK = this.notEmpty('Identity_Statement_Weekly_Status__c');
-    const identityPromptOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Prompts__c');
+    const identityTopicOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Topic__c');
+    const identityHighlightsOK = emptyIdStatement || idNo || this.notEmpty('Identity_Statement_Highlights__c');
 
-    const emptyPsStatus = !this.notEmpty('Point_Sheet_Status__c');
-    const psTurnedIn = sr.Point_Sheet_Status__c === 'Turned in';
-    const psNotTurnedIn = sr.Point_Sheet_Status__c === 'Not turned in';
-    const psMs = this.state.studentGrade > 5;
-    const psEs = this.state.studentGrade <= 5;
-    const pointSheetStatusOK = this.notEmpty('Point_Sheet_Status__c');
-    const msSelfReflectionOK = emptyPsStatus || psNotTurnedIn || psEs
-      || (psMs && this.notEmpty('Point_Sheet_MS_Self_Reflection__c'));
-    const esSelfReflectionOK = emptyPsStatus || psNotTurnedIn || psMs
-      || (psEs && this.notEmpty('Point_Sheet_ES_Self_Reflection__c'));
-    const msTeacherConvoOK = emptyPsStatus || psEs || psNotTurnedIn
-      || (psMs && psTurnedIn && this.notEmpty('Point_Sheet_Teacher_Convo_MS__c')); 
-    const esTeacherConvoOK = emptyPsStatus || psMs || psNotTurnedIn
-      || (psEs && psTurnedIn && this.notEmpty('Point_Sheet_Teacher_Convo_ES__c')); 
-    const pointSheetMissedReasonOK = emptyPsStatus || psTurnedIn
-      || (psNotTurnedIn && this.notEmpty('No_Point_Sheet__c'));
-    const pointSheetStatusNotesOK = emptyPsStatus || psTurnedIn
-      || (psNotTurnedIn && sr.No_Point_Sheet__c !== 'Other')
-      || (psNotTurnedIn && sr.No_Point_Sheet__c === 'Other' && this.notEmpty('No_Point_Sheet_What_Happened__c'));
-    const psAndSchoolUpdateOK = this.notEmpty('Point_Sheet_and_School_Update__c');
+    const emptyIJStatus = !this.notEmpty('Identity_Journal_Status__c');
+    const ijTurnedIn = sr.Identity_Journal_Status__c === 'Turned in';
+    const ijNotTurnedIn = sr.Identity_Journal_Status__c === 'Not turned in';
+    const ijMs = this.state.studentGrade > 5;
+    const ijEs = this.state.studentGrade <= 5;
+    const identityJournalStatusOK = this.notEmpty('Identity_Journal_Status__c');
+    const msSelfReflectionOK = emptyIJStatus || ijNotTurnedIn || ijEs
+      || (ijMs && this.notEmpty('Identity_Journal_MS_Self_Reflection__c'));
+    const esSelfReflectionOK = emptyIJStatus || ijNotTurnedIn || ijMs
+      || (ijEs && this.notEmpty('Identity_Journal_ES_Self_Reflection__c'));
+    const msTeacherConvoOK = emptyIJStatus || ijEs || ijNotTurnedIn
+      || (ijMs && ijTurnedIn && this.notEmpty('Identity_Journal_Teacher_Convo_MS__c')); 
+    const esTeacherConvoOK = emptyIJStatus || ijMs || ijNotTurnedIn
+      || (ijEs && ijTurnedIn && this.notEmpty('Identity_Journal_Teacher_Convo_ES__c')); 
+    const identityJournaltMissedReasonOK = emptyIJStatus || ijTurnedIn
+      || (ijNotTurnedIn && this.notEmpty('No_Identity_Journal__c'));
+    const identityJournalStatusNotesOK = emptyIJStatus || ijTurnedIn
+      || (ijNotTurnedIn && sr.No_Identity_Journal__c !== 'Other')
+      || (ijNotTurnedIn && sr.No_Identity_Journal__c === 'Other' && this.notEmpty('Identity_Journal_and_Teacher_Convo__c'));
+    const ijAndTeacherConvoOK = this.notEmpty('Identity_Journal_and_Teacher_Convo__c');
 
-    const sportsUpdateOK = this.notEmpty('Weekly_Sports_Update__c');
+    const sportsUpdateOK = this.notEmpty('Weekly_Sports_and_Activities_Update__c');
 
-    const psImageOrReasonOK = sr.Point_Sheet_Status__c === 'Not turned in'
-      || (sr.Point_Sheet_Status__c === 'Turned in' && this.props.imagePreviews && this.props.imagePreviews.length)
-      || (sr.Point_Sheet_Status__c === 'Turned in' && this.notEmpty('Missing_Point_Sheet_Image__c'));
+    const ijImageOK = sr.Identity_Journal_Status__c === 'Not turned in'
+      || (sr.Identity_Journal_Status__c === 'Turned in' && !!(this.props.imagePreviews && this.props.imagePreviews.length));
+      // || (sr.Identity_Journal_Status__c === 'Turned in' && this.notEmpty('Missing_Identity_Journal_Image__c'));
 
     const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
     const mentorSupportRequestNotesOK = sr.Mentor_Support_Request__c === 'No' 
       || (sr.Mentor_Support_Request__c !== 'No' && this.notEmpty('Mentor_Support_Request_Notes__c'));
 
     this.setState({
+      metWithMentee,
       weeklyCheckinStatusOK,
       checkinStatusMetOK,
       commStatusMetOK,
@@ -217,22 +222,24 @@ class SynopsisReportForm extends React.Component {
       metWithTeacherOK,
       metWithCoachOK,
       identityStatusOK,
-      identityPromptOK,
-      pointSheetStatusOK,
+      identityTopicOK,
+      identityHighlightsOK,
+      identityJournalStatusOK,
       msSelfReflectionOK,
       esSelfReflectionOK,
       msTeacherConvoOK,
       esTeacherConvoOK,
-      pointSheetMissedReasonOK,
-      pointSheetStatusNotesOK,
-      psAndSchoolUpdateOK,
+      identityJournaltMissedReasonOK,
+      identityJournalStatusNotesOK,
+      ijAndTeacherConvoOK,
       sportsUpdateOK,
-      psImageOrReasonOK,
+      ijImageOK,
       mentorSupportRequestOK,
       mentorSupportRequestNotesOK,
     });
 
-    return weeklyCheckinStatusOK 
+    return metWithMentee
+      && weeklyCheckinStatusOK 
       && checkinStatusMetOK
       && commStatusMetOK 
       && commStatusDidNotMeetOK
@@ -244,17 +251,18 @@ class SynopsisReportForm extends React.Component {
       && metWithTeacherOK
       && metWithCoachOK
       && identityStatusOK
-      && identityPromptOK
-      && pointSheetStatusOK
+      && identityTopicOK
+      && identityHighlightsOK
+      && identityJournalStatusOK
       && msSelfReflectionOK
       && esSelfReflectionOK
       && msTeacherConvoOK
       && esTeacherConvoOK
-      && pointSheetMissedReasonOK
-      && pointSheetStatusNotesOK
-      && psAndSchoolUpdateOK
+      && identityJournaltMissedReasonOK
+      && identityJournalStatusNotesOK
+      && ijAndTeacherConvoOK
       && sportsUpdateOK
-      && psImageOrReasonOK
+      && ijImageOK
       && mentorSupportRequestOK
       && mentorSupportRequestNotesOK;
   }
@@ -306,6 +314,24 @@ class SynopsisReportForm extends React.Component {
     return 1;
   }
 
+  handleMentorMadeScheduledCheckinChange = (event) => {
+    const newState = Object.assign({}, this.state);
+    newState.mentorMadeScheduledCheckin = event.target.value === 'Met' ? 1 : 0;
+    if (newState.mentorMadeScheduledCheckin === 1) {
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Met';
+      newState.synopsisReport.Did_not_meet_communication__c = null;
+      newState.synopsisReport.How_can_we_support_communication__c = '';
+      newState.synopsisReport.How_can_we_support_comm_required__c = '';
+      newState.synopsisReport.Communication_Method_No_Check_In__c = null;
+      newState.synopsisReport.Communication_Method_No_Response__c = null;
+    } else {
+      newState.synopsisReport.Weekly_Check_In_Status__c = 'Did not meet';
+      newState.synopsisReport.Check_in_status_met__c = null;
+      newState.synopsisReport.Communication_Status_Met__c = null;
+    }
+    this.setState(newState);
+  }
+
   render() {
     const headerJSX = (
       <div className="row">
@@ -326,13 +352,28 @@ class SynopsisReportForm extends React.Component {
     const mentorMadeScheduledCheckinJSX = (
       <fieldset>
       <div className="mentor-met-container" key='mentorMadeCheckin'>
-        <DropDown
-          compName="Weekly_Check_In_Status__c"
-          value={ this.srSafe('Weekly_Check_In_Status__c') ? this.state.synopsisReport.Weekly_Check_In_Status__c : undefined}
-          valueClass={this.state.weeklyCheckinStatusOK || this.notEmpty('Weekly_Check_In_Status__c') ? '' : 'required'}
-          onChange={ this.handleSimpleFieldChange}
-          options={this.props.pickListFieldValues.Weekly_Check_In_Status__c.values}
-          />
+        <React.Fragment>
+          <div className="mentor-met-container" key='mentorMadeCheckin'>
+          <label className={this.state.metWithMentee ? '' : 'required'} htmlFor="made-meeting">Did you meet with your student?</label><br className="rwd-break" />
+          <input
+            type="radio"
+            name="made-meeting"
+            value="Met"
+            className={this.state.weeklyCheckinStatusOK ? 'inline' : 'inline required'}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' ? 'checked' : ''}
+            required="required"
+            onChange={this.handleMentorMadeScheduledCheckinChange}/> Yes
+          <input
+            type="radio"
+            name="made-meeting"
+            value="Did not meet"
+            className={this.state.weeklyCheckinStatusOK
+              || this.notEmpty('Weekly_Check_In_status__c') ? 'inline' : 'inline required'}
+            checked={this.state.synopsisReport && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Did not meet' ? 'checked' : ''}
+            requried="required"
+            onChange={this.handleMentorMadeScheduledCheckinChange}/> No
+          </div>
+        </React.Fragment>
           { this.notEmpty('Weekly_Check_In_Status__c') && this.state.synopsisReport.Weekly_Check_In_Status__c === 'Met' 
             ? <div className="survey-question-container">
                 <DropDown
@@ -369,6 +410,34 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
+            { this.notEmpty('Did_not_meet_communication__c') 
+              && this.state.synopsisReport.Did_not_meet_communication__c === 'I did not connect with student and/or family for other reasons explained below' 
+               && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              ? <div className="survey-question-container"> 
+                <TextArea
+                  compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_comm_required__c') ? 'title' : 'title required' }
+                  compName="How_can_we_support_comm_required__c"
+                  label="Additional Notes (Required)"
+                  value={ this.srSafe('How_can_we_support_comm_required__c') ? this.state.synopsisReport.How_can_we_support_comm_required__c : '' }
+                  onChange={ this.handleTextAreaChange }
+                  placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
+                />
+                </div>
+              : '' }
+            { this.notEmpty('Did_not_meet_communication__c')  
+              && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
+              && this.state.synopsisReport.Did_not_meet_communication__c !== 'I did not connect with student and/or family for other reasons explained below'
+              ? <div className="survey-question-container"> 
+              <TextArea
+                compClass="title"
+                compName="How_can_we_support_communication__c"
+                label="Additional Notes (Optional)"
+                value={ this.srSafe('How_can_we_support_communication__c') ? this.state.synopsisReport.How_can_we_support_communication__c : '' }
+                onChange={ this.handleTextAreaChange }
+                placeholder="Please provide any additional context to RA staff in order to help inform how we can best support"
+              />
+              </div>
+              : '' }
           { this.notEmpty('Did_not_meet_communication__c')
             && this.state.synopsisReport.Did_not_meet_communication__c === 'I communicated with the student and/or family but we weren’t able to have a check in' 
             && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
@@ -382,34 +451,6 @@ class SynopsisReportForm extends React.Component {
                 />
               </div>
             : '' }
-          { this.notEmpty('Communication_Method_No_Check_In__c') 
-            && this.state.synopsisReport.Communication_Method_No_Check_In__c === 'I did not connect with student and/or family for other reasons explained below' 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-            ? <div className="survey-question-container"> 
-            <TextArea
-              compClass={ this.state.howSupportRequiredOK || this.notEmpty('How_can_we_support_required__c') ? 'title' : 'title required' }
-              compName="How_can_we_support_required__c"
-              label="Please provide any additional context to RA staff in order to help inform how we can best support"
-              value={ this.srSafe('How_can_we_support_required__c') ? this.state.synopsisReport.How_can_we_support_required__c : undefined }
-              onChange={ this.handleTextAreaChange }
-              placeholder="Required..."
-            />
-            </div>
-            : '' }
-            { this.notEmpty('Communication_Method_No_Response__c') 
-            && this.state.synopsisReport.Communication_Method_No_Response__c === 'I did not connect with student and/or family for reasons explained below' 
-            && this.state.synopsisReport.Weekly_Check_In_Status__c !== 'Met'
-              ? <div className="survey-question-container"> 
-              <TextArea
-                compClass={ this.state.howSupportOK || this.notEmpty('How_can_we_support__c') ? 'title' : 'title required' }
-                compName="How_can_we_support__c"
-                label="Please provide any additional context to RA staff in order to help inform how we can best support"
-                value={ this.srSafe('How_can_we_support__c') ? this.state.synopsisReport.How_can_we_support__c : undefined }
-                onChange={ this.handleTextAreaChange }
-                placeholder="Required..."
-              />
-              </div>
-              : '' }
       </div>
       </fieldset>
     );
@@ -420,12 +461,13 @@ class SynopsisReportForm extends React.Component {
             <h5>ONE TEAM CONNECTIONS</h5>
         </div>
         <div>
-            <p>(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
+            <p className="paragraph-text">(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
         </div>
         <fieldset>
           <div className="mentor-met-container">
             <DropDown
               compName="Family_Connection__c"
+              label="Family Connection"
               value={ this.srSafe('Family_Connection__c')
                 ? this.state.synopsisReport.Family_Connection__c
                 : ''}
@@ -435,6 +477,7 @@ class SynopsisReportForm extends React.Component {
             />
             <DropDown
               compName="Teacher_Connection__c"
+              label="Teacher Connection"
               value={this.srSafe('Teacher_Connection__c')
                 ? this.state.synopsisReport.Teacher_Connection__c
                 : ''}
@@ -444,6 +487,7 @@ class SynopsisReportForm extends React.Component {
             />
             <DropDown
               compName="Coach_Connection__c"
+              label="Coach Connection"
               value={this.srSafe('Coach_Connection__c')
                 ? this.state.synopsisReport.Coach_Connection__c
                 : ''}
@@ -459,7 +503,10 @@ class SynopsisReportForm extends React.Component {
     const identityStatementJSX = (
       <React.Fragment>
         <div className="title">
-            <h5>IDENTITY STATEMENT</h5>
+            <h5>IDENTITY STATEMENT EXPLORATION</h5>
+        </div>
+        <div>
+          <p className="paragraph-text">Identity Statement Exploration is Self-Discovery in action! Statements will be added throughout the school year onto the top of each student&apos;s Identity Journal based on your discussions. The statements will change over the year as your topics of conversation change, focusing at first on the Introduction &amp; Values topic, then changing to the Community topic, then Race &amp; Ethnicity and so on.</p>
         </div>
         <div className="survey-question-container">
           <DropDown
@@ -476,13 +523,13 @@ class SynopsisReportForm extends React.Component {
             && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' 
           ? <div className="survey-question-container">
             <DropDown
-              compName="Identity_Statement_Prompts__c"
-              value={this.srSafe('Identity_Statement_Prompts__c')
-                ? this.state.synopsisReport.Identity_Statement_Prompts__c
+              compName="Identity_Statement_Topic__c"
+              value={this.srSafe('Identity_Statement_Topic__c')
+                ? this.state.synopsisReport.Identity_Statement_Topic__c
                 : ''}
-              valueClass={this.state.identityPromptOK || this.notEmpty('Identity_Statement_Prompts__c') ? '' : 'required'}
+              valueClass={this.state.identityTopicOK || this.notEmpty('Identity_Statement_Topic__c') ? '' : 'required'}
               onChange={ this.handleSimpleFieldChange}
-              options={this.props.pickListFieldValues.Identity_Statement_Prompts__c.values}
+              options={this.props.pickListFieldValues.Identity_Statement_Topic__c.values}
             />
             </div>
           : '' }
@@ -501,132 +548,142 @@ class SynopsisReportForm extends React.Component {
               />
             </div>
           : '' }
-        <div className="survey-question-container">
+        { this.notEmpty('Identity_Statement_Weekly_Status__c')
+          && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes'
+          && this.notEmpty('Identity_Statement_Topic__c')
+          ? <div className="survey-question-container">
             <TextArea
-                compClass="title"
+                compClass={this.state.identityHighlightsOK
+                && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes' ? 'title' : 'title required'}
                 compName="Identity_Statement_Highlights__c"
-                label="Identity Statement Highlights (Optional)"
+                label="Identity Statement Highlights (Required)"
                 value={ this.srSafe('Identity_Statement_Highlights__c')
                   ? this.state.synopsisReport.Identity_Statement_Highlights__c
                   : '' }
                 onChange={ this.handleTextAreaChange }
-                placeholder="Optional..."
+                placeholder="What did your mentee share on this topic that they are open to sharing with their core community on their Identity Journal and over Basecamp?"
               />
-        </div>
+          </div>
+          : '' }
+          { this.notEmpty('Identity_Statement_Weekly_Status__c')
+          && this.state.synopsisReport.Identity_Statement_Weekly_Status__c === 'Yes'
+          && this.notEmpty('Identity_Statement_Topic__c')
+            ? <React.Fragment><div>
+              <p>Your mentee might not be comfortable sharing all the same details with their core community that they share with you. Talk to them about what they are ready to share in order to continue working towards showing up as their authentic selves across their community.</p>
+              </div>
+              <div className="survey-question-container">
+              <TextArea
+                  compClass='title'
+                  compName="Identity_Statement_Notes__c"
+                  label="Identity Statement Notes (Optional)"
+                  value={ this.srSafe('Identity_Statement_Notes__c')
+                    ? this.state.synopsisReport.Identity_Statement_Notes__c
+                    : '' }
+                  onChange={ this.handleTextAreaChange }
+                  placeholder="Please add any other notes that your mentee is not yet open to sharing with their core community."
+                />
+              </div></React.Fragment>
+            : '' }
       </React.Fragment>
     );
 
     const { studentGrade } = this.state;
 
-    const pointSheetStatusJSX = (
+    const identityJournalJSX = (
       <fieldset>
         <div className="title">
-          <h5>POINT SHEET AND SCHOOL UPDATE</h5>
+          <h5>IDENTITY JOURNAL AND TEACHER CONVERSATIONS</h5>
         </div>
         <div className="mentor-met-container">
           <DropDown
-            compName="Point_Sheet_Status__c"
-            value={this.srSafe('Point_Sheet_Status__c')
-              ? this.state.synopsisReport.Point_Sheet_Status__c
+            compName="Identity_Journal_Status__c"
+            label="Identity Journal Status"
+            value={this.srSafe('Identity_Journal_Status__c')
+              ? this.state.synopsisReport.Identity_Journal_Status__c
               : undefined}
-            valueClass={this.state.pointSheetStatusOK || this.notEmpty('Point_Sheet_Status__c') ? '' : 'required'}
+            valueClass={this.state.identityJournalStatusOK || this.notEmpty('Identity_Journal_Status__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={this.props.pickListFieldValues.Point_Sheet_Status__c.values}
+            options={this.props.pickListFieldValues.Identity_Journal_Status__c.values}
           />
-          {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
-            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in' 
+          {studentGrade > 5 && this.notEmpty('Identity_Journal_Status__c')
+            && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in' 
             ? <DropDown
-                compName="Point_Sheet_MS_Self_Reflection__c"
-                value={this.srSafe('Point_Sheet_MS_Self_Reflection__c')
-                  ? this.state.synopsisReport.Point_Sheet_MS_Self_Reflection__c
+                compName="Identity_Journal_MS_Self_Reflection__c"
+                label="Self Reflection"
+                value={this.srSafe('Identity_Journal_MS_Self_Reflection__c')
+                  ? this.state.synopsisReport.Identity_Journal_MS_Self_Reflection__c
                   : undefined}
-                valueClass={this.state.msSelfReflectionOK || this.notEmpty('Point_Sheet_MS_Self_Reflection__c') ? '' : 'required'}
+                valueClass={this.state.msSelfReflectionOK || this.notEmpty('Identity_Journal_MS_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={this.props.pickListFieldValues.Point_Sheet_MS_Self_Reflection__c.values}
+                options={this.props.pickListFieldValues.Identity_Journal_MS_Self_Reflection__c.values}
               /> 
             : ''}
           {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
-            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
+            && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
             ? <DropDown
-                compName="Point_Sheet_ES_Self_Reflection__c"
-                value={this.srSafe('Point_Sheet_ES_Self_Reflection__c')
-                  ? this.state.synopsisReport.Point_Sheet_ES_Self_Reflection__c
+                compName="Identity_Journal_ES_Self_Reflection__c"
+                label="Self Reflection"
+                value={this.srSafe('Identity_Journal_ES_Self_Reflection__c')
+                  ? this.state.synopsisReport.Identity_Journal_ES_Self_Reflection__c
                   : undefined}
-                valueClass={this.state.esSelfReflectionOK || this.notEmpty('Point_Sheet_ES_Self_Reflection__c') ? '' : 'required'}
+                valueClass={this.state.esSelfReflectionOK || this.notEmpty('Identity_Journal_ES_Self_Reflection__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={this.props.pickListFieldValues.Point_Sheet_ES_Self_Reflection__c.values}
+                options={this.props.pickListFieldValues.Identity_Journal_ES_Self_Reflection__c.values}
               /> 
             : ''}
-          {studentGrade > 5 && this.notEmpty('Point_Sheet_Status__c')
-            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
-            && this.notEmpty('Point_Sheet_MS_Self_Reflection__c')
+          {studentGrade > 5 && this.notEmpty('Identity_Journal_Status__c')
+            && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
             ? <DropDown
-                compName="Point_Sheet_Teacher_Convo_MS__c"
-                value={this.srSafe('Point_Sheet_Teacher_Convo_MS__c')
-                  ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_MS__c
+                compName="Identity_Journal_Teacher_Convo_MS__c"
+                label="Teacher Conversation"
+                value={this.srSafe('Identity_Journal_Teacher_Convo_MS__c')
+                  ? this.state.synopsisReport.Identity_Journal_Teacher_Convo_MS__c
                   : undefined}
-                valueClass={this.state.msTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_MS__c') ? '' : 'required'}
+                valueClass={this.state.msTeacherConvoOK || this.notEmpty('Identity_Journal_Teacher_Convo_MS__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={this.props.pickListFieldValues.Point_Sheet_Teacher_Convo_MS__c.values}
+                options={this.props.pickListFieldValues.Identity_Journal_Teacher_Convo_MS__c.values}
               /> 
             : ''}
-          {studentGrade <= 5 && this.notEmpty('Point_Sheet_Status__c')
-            && this.state.synopsisReport.Point_Sheet_Status__c === 'Turned in'
-            && this.notEmpty('Point_Sheet_ES_Self_Reflection__c')
+          {studentGrade <= 5 && this.notEmpty('Identity_Journal_Status__c')
+            && this.state.synopsisReport.Identity_Journal_Status__c === 'Turned in'
             ? <DropDown
-                compName="Point_Sheet_Teacher_Convo_ES__c"
-                value={this.srSafe('Point_Sheet_Teacher_Convo_ES__c')
-                  ? this.state.synopsisReport.Point_Sheet_Teacher_Convo_ES__c
+                compName="Identity_Journal_Teacher_Convo_ES__c"
+                label="Teacher Conversation"
+                value={this.srSafe('Identity_Journal_Teacher_Convo_ES__c')
+                  ? this.state.synopsisReport.Identity_Journal_Teacher_Convo_ES__c
                   : undefined}
-                valueClass={this.state.esTeacherConvoOK || this.notEmpty('Point_Sheet_Teacher_Convo_ES__c') ? '' : 'required'}
+                valueClass={this.state.esTeacherConvoOK || this.notEmpty('Identity_Journal_Teacher_Convo_ES__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={this.props.pickListFieldValues.Point_Sheet_Teacher_Convo_ES__c.values}
+                options={this.props.pickListFieldValues.Identity_Journal_Teacher_Convo_ES__c.values}
               /> 
             : ''}
-          {this.notEmpty('Point_Sheet_Status__c') && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in'
+          {this.notEmpty('Identity_Journal_Status__c') && this.state.synopsisReport.Identity_Journal_Status__c === 'Not turned in'
             ? <DropDown
-                compName="No_Point_Sheet__c"
-                value={this.srSafe('No_Point_Sheet__c')
-                  ? this.state.synopsisReport.No_Point_Sheet__c
+                compName="No_Identity_Journal__c"
+                value={this.srSafe('No_Identity_Journal__c')
+                  ? this.state.synopsisReport.No_Identity_Journal__c
                   : undefined}
-                valueClass={this.state.pointSheetMissedReasonOK || this.notEmpty('No_Point_Sheet__c') ? '' : 'required'}
+                valueClass={this.state.identityJournaltMissedReasonOK || this.notEmpty('No_Identity_Journal__c') ? '' : 'required'}
                 onChange={ this.handleSimpleFieldChange}
-                options={this.props.pickListFieldValues.No_Point_Sheet__c.values}
+                options={this.props.pickListFieldValues.No_Identity_Journal__c.values}
               /> 
             : ''}
-            { this.notEmpty('Point_Sheet_Status__c') 
-              && this.state.synopsisReport.Point_Sheet_Status__c === 'Not turned in' 
-              && this.notEmpty('No_Point_Sheet__c') 
-              && this.state.synopsisReport.No_Point_Sheet__c === 'Other'
+            { this.notEmpty('Identity_Journal_Status__c')
               ? <div className="survey-question-container">
                   <TextArea
-                    compClass={`title ${this.state.pointSheetStatusNotesOK || this.notEmpty('No_Point_Sheet_What_Happened__c') ? '' : 'required'}`}
-                    compName="No_Point_Sheet_What_Happened__c"
-                    label="What happened?"
-                    value={ this.srSafe('No_Point_Sheet_What_Happened__c')
-                      ? this.state.synopsisReport.No_Point_Sheet_What_Happened__c
-                      : undefined }
-                    placeholder="Required..."
+                    compClass={`title ${this.state.ijAndTeacherConvoOK || this.notEmpty('Identity_Journal_and_Teacher_Convo__c') ? '' : 'required'}`}
+                    compName="Identity_Journal_and_Teacher_Convo__c"
+                    label="Identity Journal and Teacher Conversations Update (Required)"
+                    value={ this.srSafe('Identity_Journal_and_Teacher_Convo__c')
+                      ? this.state.synopsisReport.Identity_Journal_and_Teacher_Convo__c
+                      : '' }
+                    placeholder="Explain highlights from your discussion and especially regarding Identity Journal self-reflection and teacher conversations"
                     onChange={ this.handleTextAreaChange }
                     rows={ 3 }
                     cols={ 80 }
                   />
                 </div>
-              : '' }
-            <div className="survey-question-container">
-                  <TextArea
-                    compClass={`title ${this.state.psAndSchoolUpdateOK || this.notEmpty('Point_Sheet_and_School_Update__c') ? '' : 'required'}`}
-                    compName="Point_Sheet_and_School_Update__c"
-                    label="Point Sheet and School Update (Required)"
-                    value={ this.srSafe('Point_Sheet_and_School_Update__c')
-                      ? this.state.synopsisReport.Point_Sheet_and_School_Update__c
-                      : undefined }
-                    placeholder="Required..."
-                    onChange={ this.handleTextAreaChange }
-                    rows={ 3 }
-                    cols={ 80 }
-                  />
-                </div>
+              : ''}
         </div>
     </fieldset>
     );
@@ -634,28 +691,28 @@ class SynopsisReportForm extends React.Component {
     const sportsUpdateJSX = (
       <fieldset>
         <div className="title">
-          <h5>SPORTS UPDATE</h5>
+          <h5>SPORTS &amp; ACTIVITIES UPDATE</h5>
         </div>
         <div className="mentor-met-container">
           <DropDown
-            compName="Weekly_Sports_Update__c"
-            value={this.srSafe('Weekly_Sports_Update__c')
+            compName="Weekly_Sports_and_Activities_Update__c"
+            value={this.srSafe('Weekly_Sports_and_Activities_Update__c')
               ? this.state.synopsisReport.Weekly_Sports_Update__c
-              : undefined}
-              valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_Update__c') ? '' : 'required'}
+              : 'X'}
+              valueClass={this.state.sportsUpdateOK || this.notEmpty('Weekly_Sports_and_Activities_Update__c') ? '' : 'required'}
             onChange={ this.handleSimpleFieldChange}
-            options={this.props.pickListFieldValues.Weekly_Sports_Update__c.values}
+            options={this.props.pickListFieldValues.Weekly_Sports_and_Activities_Update__c.values}
           />
           <div className="survey-question-container">
             <TextArea
               compClass="title"
-              compName="Sports_Update__c"
-              label="Sports Update (Optional):"
-              value={ this.srSafe('Sports_Update__c')
-                ? this.state.synopsisReport.Sports_Update__c
-                : undefined }
+              compName="Sports_and_Activities_Update__c"
+              label="Sports &amp; Activities Update (Optional):"
+              value={ this.srSafe('Sports_and_Activities_Update__c')
+                ? this.state.synopsisReport.Sports_and_Activities_Update__c
+                : '' }
               onChange={ this.handleTextAreaChange }
-              placeholder="Optional..."
+              placeholder="Explain highlights from your conversation and especially the student&apos;s progress in sports and activities related goals discussed last week."
               rows={ 3 }
               cols={ 80 }
             />
@@ -667,18 +724,18 @@ class SynopsisReportForm extends React.Component {
     const additionalCommentsJSX = (
       <fieldset>
         <div className="title">
-          <h5>ADDITIONAL COMMENTS</h5>
+          <h5>ADDITIONAL COMMENTS AND SUPPORT</h5>
         </div>
         <div className="mentor-met-container">
             <TextArea
               compClass="title"
               compName="Additional_Comments__c"
-              label="Additional Comments for the core community:"
+              label="Additional Comments to inform the core community (Optional)"
               value={ this.srSafe('Additional_Comments__c')
                 ? this.state.synopsisReport.Additional_Comments__c
-                : undefined }
+                : '' }
               onChange={ this.handleTextAreaChange }
-              placeholder="Optional..."
+              placeholder="Explain highlights from your conversation and especially the student&apos;s progress in non-school related goals discussed last week."
               rows={ 3 }
               cols={ 80 }
             />
@@ -686,28 +743,13 @@ class SynopsisReportForm extends React.Component {
       </fieldset>
     );
 
-    const pointSheetImageOrCommentsJSX = (
+    const imageUploadJSX = (
       <React.Fragment>
-        <div className={ this.state.psImageOrReasonOK ? 'title' : 'title required' }>
-          <h5>Point Sheet Upload</h5>
+        <div>
+          <h5 className={ this.state.ijImageOK ? '' : 'required' }>IDENTITY JOURNAL AND IMAGE UPLOAD</h5>
+          <p className="paragraph-text">Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
         </div>
-        <ImagePreviews labelText="Upload Point Sheet Image" />
-        { !this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c')
-          ? <div className="mentor-met-container">
-              <TextArea
-                compClass={ this.state.psImageOrReasonOK || this.notEmpty('Missing_Point_Sheet_Image__c') ? 'title' : 'title required' }
-                compName="Missing_Point_Sheet_Image__c"
-                label="If no point sheet image, please explain:"
-                value={ this.srSafe('Missing_Point_Sheet_Image__c')
-                  ? this.state.synopsisReport.Missing_Point_Sheet_Image__c
-                  : undefined }
-                onChange={ this.handleTextAreaChange }
-                placeholder="Required..."
-                rows={ 3 }
-                cols={ 80 }
-              />
-            </div>
-          : ''}
+        <ImagePreviews labelText="Upload Images" />
       </React.Fragment>
     );
 
@@ -735,7 +777,7 @@ class SynopsisReportForm extends React.Component {
                 label="Please explain:"
                 value={ this.srSafe('Mentor_Support_Request_Notes__c')
                   ? this.state.synopsisReport.Mentor_Support_Request_Notes__c
-                  : undefined }
+                  : '' }
                 onChange={ this.handleTextAreaChange }
                 placeholder="Required..."
                 rows={ 3 }
@@ -802,10 +844,10 @@ class SynopsisReportForm extends React.Component {
                 { mentorMadeScheduledCheckinJSX }
                 { oneTeamJSX }
                 { identityStatementJSX }
-                { pointSheetStatusJSX }
+                { identityJournalJSX }
                 { sportsUpdateJSX }
                 { additionalCommentsJSX }
-                { pointSheetImageOrCommentsJSX }
+                { imageUploadJSX }
                 <hr />
                 { mentorSupportRequestJSX }
                 <div className="modal-footer">
