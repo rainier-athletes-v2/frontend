@@ -461,7 +461,7 @@ class SynopsisReportForm extends React.Component {
             <h5>ONE TEAM CONNECTIONS</h5>
         </div>
         <div>
-            <p>(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
+            <p className="paragraph-text">(Connecting with your student’s core community is ONE Team in action! Please let RA staff know who you were able to connect with over the past week.)</p>
         </div>
         <fieldset>
           <div className="mentor-met-container">
@@ -506,7 +506,7 @@ class SynopsisReportForm extends React.Component {
             <h5>IDENTITY STATEMENT EXPLORATION</h5>
         </div>
         <div>
-          <p>Identity Statement Exploration is Self-Discovery in action! Statements will be added throughout the school year onto the top of each student&apos;s Identity Journal based on your discussions. The statements will change over the year as your topics of conversation change, focusing at first on the Introduction &amp; Values topic, then changing to the Community topic, then Race &amp; Ethnicity and so on.</p>
+          <p className="paragraph-text">Identity Statement Exploration is Self-Discovery in action! Statements will be added throughout the school year onto the top of each student&apos;s Identity Journal based on your discussions. The statements will change over the year as your topics of conversation change, focusing at first on the Introduction &amp; Values topic, then changing to the Community topic, then Race &amp; Ethnicity and so on.</p>
         </div>
         <div className="survey-question-container">
           <DropDown
@@ -747,7 +747,7 @@ class SynopsisReportForm extends React.Component {
       <React.Fragment>
         <div>
           <h5 className={ this.state.ijImageOK ? '' : 'required' }>IDENTITY JOURNAL AND IMAGE UPLOAD</h5>
-          <p>Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
+          <p className="paragraph-text">Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
         </div>
         <ImagePreviews labelText="Upload Images" />
       </React.Fragment>
