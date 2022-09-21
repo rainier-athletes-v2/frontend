@@ -31,10 +31,12 @@ function SynopsisReportsList(props) {
                       <td>{sr.srName}</td>
                       <td>{sr.title}</td>
                       <td>{sr.synopsisReportStatus}</td>
-                      <td><button className="btn-link-1" 
+                      <td><button className={sr.synopsisReportStatus !== 'Completed' ? 'btn-link-1' : 'btn-link-1 greyedout'}
                         onClick={sr.pointSheetStatus && sr.pointSheetStatus.toLowerCase() === 'virtual' ? props.onSummerClick : props.onClick} 
                         value={sr.id} 
-                        name="SynopsisReportsTable">{sr.synopsisReportStatus === 'New' ? 'FILL IN' : 'EDIT'}</button></td>
+                        name="SynopsisReportsTable"
+                        disabled={sr.synopsisReportStatus === 'Completed'}>FILL IN</button>
+                      </td>
                     </tr>;
                 })
                 : null
