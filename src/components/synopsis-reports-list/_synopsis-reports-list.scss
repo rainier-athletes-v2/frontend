@@ -111,3 +111,9 @@ td:last-child {
     color: white;
   }
 }
+
+.greyedout {
+  color: lightgrey;
+  border: 2px grey solid;
+  pointer-events: none;
+}
