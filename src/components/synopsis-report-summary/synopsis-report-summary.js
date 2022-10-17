@@ -75,7 +75,7 @@ class SynopsisReportSummary extends React.Component {
       : '';
 
     const block3 = `<p><strong>Identity Journal and Teacher Conversations: </strong>
-    ${studentName} ${sr.Point_Sheet_Status__c === 'Turned in' ? 'did' : 'did not'} turn in an Identity Journal. 
+    ${studentName} ${sr.Identity_Journal_Status__c === 'Turned in' ? 'did' : 'did not'} turn in an Identity Journal. 
     ${sr.Identity_Journal_and_Teacher_Convo__c ? sr.Identity_Journal_and_Teacher_Convo__c.replace(/(?:\r\n|\r|\n)/g, '<br>') : ''}</p></br><br>`;
 
     const optionalBlock4 = sr.Sports_and_Activities_Update__c
