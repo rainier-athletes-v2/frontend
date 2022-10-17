@@ -200,8 +200,8 @@ class SynopsisReportForm extends React.Component {
 
     const sportsUpdateOK = this.notEmpty('Weekly_Sports_and_Activities_Update__c');
 
-    const ijImageOK = sr.Identity_Journal_Status__c === 'Not turned in'
-      || (sr.Identity_Journal_Status__c === 'Turned in' && !!(this.props.imagePreviews && this.props.imagePreviews.length));
+    // const ijImageOK = sr.Identity_Journal_Status__c === 'Not turned in'
+    //   || (sr.Identity_Journal_Status__c === 'Turned in' && !!(this.props.imagePreviews && this.props.imagePreviews.length));
       // || (sr.Identity_Journal_Status__c === 'Turned in' && this.notEmpty('Missing_Identity_Journal_Image__c'));
 
     const mentorSupportRequestOK = this.notEmpty('Mentor_Support_Request__c');
@@ -746,7 +746,7 @@ class SynopsisReportForm extends React.Component {
     const imageUploadJSX = (
       <React.Fragment>
         <div>
-          <h5 className={ this.state.ijImageOK ? '' : 'required' }>IDENTITY JOURNAL AND IMAGE UPLOAD</h5>
+          <h5 className={ this.state.ijImageOK ? '' : 'optional' }>IDENTITY JOURNAL AND IMAGE UPLOAD</h5>
           <p className="paragraph-text">Bring your check-in to life! Add a picture of your mentee&apos;s Identity Journal if they turned one in this week. Option to also add a picture of your mentee, yourself, or images that share the hightlights of your check-in.</p>
         </div>
         <ImagePreviews labelText="Upload Images" />
