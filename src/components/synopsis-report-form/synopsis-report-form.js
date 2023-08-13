@@ -232,32 +232,33 @@ class SynopsisReportForm extends React.Component {
       mentorSupportRequestNotesOK,
     });
 
-    return metWithMentee
-      && weeklyCheckinStatusOK 
-      && checkinStatusMetOK
-      && commStatusMetOK 
-      && commStatusDidNotMeetOK
-      && commMethodNoCheckinOK
-      && howSupportRequiredOK
-      && howSupportOK
-      && commNoResponseOK
-      && metWithFamilyOK
-      && metWithTeacherOK
-      && metWithCoachOK
-      && identityStatusOK
-      && identityTopicOK
-      && identityHighlightsOK
-      && identityJournalStatusOK
-      && msSelfReflectionOK
-      && esSelfReflectionOK
-      && msTeacherConvoOK
-      && esTeacherConvoOK
-      && identityJournaltMissedReasonOK
-      && identityJournalStatusNotesOK
-      && ijAndTeacherConvoOK
-      && sportsUpdateOK
-      && mentorSupportRequestOK
-      && mentorSupportRequestNotesOK;
+    return true;
+    // return metWithMentee
+    //   && weeklyCheckinStatusOK 
+    //   && checkinStatusMetOK
+    //   && commStatusMetOK 
+    //   && commStatusDidNotMeetOK
+    //   && commMethodNoCheckinOK
+    //   && howSupportRequiredOK
+    //   && howSupportOK
+    //   && commNoResponseOK
+    //   && metWithFamilyOK
+    //   && metWithTeacherOK
+    //   && metWithCoachOK
+    //   && identityStatusOK
+    //   && identityTopicOK
+    //   && identityHighlightsOK
+    //   && identityJournalStatusOK
+    //   && msSelfReflectionOK
+    //   && esSelfReflectionOK
+    //   && msTeacherConvoOK
+    //   && esTeacherConvoOK
+    //   && identityJournaltMissedReasonOK
+    //   && identityJournalStatusNotesOK
+    //   && ijAndTeacherConvoOK
+    //   && sportsUpdateOK
+    //   && mentorSupportRequestOK
+    //   && mentorSupportRequestNotesOK;
   }
 
   handleFullReportSubmit = (event) => {
