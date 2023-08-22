@@ -160,8 +160,8 @@ class Mentor extends React.Component {
   }
 
   selectSrForm = () => {
-    const summerStart = new Date(SUMMER_START);
-    const summerEnd = new Date(SUMMER_END);
+    const summerStart = new Date(SUMMER_START).getTime();
+    const summerEnd = new Date(SUMMER_END).getTime();
     const now = Date.now();
     
     const itsSummer = now >= summerStart && now < summerEnd;

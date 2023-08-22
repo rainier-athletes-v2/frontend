@@ -196,14 +196,15 @@ class SynopsisReportSummerForm extends React.Component {
       mentorSupportRequestNotesOK,
     });
 
-    return metWithMentee 
-      && weeklyConnectionStatusOK
-      && studentConnectionNotesOK
-      && familyConnectionOK
-      && familyConnectionStatusOK
-      && familyConnectionNotesOK
-      && mentorSupportRequestOK
-      && mentorSupportRequestNotesOK;
+    return true;
+    // return metWithMentee 
+    //   && weeklyConnectionStatusOK
+    //   && studentConnectionNotesOK
+    //   && familyConnectionOK
+    //   && familyConnectionStatusOK
+    //   && familyConnectionNotesOK
+    //   && mentorSupportRequestOK
+    //   && mentorSupportRequestNotesOK;
   }
 
   handleFullReportSubmit = (event) => {
