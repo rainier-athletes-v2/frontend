@@ -552,7 +552,7 @@ class SynopsisReportSummerForm extends React.Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">SYNOPSIS REPORT</h5>
+              <h5 className="modal-title">SUMMER SYNOPSIS REPORT</h5>
               <button type="button" 
                 className="close" 
                 onClick={ this.props.cancelClick }
