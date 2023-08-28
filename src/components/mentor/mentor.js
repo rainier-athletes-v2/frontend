@@ -165,7 +165,7 @@ class Mentor extends React.Component {
     const now = Date.now();
     
     const itsSummer = now >= summerStart && now < summerEnd;
-
+    console.log({ SUMMER_START, summerStart, SUMMER_END, summerEnd, now, itsSummer });
     if (this.state.modal === MODAL_OFF) {
       return null;
     }
